@@ -1,0 +1,45 @@
+# ── Secrets & Environnement ──────────────────────────────────
+.env
+*.env.local
+*.env.production
+
+# ── Java / Maven ─────────────────────────────────────────────
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+mvnw
+mvnw.cmd
+
+# ── IDE ──────────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/settings.json
+*.classpath
+*.project
+.settings/
+
+# ── Logs ─────────────────────────────────────────────────────
+*.log
+console.log
+console_*.log
+spring.log
+spring_*.log
+
+# ── Uploads (données utilisateurs) ───────────────────────────
+uploads/
+
+# ── OS ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Docker volumes locaux ─────────────────────────────────────
+docker-data/
+
+# ── Fichiers de diagnostic ────────────────────────────────────
+schema_info.txt
+cp.txt
+sources.txt
+CheckDb.class

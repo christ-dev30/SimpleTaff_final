@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimpleTaff — Plateforme SaaS de Gestion de Main-d'Œuvre Temporaire</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3, .font-display { font-family: 'Outfit', sans-serif; }
+        .glass-light { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.4); }
+        .hero-bg { background: radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 50%), radial-gradient(circle at 10% 80%, rgba(14, 165, 233, 0.08) 0%, transparent 50%), #f8fafc; }
+        .card-shadow { box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02); }
+        .card-hover { transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .card-hover:hover { transform: translateY(-6px); box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.2); }
+        .btn-gradient { background: linear-gradient(135deg, #4f46e5, #0284c7); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4); }
+        .tag-light { background: rgba(79, 70, 229, 0.06); border: 1px solid rgba(79, 70, 229, 0.15); color: #4338ca; }
+    </style>
+</head>
+<body class="hero-bg text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- HEADER / NAVIGATION -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-light border-b border-slate-200/50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl btn-gradient flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                </div>
+                <span class="font-extrabold text-2xl tracking-tight text-slate-900">SimpleTaff</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#concept" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Concept</a>
+                <a href="#processus" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Fonctionnement</a>
+                <a href="#roles" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Espaces Dédiés</a>
+                <a href="#technologie" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Sécurité</a>
+                <a href="#pricing" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Tarifs</a>
+                <a href="/vitrine/login.html" class="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">Connexion</a>
+                <a href="/vitrine/demo.html" class="btn-gradient px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-md">Essayer la démo</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="pt-40 pb-24 px-6 text-center max-w-5xl mx-auto flex-grow flex flex-col justify-center">
+        <div class="tag-light inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold mb-8 mx-auto">
+            <span class="w-2 h-2 rounded-full bg-indigo-600 inline-block animate-pulse"></span>
+            Solution Multi-Tenant pour Agences de Placement & Entreprises
+        </div>
+        <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 tracking-tight leading-tight mb-8">
+            Digitalisez la gestion de votre<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-sky-500">personnel temporaire</span> sur le terrain
+        </h1>
+        <p class="text-slate-500 text-lg md:text-xl max-w-3xl mx-auto mb-12 leading-relaxed" style="max-width: 65ch;">
+            Une plateforme SaaS moderne conçue pour simplifier les affectations d'agents, automatiser les pointages via QR codes sécurisés, et optimiser les flux de paie et de facturation en Côte d'Ivoire.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/vitrine/demo.html" class="btn-gradient px-8 py-4 rounded-xl font-bold text-white shadow-lg">Voir la démo interactive</a>
+            <a href="#concept" class="bg-white border border-slate-200 hover:border-slate-300 text-slate-700 px-8 py-4 rounded-xl font-bold transition-all card-shadow">Découvrir le principe</a>
+        </div>
+    </header>
+
+    <!-- CONCEPT / PROBLÉMATIQUE -->
+    <section id="concept" class="py-24 bg-white border-y border-slate-100 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6">Pourquoi choisir SimpleTaff ?</h2>
+                <p class="text-slate-500 leading-relaxed text-base">
+                    La gestion de la main-d'œuvre temporaire (agents de sécurité, agents d'entretien, ouvriers de chantier) souffre souvent de processus manuels lents, de fraudes au pointage et d'erreurs de calcul de paie. SimpleTaff résout ces problèmes en automatisant chaque étape de manière sécurisée et centralisée.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Point 1 -->
+                <div class="bg-slate-50/50 border border-slate-100 rounded-2xl p-8 card-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Sécurité Multi-Tenant Stricte</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">
+                        Chaque agence de placement possède sa propre base de données isolée au niveau applicatif (Hibernate Tenant Filter). Vos données clients, agents et financières restent strictement confidentielles.
+                    </p>
+                </div>
+                <!-- Point 2 -->
+                <div class="bg-slate-50/50 border border-slate-100 rounded-2xl p-8 card-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Zéro Fraude au Pointage</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">
+                        Les pointages physiques sont validés en temps réel par scan de QR Code sur le lieu de travail par le superviseur ou l'employeur. Fini les déclarations d'heures fictives ou approximatives.
+                    </p>
+                </div>
+                <!-- Point 3 -->
+                <div class="bg-slate-50/50 border border-slate-100 rounded-2xl p-8 card-shadow">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-3">Conformité Légale Assurée</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed">
+                        Notre moteur de paie applique automatiquement les régimes d'absence légaux, calcule les cotisations sociales ivoiriennes (CNPS) et génère des factures prêtes à être envoyées.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LE PROCESSUS OPÉRATIONNEL -->
+    <section id="processus" class="py-24 px-6 max-w-6xl mx-auto">
+        <div class="text-center max-w-3xl mx-auto mb-20">
+            <span class="tag-light px-3 py-1.5 rounded-full text-xs font-bold">Méthodologie</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mt-4 mb-6">Le Cycle de Gestion SimpleTaff</h2>
+            <p class="text-slate-500">Découvrez comment SimpleTaff gère l'intégralité du flux opérationnel, du recrutement initial à la facturation finale.</p>
+        </div>
+
+        <div class="relative border-l-2 border-indigo-100 ml-4 md:ml-32 space-y-16">
+            <!-- Etape 1 -->
+            <div class="relative pl-8 md:pl-12">
+                <div class="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-white border-4 border-indigo-600 flex items-center justify-center font-bold text-xs text-indigo-600 shadow-md">1</div>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                    <div class="md:col-span-4">
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Recrutement & Fiche Agent</h3>
+                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Étape Initiale</span>
+                    </div>
+                    <div class="md:col-span-8 text-slate-500 text-sm leading-relaxed space-y-2">
+                        <p>
+                            Chaque agent est recruté et enregistré avec ses pièces justificatives (CNI, Passeport, carte d'électeur) dans sa fiche profil. Il est affecté à une **Zone Géographique Tarifaire** spécifique qui régit son taux de rémunération horaire de base.
+                        </p>
+                        <p class="text-xs text-slate-400">
+                            💡 *Sécurité :* Le système alerte automatiquement le gestionnaire si une pièce d'identité requise est manquante ou arrive à expiration.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etape 2 -->
+            <div class="relative pl-8 md:pl-12">
+                <div class="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-white border-4 border-indigo-600 flex items-center justify-center font-bold text-xs text-indigo-600 shadow-md">2</div>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                    <div class="md:col-span-4">
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Création des Postes & Affectation</h3>
+                        <span class="text-xs font-bold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-full">Planification</span>
+                    </div>
+                    <div class="md:col-span-8 text-slate-500 text-sm leading-relaxed space-y-2">
+                        <p>
+                            L'agence crée des **Postes** de travail sur les sites de ses entreprises clientes (ex: Vigile de nuit, Manutentionnaire). Un agent qualifié est affecté à ce poste.
+                        </p>
+                        <p>
+                            En cas d'absence, le coordonnateur de zone peut libérer l'agent instantanément et effectuer une affectation de remplacement pour garantir la continuité du service chez le client.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etape 3 -->
+            <div class="relative pl-8 md:pl-12">
+                <div class="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-white border-4 border-indigo-600 flex items-center justify-center font-bold text-xs text-indigo-600 shadow-md">3</div>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                    <div class="md:col-span-4">
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Pointage par QR Code Sécurisé</h3>
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">Contrôle Terrain</span>
+                    </div>
+                    <div class="md:col-span-8 text-slate-500 text-sm leading-relaxed space-y-2">
+                        <p>
+                            À chaque prise et fin de service, l'agent présente sa **Carte QR Code** physique ou numérique. Le superviseur sur site scanne ce code pour horodater l'arrivée et le départ de l'agent.
+                        </p>
+                        <p>
+                            Cette validation croisée garantit que l'agent est physiquement présent sur site, éliminant tout risque de fausses déclarations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Etape 4 -->
+            <div class="relative pl-8 md:pl-12">
+                <div class="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-white border-4 border-indigo-600 flex items-center justify-center font-bold text-xs text-indigo-600 shadow-md">4</div>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                    <div class="md:col-span-4">
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Calcul de Paie & Facturation</h3>
+                        <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">Finances</span>
+                    </div>
+                    <div class="md:col-span-8 text-slate-500 text-sm leading-relaxed space-y-2">
+                        <p>
+                            À la fin de la période, le système compile les heures de présence effectives. Le moteur de calcul applique les règles d'absences (justifiées, maladies, etc.) et génère le **bulletin de paie** de l'agent.
+                        </p>
+                        <p>
+                            Simultanément, la **facture client** correspondante est automatiquement générée, basée sur les heures validées par l'employeur lui-même.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LES RÔLES ET ESPACES DÉDIÉS -->
+    <section id="roles" class="py-24 bg-white border-t border-slate-100 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="tag-light px-3 py-1.5 rounded-full text-xs font-bold">Collaboratif</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mt-4 mb-6">4 Espaces de Travail Distincts</h2>
+                <p class="text-slate-500">Chaque acteur interagit sur une interface épurée adaptée à ses missions du quotidien.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Super Admin -->
+                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6 card-hover">
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">👑 Super Admin</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed mb-4">
+                        Gère la création des comptes d'entreprises (tenants), surveille l'état global du système, et gère les abonnements de la plateforme SaaS.
+                    </p>
+                    <span class="text-[10px] bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full font-semibold">Portée Globale</span>
+                </div>
+                <!-- Admin Entreprise -->
+                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6 card-hover">
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">🏢 Admin Entreprise</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed mb-4">
+                        Gère le catalogue d'emplois, les zones géographiques, les structures clientes, et valide les paies et factures en fin de mois.
+                    </p>
+                    <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-semibold">Portée Tenant</span>
+                </div>
+                <!-- Coordonnateur -->
+                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6 card-hover">
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">🧭 Coordonnateur</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed mb-4">
+                        Gère les agents terrain de sa zone, effectue les affectations quotidiennes sur les sites clients et résout les problèmes de sous-effectif.
+                    </p>
+                    <span class="text-[10px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-semibold">Portée Zone</span>
+                </div>
+                <!-- Employeur (Client) -->
+                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-6 card-hover">
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">💼 Employeur (Client)</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed mb-4">
+                        Représente le client final. Il valide les pointages d'arrivée/départ des agents sur ses chantiers ou bureaux via scan QR code.
+                    </p>
+                    <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">Portée Site</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ARCHITECTURE TECHNIQUE & SECURITE -->
+    <section id="technologie" class="py-24 px-6 max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="tag-light px-3 py-1.5 rounded-full text-xs font-bold">Sécurité & Architecture</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mt-4 mb-6">Une base technique robuste pour la soutenance</h2>
+                <p class="text-slate-500 text-sm leading-relaxed mb-6">
+                    L'application est construite sur des standards professionnels, garantissant des performances et une isolation stricte des données :
+                </p>
+                <ul class="space-y-3 text-sm text-slate-600">
+                    <li class="flex items-start gap-2">
+                        <span class="text-indigo-600 font-bold">✓</span>
+                        <span>**Multi-Tenancy par filtre Hibernate :** Les requêtes SQL vers les tables d'entités (Zone, Agent, Poste...) intègrent automatiquement le filtre `tenantFilter` garantissant qu'aucune donnée n'est partagée.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-indigo-600 font-bold">✓</span>
+                        <span>**Sécurité JWT (JSON Web Tokens) :** Connexion stateless avec gestion des rôles à chaque requête.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-indigo-600 font-bold">✓</span>
+                        <span>**Base de données Relationnelle :** PostgreSQL et gestion des migrations d'historique de schéma via Flyway pour des mises à jour fluides de la DB.</span>
+                    </li>
+                </ul>
+            </div>
+            <!-- Interactive Stack Graphic -->
+            <div class="bg-slate-100 border border-slate-200 rounded-3xl p-8 card-shadow space-y-4">
+                <div class="bg-white rounded-xl p-4 border border-slate-200 flex justify-between items-center">
+                    <span class="font-bold text-xs">Couche Présentation (Vues)</span>
+                    <span class="text-[10px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">HTML5 / Tailwind CSS</span>
+                </div>
+                <div class="bg-white rounded-xl p-4 border border-slate-200 flex justify-between items-center">
+                    <span class="font-bold text-xs">Contrôle de Sécurité</span>
+                    <span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">Spring Security & JWT</span>
+                </div>
+                <div class="bg-white rounded-xl p-4 border border-slate-200 flex justify-between items-center">
+                    <span class="font-bold text-xs">Moteur Applicatif (Backend)</span>
+                    <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Spring Boot 3.3 / Java 21</span>
+                </div>
+                <div class="bg-white rounded-xl p-4 border border-slate-200 flex justify-between items-center">
+                    <span class="font-bold text-xs">Accès Données (ORM & Tenant)</span>
+                    <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">Hibernate 6 / JPA</span>
+                </div>
+                <div class="bg-white rounded-xl p-4 border border-slate-200 flex justify-between items-center">
+                    <span class="font-bold text-xs">Stockage & Persistance</span>
+                    <span class="text-[10px] bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-bold">PostgreSQL / Flyway</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" class="py-24 bg-white border-t border-slate-100 px-6">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-16">
+                <span class="tag-light px-3 py-1.5 rounded-full text-xs font-bold">Tarification</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mt-4 mb-4">Des tarifs transparents, sans engagement</h2>
+                <p class="text-slate-500">Aucun frais caché. Adaptez l'offre à vos effectifs.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <!-- Starter -->
+                <div class="bg-slate-50 border border-slate-200/60 rounded-3xl p-8 card-hover flex flex-col justify-between">
+                    <div>
+                        <p class="text-indigo-600 text-xs font-bold uppercase tracking-wider mb-2">Starter</p>
+                        <p class="text-4xl font-extrabold text-slate-950 mb-1">49 000 <span class="text-sm font-normal text-slate-500">FCFA/mois</span></p>
+                        <p class="text-slate-400 text-xs mb-8">Jusqu'à 30 agents actifs</p>
+                        <ul class="space-y-4 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>Gestion agents & postes</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>Pointage QR Code</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>1 coordonnateur de zone</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="/vitrine/contact-souscription.html?plan=Starter" class="block text-center bg-white border border-slate-200 hover:border-slate-300 text-slate-800 py-3 rounded-xl font-bold text-sm transition-all">Choisir Starter</a>
+                </div>
+                
+                <!-- Pro (Recommended) -->
+                <div class="bg-white border-2 border-indigo-600 rounded-3xl p-8 card-hover shadow-xl shadow-indigo-500/5 relative flex flex-col justify-between">
+                    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-xs font-bold">Recommandé</div>
+                    <div>
+                        <p class="text-indigo-600 text-xs font-bold uppercase tracking-wider mb-2">Pro</p>
+                        <p class="text-4xl font-extrabold text-slate-950 mb-1">120 000 <span class="text-sm font-normal text-slate-500">FCFA/mois</span></p>
+                        <p class="text-slate-400 text-xs mb-8">Jusqu'à 150 agents actifs</p>
+                        <ul class="space-y-4 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>Tout Starter inclus</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>Calcul de paie automatique</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>Facturation client & Audit</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>Coordonnateurs illimités</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="/vitrine/contact-souscription.html?plan=Pro" class="block text-center btn-gradient text-white py-3 rounded-xl font-bold text-sm shadow-md">Choisir Pro</a>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="bg-slate-50 border border-slate-200/60 rounded-3xl p-8 card-hover flex flex-col justify-between">
+                    <div>
+                        <p class="text-indigo-600 text-xs font-bold uppercase tracking-wider mb-2">Enterprise</p>
+                        <p class="text-4xl font-extrabold text-slate-950 mb-1">Sur Devis</p>
+                        <p class="text-slate-400 text-xs mb-8">Agents & sites illimités</p>
+                        <ul class="space-y-4 text-sm text-slate-600 mb-8">
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>Tout Pro inclus</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>Support dédié 24/7 & SLA</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                <span>Intégration SI sur-mesure</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="/vitrine/contact-souscription.html?plan=Enterprise" class="block text-center bg-white border border-slate-200 hover:border-slate-300 text-slate-800 py-3 rounded-xl font-bold text-sm transition-all">Nous contacter</a>
+                </div>
+            </div>
+
+            <!-- SIMULATEUR DE BUDGET & DEVIS -->
+            <div class="bg-slate-50 border border-slate-200/80 rounded-3xl p-8 shadow-sm max-w-3xl mx-auto">
+                <div class="text-center mb-8">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">Simulateur</span>
+                    <h3 class="text-2xl font-extrabold text-slate-900 mt-3 mb-2">Simulez votre abonnement en temps réel</h3>
+                    <p class="text-slate-500 text-sm">Ajustez les effectifs prévus pour obtenir une estimation de tarif et générer un devis.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2 flex justify-between">
+                                <span>Nombre d'agents :</span>
+                                <span id="agent-count-val" class="font-extrabold text-indigo-600 text-lg">50 agents</span>
+                            </label>
+                            <input id="agent-slider" type="range" min="5" max="300" value="50" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                            <div class="flex justify-between text-xs text-slate-400 mt-2">
+                                <span>5 agents</span>
+                                <span>150 agents</span>
+                                <span>300+ agents</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="block text-sm font-semibold text-slate-600 mb-2">Formule recommandée :</span>
+                            <div id="recommended-badge" class="inline-block bg-indigo-55 border border-indigo-150 text-indigo-700 px-3.5 py-1 rounded-full text-xs font-bold">
+                                Formule Pro
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 text-center space-y-4 shadow-sm">
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Abonnement Estimé</p>
+                        <p id="estimated-cost" class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-sky-500">120 000 FCFA</p>
+                        <p class="text-slate-400 text-[11px]">Prix HT / mois. Facturé à l'usage des agents.</p>
+                        
+                        <button onclick="openDevisModal()" class="w-full btn-gradient py-3 rounded-xl font-bold text-sm text-white shadow-md">
+                            Obtenir mon Devis Officiel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEVIS MODAL -->
+    <div id="devis-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full border border-slate-200 mx-4 relative shadow-2xl">
+            <button onclick="closeDevisModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-extrabold text-slate-900">Demande de Devis Officiel</h3>
+                <p class="text-slate-500 text-sm mt-1">Remplissez les informations ci-dessous pour recevoir votre devis officiel PDF par e-mail.</p>
+            </div>
+            <form id="devis-form" onsubmit="submitDevis(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Nom de l'entreprise</label>
+                    <input type="text" required placeholder="Ex: Bolloré Côte d'Ivoire" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-slate-800">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Votre Nom complet</label>
+                    <input type="text" required placeholder="Ex: Jean Koffi" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-slate-800">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Adresse e-mail</label>
+                    <input type="email" required placeholder="Ex: contact@entreprise.ci" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-slate-800">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Téléphone</label>
+                    <input type="tel" required placeholder="Ex: +225 07 00 00 00 00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-slate-800">
+                </div>
+                <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 text-xs text-indigo-800">
+                    <span class="font-bold">Estimation sélectionnée :</span> <span id="modal-summary">Formule Pro (50 agents) - 120 000 FCFA/mois</span>
+                </div>
+                <button type="submit" class="w-full btn-gradient py-3 rounded-xl font-bold text-sm text-white shadow-md">
+                    Générer et envoyer le devis
+                </button>
+            </form>
+            <div id="devis-success" class="hidden text-center py-6 space-y-4">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <h4 class="text-xl font-extrabold text-slate-900">Devis envoyé avec succès !</h4>
+                <p class="text-slate-500 text-sm">Un e-mail contenant le devis officiel PDF a été envoyé à l'adresse indiquée.</p>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-left text-xs space-y-2 text-slate-700">
+                    <div class="flex justify-between"><span class="text-slate-400 font-semibold">Numéro de Devis :</span> <span class="font-mono text-indigo-600 font-bold">DEVIS-2026-0042</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400 font-semibold">Destinataire :</span> <span id="success-email" class="font-bold">contact@entreprise.ci</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400 font-semibold">Total Mensuel :</span> <span id="success-cost" class="font-bold text-slate-950">120 000 FCFA</span></div>
+                </div>
+                <div class="flex gap-3 mt-4">
+                    <a href="#" id="download-devis-btn" onclick="downloadMockDevisPdf(event)" class="flex-1 text-center btn-gradient py-2.5 rounded-xl font-bold text-xs text-white shadow-md">
+                        Télécharger le PDF
+                    </a>
+                    <button onclick="closeDevisModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl font-bold text-xs transition-colors">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Devis Simulator Logic
+        const agentSlider = document.getElementById('agent-slider');
+        const agentCountVal = document.getElementById('agent-count-val');
+        const recommendedBadge = document.getElementById('recommended-badge');
+        const estimatedCost = document.getElementById('estimated-cost');
+        const modalSummary = document.getElementById('modal-summary');
+
+        function updatePricing() {
+            if (!agentSlider) return;
+            const count = parseInt(agentSlider.value);
+            agentCountVal.textContent = `${count} agent${count > 1 ? 's' : ''}`;
+            
+            let formula = '';
+            let price = '';
+            if (count <= 30) {
+                formula = 'Formule Starter';
+                price = '49 000 FCFA';
+            } else if (count <= 150) {
+                formula = 'Formule Pro';
+                price = '120 000 FCFA';
+            } else {
+                formula = 'Formule Enterprise';
+                price = 'Sur devis';
+            }
+            
+            recommendedBadge.textContent = formula;
+            estimatedCost.textContent = price;
+            modalSummary.textContent = `${formula} (${count} agents) - ${price}/mois`;
+        }
+
+        if (agentSlider) {
+            agentSlider.addEventListener('input', updatePricing);
+            updatePricing();
+        }
+
+        // Modal Operations
+        const devisModal = document.getElementById('devis-modal');
+        function openDevisModal() {
+            devisModal.classList.remove('hidden');
+            setTimeout(() => {
+                devisModal.classList.remove('opacity-0');
+            }, 50);
+        }
+        function closeDevisModal() {
+            devisModal.classList.add('opacity-0');
+            setTimeout(() => {
+                devisModal.classList.add('hidden');
+                document.getElementById('devis-form').classList.remove('hidden');
+                document.getElementById('devis-success').classList.add('hidden');
+            }, 300);
+        }
+        function submitDevis(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input[type="email"]').value;
+            document.getElementById('success-email').textContent = email;
+            document.getElementById('success-cost').textContent = estimatedCost.textContent;
+            
+            document.getElementById('devis-form').classList.add('hidden');
+            document.getElementById('devis-success').classList.remove('hidden');
+        }
+        function downloadMockDevisPdf(e) {
+            e.preventDefault();
+            const companyName = document.querySelector('#devis-form input[type="text"]').value || "Votre Entreprise";
+            const agentCount = agentSlider.value;
+            const cost = estimatedCost.textContent;
+            const formula = recommendedBadge.textContent;
+            
+            let pdfText = `====================================================\n`;
+            pdfText += `               DEVIS OFFICIEL - SIMPLETTAFF          \n`;
+            pdfText += `====================================================\n`;
+            pdfText += `Numéro : DEVIS-2026-0042\n`;
+            pdfText += `Date   : ${new Date().toLocaleDateString('fr-FR')}\n`;
+            pdfText += `Validité : 30 jours\n\n`;
+            pdfText += `Destinataire :\n`;
+            pdfText += `  Entreprise : ${companyName}\n\n`;
+            pdfText += `Détails de l'offre :\n`;
+            pdfText += `  - Formule : ${formula}\n`;
+            pdfText += `  - Capacité : Jusqu'à ${agentCount} agents gérés\n`;
+            pdfText += `  - Hébergement & Support inclus\n`;
+            pdfText += `  - Configuration initiale : Offerte (Frais d'installation : 0 FCFA)\n\n`;
+            pdfText += `----------------------------------------------------\n`;
+            pdfText += `TOTAL MENSUEL : ${cost} / mois HT\n`;
+            pdfText += `----------------------------------------------------\n\n`;
+            pdfText += `Merci pour votre confiance.\n`;
+            pdfText += `SimpleTaff Platform - www.simpletaff.ci\n`;
+            pdfText += `====================================================\n`;
+
+            const blob = new Blob([pdfText], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `devis_simpletaff_${companyName.toLowerCase().replace(/\s+/g, '_')}.txt`;
+            link.click();
+        }
+    </script>
+
+    <!-- CALL TO ACTION (CTA) -->
+    <section class="py-24 px-6 text-center bg-slate-50 border-t border-slate-100">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6">Essayez SimpleTaff gratuitement dès maintenant</h2>
+            <p class="text-slate-500 mb-10">Connectez-vous avec nos comptes de test ou découvrez notre démo pas à pas cliquable.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/vitrine/login.html" class="btn-gradient px-8 py-4 rounded-xl font-bold text-white shadow-lg">Se Connecter à l'Espace Pro</a>
+                <a href="/vitrine/demo.html" class="bg-white border border-slate-200 hover:border-slate-300 text-slate-700 px-8 py-4 rounded-xl font-bold transition-all card-shadow">Essayer la Démo Pas à Pas</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200 bg-white py-12 px-6 text-center text-slate-400 text-sm">
+        <div class="flex items-center justify-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg btn-gradient flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </div>
+            <span class="font-extrabold text-lg text-slate-800">SimpleTaff</span>
+        </div>
+        <p class="mb-2">© 2026 SimpleTaff. Tous droits réservés.</p>
+        <p class="text-xs text-slate-300">Conçu pour les agences de placement et les superviseurs de chantiers en Côte d'Ivoire.</p>
+    </footer>
+
+</body>
+</html>

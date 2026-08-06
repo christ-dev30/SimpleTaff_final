@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="fr" class="antialiased scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Employeur — SimpleTaff</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 8px 32px -8px rgba(0,0,0,0.06); }
+        .sidebar-link { display: flex; align-items: center; padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 14px; transition: all 200ms ease; color: #64748b; cursor: pointer; }
+        .sidebar-link:hover { background: #f1f5f9; color: #1e293b; }
+        .sidebar-link.active { background: #e0f2fe; color: #0284c7; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+        .input-minimal { width: 100%; border-radius: 10px; border: 1.5px solid #e2e8f0; background: rgba(255,255,255,0.8); padding: 10px 14px; transition: all 150ms; outline: none; font-size: 14px; }
+        .input-minimal:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); background: #fff; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 glass border-r border-slate-200/50 flex flex-col justify-between hidden md:flex h-full z-10">
+        <div>
+            <div class="h-20 flex items-center px-6 border-b border-slate-100">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-sky-500 shadow-md flex items-center justify-center mr-3">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                </div>
+                <span class="font-extrabold text-lg text-slate-900">SimpleTaff Client</span>
+            </div>
+            <nav class="p-4 space-y-1">
+                <div class="sidebar-link active" onclick="showTab('overview')">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    Vue d'ensemble
+                </div>
+                <div class="sidebar-link" onclick="showTab('pointage')">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                    Scanner QR Pointage
+                </div>
+                <div class="sidebar-link" onclick="showTab('personnel')">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Personnel assigné
+                </div>
+                <div class="sidebar-link" onclick="showTab('factures')">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Factures reçues
+                </div>
+                <div class="sidebar-link" onclick="showTab('evaluations')">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                    Évaluations
+                </div>
+                <div class="sidebar-link" onclick="showTab('disciplinaire')">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    Sanctions
+                </div>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-slate-100">
+            <button onclick="logout()" class="flex w-full items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Déconnexion
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative overflow-hidden">
+        <header class="h-20 flex items-center justify-between px-8 border-b border-slate-200/50 bg-white/50 backdrop-blur-sm z-10">
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-slate-900" id="clientNom">Structure Cliente</h1>
+                <p class="text-xs text-slate-400">Espace Client — Validation en direct & pointages</p>
+            </div>
+            <span class="badge bg-emerald-100 text-emerald-700">EMPLOYEUR</span>
+        </header>
+
+        <div class="flex-grow overflow-y-auto p-8 space-y-6">
+
+            <!-- ═══════════════ TAB: Vue d'ensemble ═══════════════ -->
+            <div id="tab-overview" class="tab-content active space-y-6">
+                <!-- 4 Stat Cards with Glassmorphism & Micro-Hover -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Agents Assignés</span>
+                            <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            </div>
+                        </div>
+                        <div class="text-3xl font-extrabold text-slate-900 mt-3" id="statOverviewTotal">—</div>
+                        <div class="flex items-center gap-1.5 mt-2">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-700">Personnel sur site</span>
+                        </div>
+                    </div>
+                    <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pointages du Jour</span>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                            </div>
+                        </div>
+                        <div class="text-3xl font-extrabold text-emerald-600 mt-3" id="statOverviewPointagesDay">—</div>
+                        <div class="flex items-center gap-1.5 mt-2">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Validations aujourd'hui</span>
+                        </div>
+                    </div>
+                    <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Note Évaluations</span>
+                            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                            </div>
+                        </div>
+                        <div class="text-3xl font-extrabold text-indigo-600 mt-3" id="statOverviewEvals">—</div>
+                        <div class="flex items-center gap-1.5 mt-2">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700">Moyenne équipe</span>
+                        </div>
+                    </div>
+                    <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Dernier Pointage</span>
+                            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                        </div>
+                        <div class="text-base font-extrabold text-amber-700 mt-3 truncate" id="statOverviewDernier">Aucun</div>
+                        <div class="flex items-center gap-1.5 mt-2">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">Activité récente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dual List Overview Cards -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Left: Personnel Assigné -->
+                    <div class="lg:col-span-7 glass rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm flex flex-col">
+                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+                                <h2 class="font-bold text-slate-900 text-sm">📋 Membres de l'Équipe Assignés sur Site</h2>
+                            </div>
+                            <button onclick="showTab('personnel')" class="text-xs text-indigo-600 font-bold hover:underline">Voir Badges & QR →</button>
+                        </div>
+                        <div class="overflow-x-auto flex-1">
+                            <table class="w-full text-left">
+                                <thead><tr class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                                    <th class="px-5 py-3">Agent</th>
+                                    <th class="px-5 py-3">Rôle / Poste</th>
+                                    <th class="px-5 py-3">Zone</th>
+                                    <th class="px-5 py-3">Statut</th>
+                                </tr></thead>
+                                <tbody id="personnelTableBody" class="divide-y divide-slate-100 text-xs">
+                                    <tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Chargement des agents…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right: Flux de pointage direct -->
+                    <div class="lg:col-span-5 glass rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm flex flex-col">
+                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <h2 class="font-bold text-slate-900 text-sm">⏱️ Direct Pointages (Aujourd'hui)</h2>
+                            </div>
+                            <button onclick="showTab('pointage')" class="text-xs text-indigo-600 font-bold hover:underline">Scanner QR →</button>
+                        </div>
+                        <div class="overflow-x-auto flex-1">
+                            <table class="w-full text-left">
+                                <thead><tr class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                                    <th class="px-5 py-3">Agent</th>
+                                    <th class="px-5 py-3">Entrée</th>
+                                    <th class="px-5 py-3">Sortie</th>
+                                    <th class="px-5 py-3">Statut</th>
+                                </tr></thead>
+                                <tbody id="overviewPointagesStream" class="divide-y divide-slate-100 text-xs">
+                                    <tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Chargement…</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════ TAB: Pointage QR ═══════════════ -->
+            <div id="tab-pointage" class="tab-content space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Scanner camera & input -->
+                    <div class="lg:col-span-6 glass rounded-2xl p-6 space-y-4">
+                        <h2 class="text-lg font-bold text-slate-900">Scanner QR Code de l'Agent</h2>
+                        <p class="text-xs text-slate-400">Présentez le badge de l'agent devant votre caméra ou saisissez l'identifiant pour valider l'entrée ou la sortie.</p>
+
+                        <!-- Camera section container -->
+                        <div class="relative overflow-hidden rounded-2xl bg-slate-900 border border-slate-700/50 flex flex-col items-center justify-center p-2">
+                            <!-- Scanner view finder -->
+                            <div id="reader" class="w-full rounded-xl overflow-hidden bg-slate-950"></div>
+                            
+                            <div class="py-2 w-full flex justify-center gap-2">
+                                <button onclick="startScanning()" id="btnStartScan" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1.5 px-4 rounded-xl text-xs shadow-sm transition-colors">
+                                    Démarrer la caméra
+                                </button>
+                                <button onclick="stopScanning()" id="btnStopScan" class="hidden bg-red-600 hover:bg-red-700 text-white font-bold py-1.5 px-4 rounded-xl text-xs shadow-sm transition-colors">
+                                    Arrêter la caméra
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Manual form input -->
+                        <form id="pointageForm" class="space-y-4 pt-2">
+                            <div id="pointageMsg" class="hidden text-sm p-3 rounded-lg font-bold"></div>
+
+                            <!-- Mode selection -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <button type="button" onclick="setPointageMode('QR_CODE')" id="modeBtnQR" class="input-minimal text-left font-bold text-xs border-2 border-indigo-600 bg-indigo-50 text-indigo-700">
+                                    QR Code
+                                </button>
+                                <button type="button" onclick="setPointageMode('NFC')" id="modeBtnNFC" class="input-minimal text-left font-bold text-xs border border-slate-200 bg-white text-slate-700">
+                                    NFC
+                                </button>
+                                <button type="button" onclick="setPointageMode('PHOTO_GPS')" id="modeBtnPHOTO" class="input-minimal text-left font-bold text-xs border border-slate-200 bg-white text-slate-700">
+                                    Photo + GPS
+                                </button>
+                                <button type="button" onclick="setPointageMode('BIOMETRIE')" id="modeBtnBIO" class="input-minimal text-left font-bold text-xs border border-slate-200 bg-white text-slate-700">
+                                    Biométrie
+                                </button>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1" id="labelAgentCard">Identifiant (QR / NFC / Biometrie)</label>
+                                <input type="text" id="agentCardId" class="input-minimal" placeholder="ex: a01a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5e">
+                            </div>
+
+                            <div id="photoGpsSection" class="hidden space-y-2">
+                                <div class="text-xs text-slate-500 font-bold">Capture Photo (optionnel si backend accepte selfieUrl) + géolocalisation</div>
+                                <input type="file" id="selfieFileInput" accept="image/*" class="input-minimal" />
+                                <div class="text-xs text-slate-400">Note: l’upload réel de l’image n’est pas implémenté ici (envoi uniquement si `selfieUrl` est fourni).</div>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <button type="button" onclick="enregistrerPointage('ENTREE')" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm transition-all">
+                                    Pointer Entrée
+                                </button>
+                                <button type="button" onclick="enregistrerPointage('SORTIE')" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm transition-all">
+                                    Pointer Sortie
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Scan Logs -->
+                    <div class="lg:col-span-6 glass rounded-2xl overflow-hidden flex flex-col h-fit">
+                        <div class="px-6 py-4 border-b border-slate-100 bg-white/50 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
+                            <h2 class="text-sm font-bold text-slate-900">Historique des pointages par date</h2>
+                            <div class="flex items-center gap-2">
+                                <input type="date" id="employeurPointageDate" class="input-minimal w-auto">
+                                <button onclick="loadPointagesLog()" class="text-xs text-indigo-600 font-bold hover:underline">Actualiser</button>
+                            </div>
+                        </div>
+                        <div id="employeurPointageDates" class="px-6 py-3 border-b border-slate-100 bg-white/30 flex flex-wrap gap-2 text-xs">
+                            <span class="text-slate-400">Chargement des jours enregistrés...</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase">
+                                        <th class="px-6 py-2.5">Agent</th>
+                                        <th class="px-6 py-2.5">Entree</th>
+                                        <th class="px-6 py-2.5">Sortie</th>
+                                        <th class="px-6 py-2.5">Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pointageLogsTableBody" class="divide-y divide-slate-100 text-xs">
+                                    <tr><td colspan="4" class="px-6 py-4 text-center text-slate-400">Aucun pointage aujourd'hui.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════ TAB: Factures ═══════════════ -->
+            <div id="tab-factures" class="tab-content space-y-4">
+                <h2 class="text-lg font-bold text-slate-900">Factures reçues</h2>
+                <div class="glass p-8 text-center text-slate-400 text-sm rounded-2xl">
+                    Aucune facture disponible pour le moment.
+                </div>
+            </div>
+
+            <!-- ═══════════════ TAB: Personnel ═══════════════ -->
+            <div id="tab-personnel" class="tab-content space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900">Personnel assigné</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Agents de sécurité actuellement affectés à vos sites.</p>
+                    </div>
+                    <button onclick="loadPersonnelQr()" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 border border-indigo-200 bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors">↻ Actualiser</button>
+                </div>
+                <div id="personnelQrGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div class="glass p-8 rounded-2xl text-center text-slate-400 text-sm col-span-full">Chargement des agents…</div>
+                </div>
+            </div>
+
+            <!-- ═══════════════ TAB: Évaluations ═══════════════ -->
+            <div id="tab-evaluations" class="tab-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Évaluations & Performance</h2>
+                        <p class="text-xs text-slate-400">Évaluez la qualité de service, la ponctualité et la discipline des agents.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Form to Log Evaluation -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="glass p-6 rounded-2xl space-y-4">
+                            <h3 class="font-bold text-slate-800 text-sm">Nouvelle évaluation de performance</h3>
+                            <form id="addEvaluationForm" class="space-y-3">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 mb-1">Agent</label>
+                                        <select id="evalAgentSelect" required class="input-minimal text-xs py-2 px-3"></select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 mb-1">Année</label>
+                                        <input type="number" id="evalAnnee" required class="input-minimal text-xs py-2 px-3" value="2026">
+                                    </div>
+                                </div>
+
+                                <div class="space-y-2 border-t border-slate-100 pt-3">
+                                    <p class="text-xs font-bold text-slate-700">Critères d'évaluation (Score de 0 à 10)</p>
+                                    
+                                    <div class="grid grid-cols-2 gap-3 text-xs">
+                                        <div>
+                                            <label class="block text-slate-500 mb-1">Ponctualité</label>
+                                            <input type="number" id="evalPonctualite" min="0" max="10" value="8" class="input-minimal text-xs py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-slate-500 mb-1">Discipline</label>
+                                            <input type="number" id="evalDiscipline" min="0" max="10" value="8" class="input-minimal text-xs py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-slate-500 mb-1">Qualité de service</label>
+                                            <input type="number" id="evalQualite" min="0" max="10" value="8" class="input-minimal text-xs py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-slate-500 mb-1">Productivité</label>
+                                            <input type="number" id="evalProductivite" min="0" max="10" value="8" class="input-minimal text-xs py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-slate-500 mb-1">Esprit d'équipe</label>
+                                            <input type="number" id="evalEspritEquipe" min="0" max="10" value="8" class="input-minimal text-xs py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-slate-500 mb-1">Respect procédures</label>
+                                            <input type="number" id="evalRespectProcedures" min="0" max="10" value="8" class="input-minimal text-xs py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-slate-500 mb-1">Satisfaction client</label>
+                                            <input type="number" id="evalSatisfactionClient" min="0" max="10" value="8" class="input-minimal text-xs py-2 px-3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-slate-500 mb-1">Communication</label>
+                                            <input type="number" id="evalCommunication" min="0" max="10" value="8" class="input-minimal text-xs py-2 px-3">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 mb-1">Commentaire global</label>
+                                    <textarea id="evalCommentaire" rows="2" class="input-minimal text-xs py-2 px-3" placeholder="Observations générales..."></textarea>
+                                </div>
+                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold w-full py-2.5 rounded-xl text-xs mt-2 transition-colors">Enregistrer l'évaluation</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Evaluations History -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="glass p-6 rounded-2xl space-y-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-slate-800 text-sm">Registre des évaluations</h3>
+                                <input type="text" id="searchEvaluations" oninput="filterEvaluationsTable()" placeholder="Rechercher par nom..." class="input-minimal w-48 text-xs py-1.5 px-3">
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
+                                            <th class="p-3">Agent</th>
+                                            <th class="p-3">Année</th>
+                                            <th class="p-3">Date</th>
+                                            <th class="p-3">Score Total</th>
+                                            <th class="p-3">Commentaire</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="evaluationsTableBody" class="divide-y divide-slate-100">
+                                        <tr><td colspan="5" class="p-3 text-center text-slate-400">Chargement...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════ TAB: Disciplinaire ═══════════════ -->
+            <div id="tab-disciplinaire" class="tab-content space-y-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Sanctions & Discipline</h2>
+                        <p class="text-xs text-slate-400">Registre des incidents et sanctions réglementaires de vos agents.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Sanctions History List -->
+                    <div class="lg:col-span-12 space-y-4">
+                        <div class="glass p-6 rounded-2xl space-y-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-slate-800 text-sm">Registre des incidents & sanctions</h3>
+                                <input type="text" id="searchSanctions" oninput="filterSanctionsTable()" placeholder="Rechercher par nom..." class="input-minimal w-48 text-xs py-1.5 px-3">
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
+                                            <th class="p-3">Agent</th>
+                                            <th class="p-3">Type</th>
+                                            <th class="p-3">Date Décision</th>
+                                            <th class="p-3">Fin</th>
+                                            <th class="p-3">Motif</th>
+                                            <th class="p-3">Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sanctionsTableBody" class="divide-y divide-slate-100">
+                                        <tr><td colspan="6" class="p-3 text-center text-slate-400">Chargement...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script type="module">
+        import { apiFetch, logout, checkAuth } from '/shared/api.js';
+        
+        window.logout = logout;
+        let html5QrCode = null;
+        let pendingPointageType = null;
+
+        function showTab(name) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            document.getElementById('tab-' + name).classList.add('active');
+            
+            document.querySelectorAll('.sidebar-link').forEach(l => {
+                if (l.getAttribute('onclick')?.includes("'" + name + "'")) l.classList.add('active');
+            });
+            
+            // Stop scanning if leaving scan tab
+            if (name !== 'pointage') {
+                stopScanning();
+            }
+
+            if (name === 'overview') loadOverview();
+            if (name === 'pointage') {
+                loadPointageDates();
+                loadPointagesLog();
+            }
+            if (name === 'personnel') loadPersonnelQr();
+            if (name === 'evaluations') loadEvaluations();
+            if (name === 'disciplinaire') loadDisciplinaire();
+        }
+        window.showTab = showTab;
+
+        // ── Personnel Assigné ─────────────────────────────────────────────────
+        async function loadPersonnelQr() {
+            const grid = document.getElementById('personnelQrGrid');
+            grid.innerHTML = `<div class="glass p-8 rounded-2xl text-center text-slate-400 text-sm col-span-full">Chargement des agents…</div>`;
+            try {
+                const agents = await apiFetch('/employeur/personnel/qr');
+                if (!agents || agents.length === 0) {
+                    grid.innerHTML = `<div class="glass p-8 rounded-2xl text-center text-slate-400 text-sm col-span-full">Aucun agent assigné à vos sites pour le moment.</div>`;
+                    return;
+                }
+                grid.innerHTML = '';
+                for (const agent of agents) {
+                    const card = document.createElement('div');
+                    card.className = 'glass rounded-2xl p-4 flex flex-col items-center gap-3 text-center shadow-sm hover:shadow-md transition-shadow';
+
+                    const statutColor = agent.statut === 'ACTIVE' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700';
+                    const carteInfo = agent.carteStatut === 'AUCUNE'
+                        ? `<span class="badge bg-red-100 text-red-600 text-[10px]">Pas de carte active</span>`
+                        : `<span class="badge ${agent.carteStatut === 'ACTIVE' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'} text-[10px]">Carte active</span>`;
+
+                    const initiales = (agent.agentNom || 'AG').split(' ').map(p => p[0]).join('').toUpperCase().slice(0,2);
+
+                    card.innerHTML = `
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-sky-500 flex items-center justify-center text-white font-extrabold text-lg shadow">${initiales}</div>
+                        <div>
+                            <div class="font-bold text-slate-900 text-sm">${agent.agentNom}</div>
+                            <div class="text-xs text-slate-400">${agent.posteLibelle}</div>
+                            <div class="text-[10px] text-slate-300 mt-0.5">${agent.siteNom}</div>
+                        </div>
+                        <div class="flex gap-1 flex-wrap justify-center">${carteInfo} <span class="badge ${statutColor} text-[10px]">${agent.statut}</span></div>
+                        ${agent.identifiantNfc ? `<div class="text-[10px] text-slate-450 font-mono bg-slate-50 px-2 py-1 rounded border border-slate-100">NFC: ${agent.identifiantNfc.slice(0,20)}…</div>` : ''}
+                        <div class="w-full grid grid-cols-2 gap-1.5 mt-1">
+                            <button onclick="generateFichePdf('${agent.agentNom}','${agent.posteLibelle}','${agent.siteNom}','${agent.statut}')" class="flex items-center justify-center gap-1 bg-indigo-50 border border-indigo-200 text-indigo-700 text-[10px] font-bold py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                Fiche PDF
+                            </button>
+                            <button onclick="printFiche('${agent.agentNom}','${agent.posteLibelle}','${agent.siteNom}','${agent.statut}')" class="flex items-center justify-center gap-1 bg-sky-50 border border-sky-200 text-sky-700 text-[10px] font-bold py-1.5 rounded-lg hover:bg-sky-100 transition-colors">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                Imprimer
+                            </button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
+            } catch (err) {
+                grid.innerHTML = `<div class="glass p-8 rounded-2xl text-center text-red-400 text-sm col-span-full">Erreur de chargement : ${err.message}</div>`;
+            }
+        }
+        window.loadPersonnelQr = loadPersonnelQr;
+
+        // Start HTML5 QR Scanner
+        function startScanning(typePointage = null) {
+            pendingPointageType = typePointage;
+            if (html5QrCode) {
+                return;
+            }
+            document.getElementById('btnStartScan').classList.add('hidden');
+            document.getElementById('btnStopScan').classList.remove('hidden');
+            
+            html5QrCode = new Html5Qrcode("reader");
+            const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+            
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config,
+                (decodedText) => {
+                    // Success callback
+                    document.getElementById('agentCardId').value = decodedText;
+                    
+                    // Visual feedback
+                    const msg = document.getElementById('pointageMsg');
+                    msg.textContent = `Code QR détecté : ${decodedText}`;
+                    msg.className = 'text-xs p-3 rounded-lg bg-indigo-50 text-indigo-700';
+                    msg.classList.remove('hidden');
+                    if (pendingPointageType) {
+                        const typeToSubmit = pendingPointageType;
+                        pendingPointageType = null;
+                        stopScanning();
+                        enregistrerPointage(typeToSubmit);
+                    }
+                },
+                (errorMessage) => {
+                    // Fail callback (silent mostly)
+                }
+            ).catch(err => {
+                console.error("Camera startup failed", err);
+                alert("Impossible de démarrer la caméra. Assurez-vous d'avoir donné les permissions.");
+                stopScanning();
+            });
+        }
+        window.startScanning = startScanning;
+
+        function stopScanning() {
+            pendingPointageType = null;
+            document.getElementById('btnStartScan').classList.remove('hidden');
+            document.getElementById('btnStopScan').classList.add('hidden');
+            
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    html5QrCode = null;
+                }).catch(err => console.error("Error stopping scanner", err));
+            }
+        }
+        window.stopScanning = stopScanning;
+
+        // ===== Pointage multi-modes (QR / NFC / Photo+GPS / Biométrie) =====
+        let activePointageMode = 'QR_CODE';
+
+        function setPointageMode(mode) {
+            activePointageMode = mode;
+
+            // Toggle styles
+            const btns = {
+                QR_CODE: document.getElementById('modeBtnQR'),
+                NFC: document.getElementById('modeBtnNFC'),
+                PHOTO_GPS: document.getElementById('modeBtnPHOTO'),
+                BIOMETRIE: document.getElementById('modeBtnBIO')
+            };
+
+            Object.entries(btns).forEach(([key, el]) => {
+                if (!el) return;
+                const isActive = key === mode;
+                el.classList.toggle('border-indigo-600', isActive);
+                el.classList.toggle('bg-indigo-50', isActive);
+                el.classList.toggle('text-indigo-700', isActive);
+                el.classList.toggle('border-2', isActive && key === 'QR_CODE');
+
+                // Default colors (keep simple)
+                if (!isActive) {
+                    el.classList.remove('bg-indigo-50');
+                    el.classList.add('bg-white');
+                    el.classList.remove('text-indigo-700');
+                    el.classList.add('text-slate-700');
+                    el.classList.remove('border-indigo-600');
+                }
+            });
+
+            // Toggle photo section
+            const photoSection = document.getElementById('photoGpsSection');
+            if (photoSection) {
+                photoSection.classList.toggle('hidden', mode !== 'PHOTO_GPS');
+            }
+
+            // QR mode can use camera, others are manual by id (ou future GPS/biometric integration)
+            if (mode === 'QR_CODE') {
+                document.getElementById('labelAgentCard').textContent = 'Identifiant (QR / NFC / Biometrie)';
+            } else if (mode === 'NFC') {
+                document.getElementById('labelAgentCard').textContent = 'Identifiant NFC (tag)';
+            } else if (mode === 'BIOMETRIE') {
+                document.getElementById('labelAgentCard').textContent = 'Identifiant Biométrie (ID lecteur)';
+            } else if (mode === 'PHOTO_GPS') {
+                document.getElementById('labelAgentCard').textContent = 'Identifiant (QR / NFC / Biometrie)';
+            }
+        }
+
+        window.setPointageMode = setPointageMode;
+
+        async function getCurrentGps() {
+            return await new Promise((resolve) => {
+                if (!navigator.geolocation) return resolve(null);
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+                    },
+                    () => resolve(null),
+                    { enableHighAccuracy: true, timeout: 8000, maximumAge: 2000 }
+                );
+            });
+        }
+
+        async function tryReadSelfieAsDataUrl() {
+            const input = document.getElementById('selfieFileInput');
+            if (!input || !input.files || input.files.length === 0) return null;
+            const file = input.files[0];
+            // NOTE: we only send a dataUrl as a placeholder. Backend may not accept this yet.
+            // If backend expects a URL, we must upload first.
+            return await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => resolve(null);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Register attendance pointage
+        async function enregistrerPointage(typePointage) {
+            const cardId = document.getElementById('agentCardId').value.trim();
+            const msg = document.getElementById('pointageMsg');
+            msg.className = 'hidden text-sm p-3 rounded-lg font-bold';
+
+            const isQrMode = activePointageMode === 'QR_CODE';
+
+            if (!cardId) {
+                pendingPointageType = typePointage;
+
+                if (isQrMode) {
+                    startScanning(typePointage);
+                    msg.textContent = `Scannez le QR code pour pointer ${typePointage}.`;
+                    msg.classList.add('bg-indigo-50', 'text-indigo-700');
+                    msg.classList.remove('hidden');
+                    return;
+                }
+
+                msg.textContent = `Identifiant requis (${activePointageMode}).`;
+                msg.classList.add('bg-red-50', 'text-red-700');
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                // Backend (PointageController) supporte déjà mode/anomalie/selfieUrl/identifiantNfc/sourceBiometrie/GPS.
+                // Ici on mappe le mode actif vers ces champs et on envoie vers l'endpoint employeur.
+                const payload = {
+                    type: typePointage,
+                    mode: activePointageMode,
+                    anomalie: null,
+
+                    // legacy key for backward compatibility with current controller signature
+                    qrCode: (activePointageMode === 'QR_CODE' || activePointageMode === 'PHOTO_GPS') ? cardId : undefined,
+                    identifiantNfc: (activePointageMode === 'NFC') ? cardId : undefined,
+                    sourceBiometrie: (activePointageMode === 'BIOMETRIE') ? cardId : undefined,
+
+                    latitude: undefined,
+                    longitude: undefined,
+                    selfieUrl: undefined
+                };
+
+                if (activePointageMode === 'PHOTO_GPS') {
+                    const gps = await getCurrentGps();
+                    if (gps) {
+                        payload.latitude = gps.latitude;
+                        payload.longitude = gps.longitude;
+                    }
+
+                    const selfieDataUrl = await tryReadSelfieAsDataUrl();
+                    payload.selfieUrl = selfieDataUrl || undefined;
+                }
+
+                // remove undefined fields
+                Object.keys(payload).forEach(k => {
+                    if (payload[k] === undefined || payload[k] === null) delete payload[k];
+                });
+
+                await apiFetch('/employeur/pointages/scanner', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                msg.textContent = `Pointage ${typePointage} (${activePointageMode}) validé avec succès !`;
+                msg.classList.add('bg-green-50', 'text-green-700');
+                msg.classList.remove('hidden');
+                pendingPointageType = null;
+
+                document.getElementById('pointageForm').reset();
+                setPointageMode('QR_CODE');
+                loadPointageDates();
+                loadPointagesLog();
+            } catch (err) {
+                pendingPointageType = null;
+                msg.textContent = err.message || 'Erreur lors de la validation du pointage.';
+                msg.classList.add('bg-red-50', 'text-red-700');
+                msg.classList.remove('hidden');
+            }
+        }
+        window.enregistrerPointage = enregistrerPointage;
+
+        // Fetch agents assignés & Vue d'ensemble
+        async function loadOverview() {
+            try {
+                // Fetch agents
+                const response = await apiFetch('/employeur/personnel');
+                const agents = Array.isArray(response) ? response : [];
+                document.getElementById('statOverviewTotal').textContent = agents.length;
+
+                // Render Personnel Table
+                const tbody = document.getElementById('personnelTableBody');
+                if (!agents || agents.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Aucun agent assigné sur votre site.</td></tr>';
+                } else {
+                    tbody.innerHTML = agents.map(a => {
+                        const initiales = (a.agentNom || 'AG').split(' ').map(p => p[0]).join('').toUpperCase().slice(0, 2);
+                        return `
+                            <tr class="hover:bg-slate-50/60 transition-colors">
+                                <td class="px-5 py-3.5 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-sky-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm">
+                                        ${initiales}
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-slate-900">${a.agentNom || 'N/A'}</div>
+                                        <div class="text-[10px] text-slate-400">ID: ${a.agentId}</div>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-3.5 text-slate-600 font-medium">${a.posteLibelle || 'Agent Terrain'}</td>
+                                <td class="px-5 py-3.5 text-slate-500">${a.zone || 'Zone Principale'}</td>
+                                <td class="px-5 py-3.5">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        ${a.statut || 'ACTIF'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+
+                // Fetch Today's Pointages for overview stream & stats
+                const todayStr = new Date().toISOString().slice(0, 10);
+                let pointages = [];
+                try {
+                    const resP = await apiFetch(`/employeur/pointages?date=${todayStr}`);
+                    pointages = Array.isArray(resP) ? resP : [];
+                } catch (errP) {
+                    console.warn("Could not load today pointages for overview", errP);
+                }
+
+                document.getElementById('statOverviewPointagesDay').textContent = pointages.length;
+
+                if (pointages.length > 0) {
+                    const first = pointages[0];
+                    const timeStr = formatTime(first.heure_entree);
+                    document.getElementById('statOverviewDernier').textContent = `${first.agent_nom || 'Agent'} (${timeStr})`;
+                } else {
+                    document.getElementById('statOverviewDernier').textContent = 'Aucun aujourd\'hui';
+                }
+
+                const streamTbody = document.getElementById('overviewPointagesStream');
+                if (streamTbody) {
+                    if (!pointages || pointages.length === 0) {
+                        streamTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Aucun pointage enregistré aujourd\'hui.</td></tr>';
+                    } else {
+                        streamTbody.innerHTML = pointages.slice(0, 5).map(p => `
+                            <tr class="hover:bg-slate-50/60 transition-colors">
+                                <td class="px-5 py-3.5 font-bold text-slate-800">${p.agent_nom || 'Agent'}</td>
+                                <td class="px-5 py-3.5 text-emerald-600 font-bold">${formatTime(p.heure_entree)}</td>
+                                <td class="px-5 py-3.5 text-rose-600 font-bold">${formatTime(p.heure_sortie)}</td>
+                                <td class="px-5 py-3.5">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${p.heure_sortie ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
+                                        ${p.heure_sortie ? 'Complet' : 'Présent'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+
+                // Fetch Evaluations for score stat
+                try {
+                    const evals = await apiFetch('/employeur/evaluations');
+                    if (Array.isArray(evals) && evals.length > 0) {
+                        const totalScore = evals.reduce((sum, e) => sum + (e.scoreGlobal || e.scoreTotal || 8), 0);
+                        const avg = (totalScore / evals.length).toFixed(1);
+                        document.getElementById('statOverviewEvals').textContent = `${avg} / 10`;
+                    } else {
+                        document.getElementById('statOverviewEvals').textContent = '—';
+                    }
+                } catch (eEval) {
+                    document.getElementById('statOverviewEvals').textContent = '—';
+                }
+
+            } catch (e) {
+                console.error("Overview error:", e);
+                document.getElementById('personnelTableBody').innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-red-500">Erreur de chargement: ' + (e.message || 'Inconnu') + '</td></tr>';
+            }
+        }
+
+        function formatTime(value) {
+            return value ? new Date(value).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '--:--';
+        }
+
+        // Fetch attendance logs
+        async function loadPointagesLog() {
+            try {
+                const dateInput = document.getElementById('employeurPointageDate');
+                const selectedDate = dateInput ? dateInput.value : new Date().toISOString().slice(0, 10);
+                const response = await apiFetch(`/employeur/pointages?date=${selectedDate}`);
+                const pointages = Array.isArray(response) ? response : [];
+                const tbody = document.getElementById('pointageLogsTableBody');
+                
+                if (pointages && pointages.length > 0) {
+                    tbody.innerHTML = pointages.map(p => `
+                        <tr>
+                            <td class="px-6 py-3 font-bold">${p.agent_nom || 'N/A'}</td>
+                            <td class="px-6 py-3 text-green-700 font-bold">${formatTime(p.heure_entree)}</td>
+                            <td class="px-6 py-3 text-red-700 font-bold">${formatTime(p.heure_sortie) || '--:--'}</td>
+                            <td class="px-6 py-3">
+                                <span class="badge ${p.heure_sortie ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${p.heure_sortie ? 'Complet' : 'En cours'}</span>
+                            </td>
+                        </tr>
+                    `).join('');
+                    if (pointages[0]) {
+                        document.getElementById('statOverviewDernier').textContent = pointages[0].agent_nom + (pointages[0].heure_sortie ? " (Sortie)" : " (Entree)");
+                    }
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-slate-400">Aucun pointage le ${formatDateLabel(selectedDate)}.</td></tr>`;
+                }
+            } catch(e) {
+                console.error("Error loading pointages log", e);
+                document.getElementById('pointageLogsTableBody').innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-red-500">Erreur: ' + (e.message || 'Inconnu') + '</td></tr>';
+            }
+        }
+        window.loadPointagesLog = loadPointagesLog;
+
+        async function loadPointageDates() {
+            const container = document.getElementById('employeurPointageDates');
+            if (!container) return;
+            try {
+                const dates = await apiFetch('/employeur/pointages/dates');
+                if (!dates || dates.length === 0) {
+                    container.innerHTML = '<span class="text-slate-400">Aucun jour enregistré pour le moment.</span>';
+                    return;
+                }
+                const selectedDate = document.getElementById('employeurPointageDate')?.value;
+                container.innerHTML = dates.map(d => `
+                    <button type="button" onclick="selectEmployeurPointageDate('${d.date}')"
+                        class="px-3 py-2 rounded-xl font-bold transition-colors ${d.date === selectedDate ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 hover:bg-indigo-50 hover:text-indigo-700'}">
+                        ${formatDateLabel(d.date)} (${d.total})
+                    </button>
+                `).join('');
+            } catch (e) {
+                container.innerHTML = `<span class="text-slate-400">Erreur: ${e.message || 'Inconnu'}</span>`;
+            }
+        }
+        window.loadPointageDates = loadPointageDates;
+
+        function selectEmployeurPointageDate(date) {
+            const input = document.getElementById('employeurPointageDate');
+            if (input) input.value = date;
+            loadPointagesLog();
+            loadPointageDates();
+        }
+        window.selectEmployeurPointageDate = selectEmployeurPointageDate;
+
+        function formatDateLabel(value) {
+            return value ? new Date(`${value}T00:00:00`).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Date inconnue';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkAuth()) {
+                window.location.href = '/vitrine/login.html';
+                return;
+            }
+            const pointageDate = document.getElementById('employeurPointageDate');
+            if (pointageDate) {
+                pointageDate.value = new Date().toISOString().slice(0, 10);
+                pointageDate.addEventListener('change', () => {
+                    loadPointagesLog();
+                    loadPointageDates();
+                });
+            }
+            loadOverview();
+            loadPointageDates();
+        });
+
+        // ─── Génération Fiche PDF Agent (sans QR) ───────────────────
+        window.generateFichePdf = function(nom, poste, site, statut) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            const W = doc.internal.pageSize.getWidth();
+            const H = doc.internal.pageSize.getHeight();
+
+            // Fond clair
+            doc.setFillColor(240, 249, 255);
+            doc.rect(0, 0, W, H, 'F');
+
+            // Header bleu/indigo
+            doc.setFillColor(14, 165, 233);
+            doc.rect(0, 0, W, 45, 'F');
+            // Accent violet
+            doc.setFillColor(99, 102, 241);
+            doc.rect(0, 38, W, 7, 'F');
+
+            // Logo
+            doc.setFillColor(255, 255, 255);
+            doc.circle(22, 22, 11, 'F');
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(14, 165, 233);
+            doc.text('ST', 18, 23.5);
+
+            // Titre
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(20);
+            doc.text('SimpleTaff', 38, 20);
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Fiche de Personnel — Espace Client', 38, 29);
+
+            // Carte blanche
+            doc.setFillColor(255, 255, 255);
+            doc.setDrawColor(226, 232, 240);
+            doc.roundedRect(15, 60, W - 30, 130, 8, 8, 'FD');
+
+            // Avatar circulaire
+            const initiales = nom.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+            doc.setFillColor(99, 102, 241);
+            doc.circle(W / 2, 90, 18, 'F');
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(255, 255, 255);
+            doc.text(initiales, W / 2, 95, { align: 'center' });
+
+            // Nom complet
+            doc.setTextColor(15, 23, 42);
+            doc.setFontSize(18);
+            doc.text(nom.toUpperCase(), W / 2, 120, { align: 'center' });
+
+            // Séparateur
+            doc.setDrawColor(196, 181, 253);
+            doc.setLineWidth(0.5);
+            doc.line(30, 127, W - 30, 127);
+
+            // Infos
+            const infoY = 140;
+            const leftX = 30;
+            const rightX = W / 2 + 5;
+
+            // Poste
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(100, 116, 139);
+            doc.text('POSTE', leftX, infoY);
+            doc.setFontSize(11);
+            doc.setTextColor(15, 23, 42);
+            doc.setFont('helvetica', 'normal');
+            doc.text(poste || '—', leftX, infoY + 8);
+
+            // Site
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(100, 116, 139);
+            doc.text('SITE D\'AFFECTATION', rightX, infoY);
+            doc.setFontSize(11);
+            doc.setTextColor(15, 23, 42);
+            doc.setFont('helvetica', 'normal');
+            doc.text(site || '—', rightX, infoY + 8);
+
+            // Statut
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(100, 116, 139);
+            doc.text('STATUT', leftX, infoY + 24);
+            const statutColor = statut === 'ACTIVE' || statut === 'ACTIF' ? [16, 185, 129] : [245, 158, 11];
+            doc.setFillColor(...statutColor);
+            doc.roundedRect(leftX, infoY + 28, 40, 9, 3, 3, 'F');
+            doc.setFontSize(9);
+            doc.setTextColor(255, 255, 255);
+            doc.text(statut, leftX + 20, infoY + 34, { align: 'center' });
+
+            // Date d'émission
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(148, 163, 184);
+            const now = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+            doc.text(`Document émis le ${now}`, W / 2, 200, { align: 'center' });
+
+            // Note confidentialité
+            doc.setFillColor(239, 246, 255);
+            doc.roundedRect(20, 206, W - 40, 14, 4, 4, 'F');
+            doc.setFontSize(8);
+            doc.setTextColor(59, 130, 246);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Ce document est confidentiel — usage interne uniquement', W / 2, 214, { align: 'center' });
+
+            // Footer
+            doc.setFillColor(14, 165, 233);
+            doc.rect(0, H - 12, W, 12, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+            doc.text('SimpleTaff — Gestion du Personnel & Sécurité', W / 2, H - 5, { align: 'center' });
+
+            doc.save(`Fiche_${nom.replace(/ /g, '_')}.pdf`);
+        };
+
+        // ─── Impression Fiche Agent ──────────────────────────────────
+        window.printFiche = function(nom, poste, site, statut) {
+            const initiales = nom.split(' ').map(p => p[0]).join('').slice(0,2).toUpperCase();
+            const statutBg = (statut === 'ACTIVE' || statut === 'ACTIF') ? '#10b981' : '#f59e0b';
+            const now = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+            const w = window.open('', '_blank', 'width=700,height=900');
+            w.document.write(`<!DOCTYPE html><html><head><title>Fiche — ${nom}</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Outfit',sans-serif;background:#f0f9ff;display:flex;align-items:center;justify-content:center;min-height:100vh}
+  .card{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(14,165,233,.15);width:340px;overflow:hidden}
+  .header{background:linear-gradient(135deg,#0ea5e9,#6366f1);padding:24px;text-align:center}
+  .avatar{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;margin:0 auto 12px;border:3px solid rgba(255,255,255,.5)}
+  .header h1{color:#fff;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+  .body{padding:24px}
+  .field{margin-bottom:16px}
+  .field label{font-size:10px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+  .field p{font-size:14px;font-weight:600;color:#0f172a}
+  .statut{display:inline-block;padding:4px 14px;border-radius:999px;color:#fff;font-weight:800;font-size:12px}
+  .divider{border:none;border-top:1.5px solid #e0f2fe;margin:16px 0}
+  .note{background:#eff6ff;border-radius:10px;padding:10px;font-size:10px;color:#3b82f6;font-weight:600;text-align:center;margin-top:12px}
+  .footer{background:#0ea5e9;color:#fff;text-align:center;padding:10px;font-size:10px}
+  .date{font-size:10px;color:#94a3b8;text-align:center;margin-top:10px}
+  @media print{body{background:#fff}.card{box-shadow:none;border:1px solid #e0f2fe}}
+</style></head><body>
+<div class="card">
+  <div class="header">
+    <div class="avatar">${initiales}</div>
+    <h1>${nom}</h1>
+  </div>
+  <div class="body">
+    <div class="field"><label>Poste</label><p>${poste || '—'}</p></div>
+    <hr class="divider">
+    <div class="field"><label>Site d'affectation</label><p>${site || '—'}</p></div>
+    <hr class="divider">
+    <div class="field"><label>Statut</label><br><span class="statut" style="background:${statutBg}">${statut}</span></div>
+    <div class="date">Document émis le ${now}</div>
+    <div class="note">Document confidentiel — usage interne uniquement</div>
+  </div>
+  <div class="footer">SimpleTaff — Gestion du Personnel &copy; ${new Date().getFullYear()}</div>
+</div>
+<script>window.onload=()=>{window.print();window.close();}<\/script>
+</body></html>`);
+            w.document.close();
+        };
+
+        // ── Evaluations ───────────────────────────────────────────────────
+        async function loadEvaluations() {
+            try {
+                // Load select list
+                const response = await apiFetch('/employeur/personnel');
+                const agents = Array.isArray(response) ? response : [];
+                const evalAgentSelect = document.getElementById('evalAgentSelect');
+                if (evalAgentSelect) {
+                    evalAgentSelect.innerHTML = agents.map(a => `<option value="${a.agentId}">${a.agentNom || 'N/A'}</option>`).join('');
+                }
+                
+                const evals = await apiFetch('/evaluations');
+                window.allEvaluationsList = evals || [];
+                renderEvaluations(window.allEvaluationsList);
+            } catch (err) {
+                console.error(err);
+                const tbody = document.getElementById('evaluationsTableBody');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-red-500">Erreur de chargement des évaluations</td></tr>';
+                }
+            }
+        }
+        window.loadEvaluations = loadEvaluations;
+
+        function renderEvaluations(list) {
+            const tbody = document.getElementById('evaluationsTableBody');
+            if (!tbody) return;
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-400">Aucune évaluation enregistrée.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = list.map(ev => {
+                const dateEval = ev.dateEvaluation ? ev.dateEvaluation : '—';
+                const agentNom = ev.agent ? (ev.agent.nom || 'N/A') : 'N/A';
+                return `
+                    <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100">
+                        <td class="p-3 font-bold text-slate-900">${agentNom}</td>
+                        <td class="p-3">${ev.annee}</td>
+                        <td class="p-3 text-slate-500">${dateEval}</td>
+                        <td class="p-3 font-bold text-indigo-600">${ev.scoreTotal || 0} / 80</td>
+                        <td class="p-3 text-slate-500 max-w-xs truncate" title="${ev.commentaire || ''}">${ev.commentaire || '—'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.filterEvaluationsTable = function() {
+            const query = document.getElementById('searchEvaluations')?.value?.toLowerCase() || '';
+            if (!window.allEvaluationsList) return;
+            const filtered = window.allEvaluationsList.filter(ev => {
+                const agentNom = ev.agent ? (ev.agent.nom || '') : '';
+                return agentNom.toLowerCase().includes(query);
+            });
+            renderEvaluations(filtered);
+        };
+
+        // Form submit handler for Evaluation
+        document.getElementById('addEvaluationForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                const agentId = document.getElementById('evalAgentSelect').value;
+                const annee = parseInt(document.getElementById('evalAnnee').value);
+                const ponctualite = parseInt(document.getElementById('evalPonctualite').value);
+                const discipline = parseInt(document.getElementById('evalDiscipline').value);
+                const qualite = parseInt(document.getElementById('evalQualite').value);
+                const productivite = parseInt(document.getElementById('evalProductivite').value);
+                const espritEquipe = parseInt(document.getElementById('evalEspritEquipe').value);
+                const respectProcedures = parseInt(document.getElementById('evalRespectProcedures').value);
+                const satisfactionClient = parseInt(document.getElementById('evalSatisfactionClient').value);
+                const communication = parseInt(document.getElementById('evalCommunication').value);
+                const commentaire = document.getElementById('evalCommentaire').value;
+
+                await apiFetch('/evaluations', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        agentId, annee, ponctualite, discipline, qualite, productivite,
+                        espritEquipe, respectProcedures, satisfactionClient, communication,
+                        commentaire
+                    })
+                });
+                alert('Évaluation enregistrée avec succès !');
+                document.getElementById('addEvaluationForm').reset();
+                loadEvaluations();
+            } catch (err) {
+                alert("Erreur lors de l'enregistrement de l'évaluation: " + err.message);
+            }
+        });
+
+        // ── Disciplinaire ─────────────────────────────────────────────────
+        async function loadDisciplinaire() {
+            try {
+                const sanctions = await apiFetch('/disciplinaire/sanctions');
+                window.allSanctionsList = sanctions || [];
+                renderSanctions(window.allSanctionsList);
+            } catch (err) {
+                console.error(err);
+                const tbody = document.getElementById('sanctionsTableBody');
+                if (tbody) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-red-500">Erreur de chargement des sanctions</td></tr>';
+                }
+            }
+        }
+        window.loadDisciplinaire = loadDisciplinaire;
+
+        function renderSanctions(list) {
+            const tbody = document.getElementById('sanctionsTableBody');
+            if (!tbody) return;
+            if (list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-slate-400">Aucune sanction enregistrée.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = list.map(s => {
+                const dateFin = s.dateFin ? s.dateFin : '—';
+                const agentNom = s.agent ? (s.agent.nom || 'N/A') : 'N/A';
+                const badgeClass = s.statut === 'EN_COURS' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700';
+                return `
+                    <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100">
+                        <td class="p-3 font-bold text-slate-900">${agentNom}</td>
+                        <td class="p-3 font-medium text-slate-700">${s.type}</td>
+                        <td class="p-3 text-slate-500">${s.dateDecision}</td>
+                        <td class="p-3 text-slate-500">${dateFin}</td>
+                        <td class="p-3 text-slate-500 max-w-xs truncate" title="${s.motif || ''}">${s.motif || '—'}</td>
+                        <td class="p-3"><span class="badge ${badgeClass}">${s.statut}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.filterSanctionsTable = function() {
+            const query = document.getElementById('searchSanctions')?.value?.toLowerCase() || '';
+            if (!window.allSanctionsList) return;
+            const filtered = window.allSanctionsList.filter(s => {
+                const agentNom = s.agent ? (s.agent.nom || '') : '';
+                return agentNom.toLowerCase().includes(query);
+            });
+            renderSanctions(filtered);
+        };
+    </script>
+</body>
+</html>

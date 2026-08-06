@@ -1,0 +1,149 @@
+package com.siege.platform.entreprise;
+
+import com.siege.platform.common.enums.FormuleAbonnement;
+import com.siege.platform.common.enums.StatutEntreprise;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/superadmin")
+public class SuperAdminController {
+
+    private final EntrepriseRepository entrepriseRepository;
+    private final JdbcTemplate jdbcTemplate;
+
+    public SuperAdminController(EntrepriseRepository entrepriseRepository, JdbcTemplate jdbcTemplate) {
+        this.entrepriseRepository = entrepriseRepository;
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @GetMapping("/entreprises")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<List<Entreprise>> getEntreprises() {
+        return ResponseEntity.ok(entrepriseRepository.findAll());
+    }
+
+    @PostMapping("/entreprises")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<Entreprise> createEntreprise(@RequestBody Map<String, Object> payload) {
+        String nom = (String) payload.getOrDefault("nom", "Nouvelle Entreprise");
+        String formuleStr = (String) payload.getOrDefault("formuleAbonnement", "PRO");
+        Object cotisationRaw = payload.getOrDefault("tauxCotisation", "5.50");
+
+        Entreprise entreprise = new Entreprise();
+        entreprise.setNom(nom);
+
+        try {
+            entreprise.setFormuleAbonnement(FormuleAbonnement.valueOf(formuleStr));
+        } catch (IllegalArgumentException e) {
+            entreprise.setFormuleAbonnement(FormuleAbonnement.PRO);
+        }
+
+        try {
+            entreprise.setTauxCotisation(new BigDecimal(cotisationRaw.toString()));
+        } catch (NumberFormatException e) {
+            entreprise.setTauxCotisation(new BigDecimal("5.50"));
+        }
+
+        entreprise.setStatut(StatutEntreprise.ACTIF);
+
+        Entreprise saved = entrepriseRepository.save(entreprise);
+        return ResponseEntity.ok(saved);
+    }
+
+    @PutMapping("/entreprises/{id}/suspendre")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<?> suspendreEntreprise(@PathVariable("id") UUID id) {
+        return entrepriseRepository.findById(id)
+                .map(entreprise -> {
+                    entreprise.setStatut(StatutEntreprise.SUSPENDUE);
+                    entrepriseRepository.save(entreprise);
+                    return ResponseEntity.noContent().build();
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/entreprises/{id}/activer")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<?> activerEntreprise(@PathVariable("id") UUID id) {
+        return entrepriseRepository.findById(id)
+                .map(entreprise -> {
+                    entreprise.setStatut(StatutEntreprise.ACTIF);
+                    entrepriseRepository.save(entreprise);
+                    return ResponseEntity.noContent().build();
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/entreprises/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @Transactional
+    public ResponseEntity<?> supprimerEntreprise(@PathVariable("id") UUID id) {
+        try {
+            // 1. Pointages de l'entreprise
+            jdbcTemplate.update("DELETE FROM pointage WHERE entreprise_id = ?", id);
+            
+            // 2. Cartes agent des agents de l'entreprise
+            jdbcTemplate.update("DELETE FROM carte_agent WHERE agent_id IN (SELECT id FROM agent_terrain WHERE entreprise_id = ?)", id);
+            
+            // 3. Pieces justificatives
+            jdbcTemplate.update("DELETE FROM piece_justificative WHERE agent_id IN (SELECT id FROM agent_terrain WHERE entreprise_id = ?)", id);
+            
+            // 4. Competences agent_emploi
+            jdbcTemplate.update("DELETE FROM agent_emploi WHERE agent_id IN (SELECT id FROM agent_terrain WHERE entreprise_id = ?)", id);
+            
+            // 5. Affectations
+            jdbcTemplate.update("DELETE FROM affectation WHERE entreprise_id = ?", id);
+            
+            // 6. Bulletins de paie
+            jdbcTemplate.update("DELETE FROM bulletin_de_paie WHERE entreprise_id = ?", id);
+            
+            // 7. Factures
+            jdbcTemplate.update("DELETE FROM facture WHERE entreprise_id = ?", id);
+            
+            // 8. Postes
+            jdbcTemplate.update("DELETE FROM poste WHERE entreprise_id = ?", id);
+            
+            // 9. Employeur_site
+            jdbcTemplate.update("DELETE FROM employeur_site WHERE site_id IN (SELECT id FROM site WHERE structure_demandeuse_id IN (SELECT id FROM structure_demandeuse WHERE entreprise_id = ?))", id);
+            
+            // 10. Sites
+            jdbcTemplate.update("DELETE FROM site WHERE structure_demandeuse_id IN (SELECT id FROM structure_demandeuse WHERE entreprise_id = ?)", id);
+            
+            // 11. Agents de terrain
+            jdbcTemplate.update("DELETE FROM agent_terrain WHERE entreprise_id = ?", id);
+            
+            // 12. Utilisateurs de l'entreprise
+            jdbcTemplate.update("DELETE FROM utilisateur WHERE entreprise_id = ?", id);
+            
+            // 13. Structures demandeuses
+            jdbcTemplate.update("DELETE FROM structure_demandeuse WHERE entreprise_id = ?", id);
+            
+            // 14. Emplois
+            jdbcTemplate.update("DELETE FROM emploi WHERE entreprise_id = ?", id);
+            
+            // 15. Zones
+            jdbcTemplate.update("DELETE FROM zone WHERE entreprise_id = ?", id);
+            
+            // 16. L'entreprise elle-même (l'invitation_entreprise sera supprimée automatiquement par ON DELETE CASCADE)
+            int rowsDeleted = jdbcTemplate.update("DELETE FROM entreprise WHERE id = ?", id);
+            
+            if (rowsDeleted > 0) {
+                return ResponseEntity.noContent().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(Map.of("message", "Erreur lors de la suppression en cascade: " + e.getMessage()));
+        }
+    }
+}

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr" class="antialiased scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Super Admin — SimpleTaff</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+        .glass { background: rgba(255,255,255,0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.45); box-shadow: 0 8px 32px -8px rgba(0,0,0,0.06); }
+        .sidebar-link { display: flex; align-items: center; padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 14px; transition: all 200ms ease; color: #64748b; cursor: pointer; }
+        .sidebar-link:hover { background: #f1f5f9; color: #1e293b; }
+        .sidebar-link.active { background: #eef2ff; color: #4338ca; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+        .input-field { width: 100%; border-radius: 10px; border: 1.5px solid #e2e8f0; background: rgba(255,255,255,0.8); padding: 10px 14px; transition: all 150ms; outline: none; font-size: 14px; }
+        .input-field:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); background: #fff; }
+        .btn-indigo { background: linear-gradient(135deg, #4f46e5, #0284c7); color: white; font-weight: 700; border-radius: 12px; padding: 10px 20px; font-size: 14px; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+        .btn-indigo:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(79,70,229,0.4); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 50; display: flex; align-items: center; justify-content: center; }
+        .modal-overlay.hidden { display: none; }
+
+        @media (max-width: 767px) {
+            body { display: block; overflow: visible; height: auto; min-height: 100vh; }
+            aside { position: fixed !important; top: 0; left: 0; bottom: 0; height: 100% !important; z-index: 700; transform: translateX(-100%); transition: transform 0.3s; box-shadow: none; display: flex !important; }
+            aside.open { transform: translateX(0); box-shadow: 8px 0 48px rgba(0,0,0,0.3); }
+            #mobile-topbar { display: flex; position: fixed; top: 0; left: 0; right: 0; height: 56px; padding: 0 16px; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 600; border-bottom: 1px solid #e2e8f0; }
+            .desktop-header { display: none !important; }
+            main { display: block !important; padding-top: 56px; overflow: visible !important; height: auto !important; }
+            .content-area { overflow: visible !important; height: auto !important; }
+            input, select, textarea, .input-field { font-size: 16px !important; }
+        }
+        @media (min-width: 768px) {
+            #mobile-topbar { display: none; }
+            #sidebar-overlay { display: none !important; }
+        }
+        .hamburger-btn { display: flex; flex-direction: column; gap: 4px; width: 36px; height: 36px; justify-content: center; align-items: center; background: none; border: none; cursor: pointer; }
+        .hamburger-btn span { display: block; width: 22px; height: 2px; background: #333; transition: 0.3s; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden relative">
+    <div id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+    
+    <div id="mobile-topbar">
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileSidebar()" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <span class="font-extrabold text-slate-900 text-sm">SimpleTaff SAAS</span>
+        <button onclick="logout()" class="text-red-500 hover:text-red-700 p-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+    </div>
+
+    <!-- Sidebar -->
+    <aside id="mainSidebar" class="w-64 glass border-r border-slate-200/60 flex flex-col justify-between md:flex h-full z-10 hidden">
+        <div>
+            <div class="h-20 flex items-center px-6 border-b border-slate-100">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-sky-500 shadow-md flex items-center justify-center mr-3">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                </div>
+                <span class="font-extrabold text-lg text-slate-900">SimpleTaff SAAS</span>
+            </div>
+            <nav class="p-4 space-y-1">
+                <div class="sidebar-link active" onclick="showTab('entreprises')">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    Entreprises (Tenants)
+                </div>
+                <div class="sidebar-link" onclick="showTab('invitations')">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    Invitations
+                </div>
+                <div class="sidebar-link" onclick="showTab('abonnements')">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Abonnements & Tarifs
+                </div>
+            </nav>
+        </div>
+        <div class="p-4 border-t border-slate-100">
+            <button onclick="logout()" class="flex w-full items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Déconnexion
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden">
+        <header class="h-20 flex items-center justify-between px-8 border-b border-slate-200/60 bg-white/60 backdrop-blur-sm z-10">
+            <div>
+                <h1 class="text-xl font-bold text-slate-900">Espace Super Admin</h1>
+                <p class="text-xs text-slate-400">Contrôle global de la plateforme SaaS SimpleTaff</p>
+            </div>
+            <span class="badge bg-indigo-100 text-indigo-700">SUPER_ADMIN</span>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8 space-y-6">
+
+            <!-- KPI Stats Cards with Glassmorphism & Micro-Hover -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Entreprises Actives</span>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-extrabold text-slate-900 mt-3" id="statActives">—</div>
+                    <div class="flex items-center gap-1.5 mt-2">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Comptes opérationnels</span>
+                    </div>
+                </div>
+                <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">En attente / Inactifs</span>
+                        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-extrabold text-amber-600 mt-3" id="statPending">—</div>
+                    <div class="flex items-center gap-1.5 mt-2">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">Invitations ou suspendus</span>
+                    </div>
+                </div>
+                <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Tenants</span>
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-3xl font-extrabold text-indigo-600 mt-3" id="statTotal">—</div>
+                    <div class="flex items-center gap-1.5 mt-2">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700">Volume total SaaS</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════ TAB: Entreprises ═══════════════ -->
+            <div id="tab-entreprises" class="tab-content active space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-slate-900">Entreprises enregistrées</h2>
+                    <button onclick="loadEntreprises()" class="text-xs text-indigo-600 font-bold hover:underline">↻ Actualiser</button>
+                </div>
+                <div class="glass rounded-2xl overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead><tr class="bg-slate-50 text-xs font-bold text-slate-500 uppercase">
+                            <th class="px-6 py-3">Entreprise</th>
+                            <th class="px-6 py-3">Abonnement</th>
+                            <th class="px-6 py-3">Taux Cotis.</th>
+                            <th class="px-6 py-3">Statut</th>
+                            <th class="px-6 py-3">Actions</th>
+                        </tr></thead>
+                        <tbody id="entreprisesTable" class="divide-y divide-slate-100 text-sm">
+                            <tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Chargement…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ═══════════════ TAB: Invitations ═══════════════ -->
+            <div id="tab-invitations" class="tab-content space-y-6">
+                <h2 class="text-lg font-bold text-slate-900">Envoyer une invitation d'abonnement</h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Form -->
+                    <div class="lg:col-span-5 glass rounded-2xl p-6 space-y-4">
+                        <div id="inviteMsg" class="hidden text-sm p-3 rounded-xl"></div>
+
+                        <!-- Success link display -->
+                        <div id="inviteSuccess" class="hidden bg-green-50 border border-green-200 rounded-xl p-4 space-y-2">
+                            <p class="text-green-700 font-bold text-sm">✅ Invitation envoyée !</p>
+                            <p class="text-xs text-green-600">Si l'email n'arrive pas, copiez ce lien manuellement :</p>
+                            <div class="flex gap-2 items-center">
+                                <input type="text" id="inviteLinkDisplay" readonly="readonly" class="flex-1 text-xs border border-green-200 rounded-lg p-2 bg-white font-mono">
+                                <button onclick="copyInviteLink()" class="text-xs bg-green-600 text-white px-3 py-2 rounded-lg font-bold hover:bg-green-700 transition-colors">Copier</button>
+                            </div>
+                        </div>
+
+                        <form id="inviteForm" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1.5">Nom de l'entreprise cliente</label>
+                                <input type="text" id="invNom" required="required" class="input-field" placeholder="ex: Bolloré Transport">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1.5">Email du contact (Admin de l'entreprise)</label>
+                                <input type="email" id="invEmail" required="required" class="input-field" placeholder="contact@entreprise.ci">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1.5">Formule souscrite</label>
+                                <select id="invFormule" class="input-field">
+                                    <option value="STARTER">STARTER (49 000 FCFA/mois)</option>
+                                    <option value="PRO" selected="selected">PRO (120 000 FCFA/mois)</option>
+                                    <option value="ENTERPRISE">ENTERPRISE (Sur devis)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1.5">Taux de cotisation (%)</label>
+                                <input type="number" id="invTaux" value="5.50" step="0.01" min="0" max="100" class="input-field">
+                            </div>
+                            <div class="flex items-center gap-2 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5 text-xs text-amber-700">
+                                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                Le lien sera à usage unique et expirera dans <strong>&nbsp;30 minutes</strong>.
+                            </div>
+                            <button type="submit" id="invBtn" class="btn-indigo w-full py-3 flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                <span id="invBtnText">Envoyer l'invitation</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Info card -->
+                    <div class="lg:col-span-7 space-y-4">
+                        <div class="glass rounded-2xl p-6 space-y-4">
+                            <h3 class="font-bold text-slate-900">Comment ça fonctionne ?</h3>
+                            <ol class="space-y-3">
+                                <li class="flex gap-3">
+                                    <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs flex-shrink-0">1</div>
+                                    <p class="text-sm text-slate-600 mt-0.5">Remplissez le formulaire avec les informations de l'entreprise cliente et son formule d'abonnement.</p>
+                                </li>
+                                <li class="flex gap-3">
+                                    <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+                                    <p class="text-sm text-slate-600 mt-0.5">Un email est automatiquement envoyé à l'entreprise avec un lien unique d'activation.</p>
+                                </li>
+                                <li class="flex gap-3">
+                                    <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+                                    <p class="text-sm text-slate-600 mt-0.5">L'entreprise clique sur le lien, crée son compte administrateur, et son abonnement est activé.</p>
+                                </li>
+                                <li class="flex gap-3">
+                                    <div class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs flex-shrink-0">⚠</div>
+                                    <p class="text-sm text-slate-600 mt-0.5">Si l'entreprise ne s'inscrit pas dans les <strong>30 minutes</strong>, le lien expire et l'abonnement reste <strong>inactif</strong>. Vous devrez renvoyer une invitation.</p>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════ TAB: Abonnements ═══════════════ -->
+            <div id="tab-abonnements" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass rounded-2xl p-6 space-y-3 border-2 border-slate-200">
+                        <p class="text-xs font-bold text-slate-400 uppercase">STARTER</p>
+                        <p class="text-3xl font-extrabold text-slate-900">49 000 <span class="text-base font-semibold text-slate-400">FCFA/mois</span></p>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>✔ Jusqu'à 20 agents</li>
+                            <li>✔ 1 site</li>
+                            <li>✔ Pointage QR</li>
+                            <li>✖ Multi-sites</li>
+                            <li>✖ Rapports avancés</li>
+                        </ul>
+                    </div>
+                    <div class="glass rounded-2xl p-6 space-y-3 border-2 border-indigo-400 relative">
+                        <span class="absolute -top-3 left-1/2 -translate-x-1/2 badge bg-indigo-600 text-white">Populaire</span>
+                        <p class="text-xs font-bold text-indigo-400 uppercase">PRO</p>
+                        <p class="text-3xl font-extrabold text-slate-900">120 000 <span class="text-base font-semibold text-slate-400">FCFA/mois</span></p>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>✔ Agents illimités</li>
+                            <li>✔ Multi-sites</li>
+                            <li>✔ Pointage QR</li>
+                            <li>✔ Rapports avancés</li>
+                            <li>✔ Gestion paie</li>
+                        </ul>
+                    </div>
+                    <div class="glass rounded-2xl p-6 space-y-3 border-2 border-slate-200">
+                        <p class="text-xs font-bold text-slate-400 uppercase">ENTERPRISE</p>
+                        <p class="text-3xl font-extrabold text-slate-900">Sur devis</p>
+                        <ul class="text-sm text-slate-600 space-y-1">
+                            <li>✔ Tout le plan PRO</li>
+                            <li>✔ API dédiée</li>
+                            <li>✔ Support prioritaire</li>
+                            <li>✔ SLA garanti</li>
+                            <li>✔ Personnalisation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script type="module">
+        import { apiFetch, logout, checkAuth } from '/shared/api.js';
+        window.logout = logout;
+        window.apiFetch = apiFetch;
+
+        window.showTab = function(name) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            document.getElementById('tab-' + name).classList.add('active');
+            document.querySelectorAll('.sidebar-link').forEach(l => {
+                if (l.getAttribute('onclick')?.includes("'" + name + "'")) l.classList.add('active');
+            });
+            if (name === 'entreprises') loadEntreprises();
+        };
+
+        window.loadEntreprises = async function() {
+            const tbody = document.getElementById('entreprisesTable');
+            try {
+                const data = await apiFetch('/superadmin/entreprises');
+                const actives = data.filter(e => e.statut === 'ACTIF' || e.statut === 'ACTIVE').length;
+                const pending = data.filter(e => e.statut === 'INACTIF' || e.statut === 'SUSPENDUE').length;
+                document.getElementById('statActives').textContent = actives;
+                document.getElementById('statPending').textContent = pending;
+                document.getElementById('statTotal').textContent = data.length;
+
+                tbody.innerHTML = data.map(e => {
+                    let statusColor = 'bg-rose-100 text-rose-700';
+                    if (e.statut === 'ACTIF' || e.statut === 'ACTIVE') {
+                        statusColor = 'bg-emerald-100 text-emerald-700';
+                    } else if (e.statut === 'INACTIF') {
+                        statusColor = 'bg-amber-100 text-amber-700';
+                    } else if (e.statut === 'SUSPENDUE') {
+                        statusColor = 'bg-rose-100 text-rose-700';
+                    }
+
+                    const isActif = e.statut === 'ACTIF' || e.statut === 'ACTIVE';
+                    const actionBtn = isActif 
+                        ? `<button onclick="toggleEntreprise('${e.id}', 'suspendre')" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold py-1.5 px-3 rounded-xl mr-2 transition-all shadow-sm">Suspendre</button>`
+                        : `<button onclick="toggleEntreprise('${e.id}', 'activer')" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-xl mr-2 transition-all shadow-sm">Activer</button>`;
+
+                    const deleteBtn = `<button onclick="deleteEntreprise('${e.id}', '${e.nom}')" class="text-xs bg-rose-600 hover:bg-rose-700 text-white font-bold py-1.5 px-3 rounded-xl transition-all shadow-sm">Supprimer</button>`;
+
+                    const initiales = (e.nom || 'ENT').split(' ').map(p => p[0]).join('').toUpperCase().slice(0, 2);
+
+                    return `
+                    <tr class="hover:bg-slate-50/60 transition-colors">
+                        <td class="px-6 py-4 flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-sky-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm">
+                                ${initiales}
+                            </div>
+                            <div>
+                                <div class="font-bold text-slate-900">${e.nom}</div>
+                                <div class="text-[10px] text-slate-400">ID: ${e.id}</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4"><span class="badge bg-indigo-50 border border-indigo-100 text-indigo-700">${e.formuleAbonnement || 'PRO'}</span></td>
+                        <td class="px-6 py-4 text-slate-600 font-bold">${e.tauxCotisation || '5.5'} %</td>
+                        <td class="px-6 py-4"><span class="badge ${statusColor}">${e.statut}</span></td>
+                        <td class="px-6 py-4 flex items-center">${actionBtn}${deleteBtn}</td>
+                    </tr>`;
+                }).join('');
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-red-400">${e.message}</td></tr>`;
+            }
+        };
+
+        window.toggleEntreprise = async function(id, action) {
+            if (!confirm(`Voulez-vous vraiment ${action} cette entreprise ?`)) return;
+            try {
+                await apiFetch(`/superadmin/entreprises/${id}/${action}`, {
+                    method: 'PUT'
+                });
+                alert(`L'action "${action}" a été effectuée avec succès.`);
+                loadEntreprises();
+            } catch (err) {
+                alert("Erreur lors de la mise à jour : " + err.message);
+            }
+        };
+
+        window.deleteEntreprise = async function(id, nom) {
+            if (!confirm(`ATTENTION : Voulez-vous vraiment supprimer définitivement l'entreprise "${nom}" ? Cette action est irréversible et effacera toutes les données (agents, utilisateurs, pointages, factures...) de cette entreprise.`)) return;
+            try {
+                await apiFetch(`/superadmin/entreprises/${id}`, {
+                    method: 'DELETE'
+                });
+                alert(`L'entreprise "${nom}" a été supprimée définitivement.`);
+                loadEntreprises();
+            } catch (err) {
+                alert("Erreur lors de la suppression : " + err.message);
+            }
+        };
+
+        let lastToken = null;
+        window.copyInviteLink = function() {
+            const input = document.getElementById('inviteLinkDisplay');
+            input.select();
+            navigator.clipboard.writeText(input.value).then(() => {
+                alert('Lien copié !');
+            });
+        };
+
+        document.getElementById('inviteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const msg = document.getElementById('inviteMsg');
+            const successBox = document.getElementById('inviteSuccess');
+            const btn = document.getElementById('invBtn');
+            const btnText = document.getElementById('invBtnText');
+
+            msg.className = 'hidden text-sm p-3 rounded-xl';
+            successBox.classList.add('hidden');
+            btnText.textContent = 'Envoi en cours…';
+            btn.disabled = true;
+
+            try {
+                const res = await apiFetch('/invitations/envoyer', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        nomEntreprise: document.getElementById('invNom').value,
+                        emailDestinataire: document.getElementById('invEmail').value,
+                        formuleAbonnement: document.getElementById('invFormule').value,
+                        tauxCotisation: parseFloat(document.getElementById('invTaux').value)
+                    })
+                });
+
+                if (res) {
+                    const link = `http://localhost:8080/vitrine/inscription.html?token=${res.token}`;
+                    document.getElementById('inviteLinkDisplay').value = link;
+                    successBox.classList.remove('hidden');
+                    document.getElementById('inviteForm').reset();
+                    loadEntreprises();
+                }
+            } catch (err) {
+                msg.textContent = err.message || "Erreur lors de l'envoi.";
+                msg.className = 'text-sm p-3 rounded-xl bg-red-50 text-red-700';
+            } finally {
+                btnText.textContent = 'Envoyer l\'invitation';
+                btn.disabled = false;
+            }
+        });
+
+        window.toggleMobileSidebar = function() {
+            const sidebar = document.getElementById('mainSidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            if(sidebar) sidebar.classList.toggle('open');
+            if(overlay) overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
+            // Also close sidebar on click on sidebar-links
+        };
+
+        // Add event listeners to sidebar links to close mobile sidebar on click
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkAuth()) { window.location.href = '/vitrine/login.html'; return; }
+            loadEntreprises();
+            
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 767) {
+                        const sidebar = document.getElementById('mainSidebar');
+                        const overlay = document.getElementById('sidebar-overlay');
+                        if (sidebar) sidebar.classList.remove('open');
+                        if (overlay) overlay.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
