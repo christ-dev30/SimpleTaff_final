@@ -887,6 +887,18 @@
                                             <div id="affSiteDropdown" class="absolute left-0 right-0 mt-1 glass border border-slate-200 shadow-xl max-h-48 overflow-y-auto hidden z-20 rounded-xl bg-white/95 backdrop-blur-md"></div>
                                         </div>
 
+                                        <!-- Champs auto-remplis: Zone et Ville -->
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                            <div>
+                                                <label class="block text-[9px] text-slate-400">Zone associée</label>
+                                                <input type="text" id="affZoneInput" readonly class="input-field text-xs py-1.5 bg-slate-100/50 text-slate-500 font-medium">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[9px] text-slate-400">Ville associée (Adresse)</label>
+                                                <input type="text" id="affVilleInput" readonly class="input-field text-xs py-1.5 bg-slate-100/50 text-slate-500 font-medium">
+                                            </div>
+                                        </div>
+
                                         <!-- Autocomplete Employeur responsable du pointage -->
                                         <div class="relative">
                                             <label class="block text-[10px] font-bold text-slate-400 mb-0.5">Employeur responsable (Superviseur) *</label>
@@ -2063,9 +2075,15 @@
             </div>
             <form id="finalizeEnrollmentForm" class="space-y-4">
                 <input type="hidden" id="feAgentId">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1">Date d'effet (Début opérationnel) *</label>
-                    <input type="date" id="feDateDebut" required="required" class="input-field">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Date d'effet (Début) *</label>
+                        <input type="date" id="feDateDebut" required="required" class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Date de fin (CDD/Stage)</label>
+                        <input type="date" id="feDateFin" class="input-field" title="Optionnel (pour CDD ou Stage)">
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <div>
@@ -3268,6 +3286,7 @@
 
             const agentId = document.getElementById('feAgentId').value;
             const dateDebut = document.getElementById('feDateDebut').value;
+            const dateFin = document.getElementById('feDateFin').value || null;
             const heureDebut = document.getElementById('feHeureArrivee').value;
             const heureFin = document.getElementById('feHeureDepart').value;
             const documentUrl = document.getElementById('feContratUrl').value;
@@ -3302,20 +3321,20 @@
                 if (pendingContrat) {
                     await apiFetch(`/contrats/${pendingContrat.id}/finaliser`, {
                         method: 'POST',
-                        body: JSON.stringify({ dateDebut, documentUrl })
+                        body: JSON.stringify({ dateDebut, dateFin, documentUrl })
                     });
                 } else {
                     // Fallback : activer l'agent en créant un contrat initial avec le document
                     await apiFetch(`/contrats`, {
                         method: 'POST',
-                        body: JSON.stringify({ agentId, type: 'CDI', dateDebut, documentUrl, statut: 'ACTIF' })
+                        body: JSON.stringify({ agentId, type: 'CDI', dateDebut, dateFin, documentUrl, statut: 'ACTIF' })
                     });
                 }
 
                 if (siteId) {
                     await apiFetch('/admin/affectations', {
                         method: 'POST',
-                        body: JSON.stringify({ siteId, agentId, dateDebut, heureDebut, heureFin })
+                        body: JSON.stringify({ siteId, agentId, dateDebut, dateFin, heureDebut, heureFin })
                     });
                 }
 
@@ -4250,6 +4269,11 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                     siteInput.classList.remove('bg-slate-100/50');
                     siteInput.value = '';
                     document.getElementById('affSiteId').value = '';
+                    
+                    const zoneInput = document.getElementById('affZoneInput');
+                    if (zoneInput) zoneInput.value = '';
+                    const villeInput = document.getElementById('affVilleInput');
+                    if (villeInput) villeInput.value = '';
 
                     empInput.disabled = false;
                     empInput.classList.remove('bg-slate-100/50');
@@ -4261,7 +4285,13 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                     filteredEmployeurs = allEmployeurs.filter(e => e.structureId === selectedId);
 
                     // Re-bind autocomplete with filtered data
-                    setupAutocomplete('affSiteInput', 'affSiteDropdown', 'affSiteId', filteredSites, 'nom');
+                    setupAutocomplete('affSiteInput', 'affSiteDropdown', 'affSiteId', filteredSites, 'nom', (selectedSiteId) => {
+                        const site = filteredSites.find(s => s.id === selectedSiteId);
+                        if (site) {
+                            document.getElementById('affZoneInput').value = site.zoneNom || '—';
+                            document.getElementById('affVilleInput').value = site.adresse || '—';
+                        }
+                    });
                     setupAutocomplete('affEmployeurInput', 'affEmployeurDropdown', 'affEmployeurEmail', filteredEmployeurs, 'email');
                 });
 
