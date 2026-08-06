@@ -606,6 +606,12 @@
                                 <label class="block text-xs font-bold text-slate-500 mb-1">Motif / Justification</label>
                                 <textarea id="reqCongeMotif" class="input-field h-20" placeholder="Motif ou détails..."></textarea>
                             </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1">Pièce(s) justificative(s) (PDF, Image)</label>
+                                <input type="file" id="reqCongeJustifFile" accept="application/pdf,image/*" multiple class="input-field text-xs py-1.5">
+                                <input type="hidden" id="reqCongeJustifUrl">
+                                <span id="reqCongeJustifStatus" class="text-[10px] text-slate-400 mt-1 block">Optionnel — certificat médical, justification officielle...</span>
+                            </div>
                             <button type="submit" class="btn-violet w-full py-2.5 text-xs">Soumettre la demande</button>
                         </form>
                     </div>
@@ -996,7 +1002,7 @@
                     <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100">
                         <td class="p-2 text-slate-500 font-mono text-xs font-bold">${a.matricule || '—'}</td>
                         <td class="p-2">
-                            <img src="${photoUrl}" class="w-8 h-8 rounded-full object-cover border border-slate-200" onerror="this.onerror=null; this.src='/shared/default-avatar.png'">
+                            <img src="${photoUrl}" data-initial="${(a.nom||'?')[0].toUpperCase()}" class="w-8 h-8 rounded-full object-cover border border-slate-200" onerror="window.fallbackAvatar(this)">
                         </td>
                         <td class="p-2 font-bold text-slate-800">${a.nom} ${a.prenom}</td>
                         <td class="p-2 text-slate-500 font-medium">${a.contact || '—'}</td>
@@ -1635,6 +1641,18 @@
                     submitBtn.disabled = true;
                     submitBtn.textContent = 'Envoi...';
                     try {
+                        // Upload justificatif if provided
+                        const justifFile = document.getElementById('reqCongeJustifFile')?.files?.[0];
+                        let justificatifUrl = null;
+                        if (justifFile) {
+                            const fd = new FormData();
+                            fd.append('file', justifFile);
+                            const up = await fetch('/api/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwtToken') }, body: fd });
+                            const upData = await up.json();
+                            justificatifUrl = upData.url || upData.fileUrl || null;
+                            const status = document.getElementById('reqCongeJustifStatus');
+                            if (status) status.textContent = justifFile.name + ' — envoyé ✔';
+                        }
                         await apiFetch('/conges', {
                             method: 'POST',
                             body: JSON.stringify({
@@ -1642,10 +1660,13 @@
                                 type: document.getElementById('reqCongeType').value,
                                 dateDebut: document.getElementById('reqCongeDateDebut').value,
                                 dateFin: document.getElementById('reqCongeDateFin').value,
-                                motif: document.getElementById('reqCongeMotif').value
+                                motif: document.getElementById('reqCongeMotif').value,
+                                justificatifUrl
                             })
                         });
                         addCongeRequestForm.reset();
+                        document.getElementById('reqCongeJustifUrl').value = '';
+                        document.getElementById('reqCongeJustifStatus').textContent = 'Optionnel — certificat médical, justification officielle...';
                         alert("Demande de congé soumise avec succès !");
                         loadCoordConges();
                     } catch (err) {
