@@ -250,6 +250,20 @@ public class ContratController {
             }
         }
         m.put("structureCliente", structureClienteNom);
+        // Site name from affectation
+        String siteNom = null;
+        if (c.getAgent() != null) {
+            List<com.siege.platform.poste.Affectation> siteAffs =
+                affectationRepository.findByAgentIdOrderByDateDebutOccupationDesc(c.getAgent().getId());
+            com.siege.platform.poste.Affectation siteAff = siteAffs.stream()
+                .filter(a -> "ACTIVE".equalsIgnoreCase(a.getStatut()))
+                .findFirst()
+                .orElse(siteAffs.isEmpty() ? null : siteAffs.get(0));
+            if (siteAff != null && siteAff.getPoste() != null && siteAff.getPoste().getSite() != null) {
+                siteNom = siteAff.getPoste().getSite().getNom();
+            }
+        }
+        m.put("siteNom", siteNom);
         m.put("direction", c.getDirection());
         m.put("statut", c.getStatut());
         m.put("salaireBase", c.getSalaireBase());

@@ -977,6 +977,7 @@
                                     <th class="p-2">Date début</th>
                                     <th class="p-2">Date fin</th>
                                     <th class="p-2">Structure cliente</th>
+                                    <th class="p-2">Site</th>
                                     <th class="p-2">Statut</th>
                                     <th class="p-2">Actions</th>
                                 </tr>
@@ -4766,13 +4767,14 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                             ? `<span class="text-rose-600 font-semibold">${c.dateFin}</span>`
                             : `<span class="text-slate-400">—</span>`;
                         const structureDisplay = c.structureCliente || '<span class="text-slate-400">—</span>';
+                        const siteDisplay = c.siteNom || '<span class="text-slate-400">—</span>';
                         const docBtn = agentId ? `<button onclick="openAgentFolder('${agentId}');setTimeout(()=>switchFolderTab('contract'),400)" class="text-sky-600 hover:underline font-bold text-xs flex items-center gap-1">Voir contrat</button> <button onclick="openAgentFolder('${agentId}');setTimeout(()=>switchFolderTab('contract'),400);setTimeout(()=>document.getElementById('renewContractFormContainer').classList.remove('hidden'),500)" class="text-indigo-600 hover:underline font-bold text-xs flex items-center gap-1 ml-2">Renouveler</button>` : (c.documentUrl ? `<a href="${c.documentUrl}" target="_blank" class="text-sky-600 hover:underline font-bold text-xs">PDF</a>` : '-');
-                        return `<tr class="hover:bg-slate-50/50 transition-colors"><td class="p-2 font-bold text-slate-800">${agentNom}</td><td class="p-2 text-slate-500">${c.type||'-'}</td><td class="p-2 text-slate-500">${c.dateDebut||'-'}</td><td class="p-2">${dateFinDisplay}</td><td class="p-2 text-slate-600 font-medium">${structureDisplay}</td><td class="p-2"><span class="badge ${c.statut==='ACTIF'?'bg-green-100 text-green-700':'bg-slate-100 text-slate-600'}">${c.statut||'-'}</span></td><td class="p-2 flex gap-2">${docBtn}</td></tr>`;
-                    }).join('') || '<tr><td colspan="7" class="p-3 text-center text-slate-400">Aucun contrat.</td></tr>'
+                        return `<tr class="hover:bg-slate-50/50 transition-colors"><td class="p-2 font-bold text-slate-800">${agentNom}</td><td class="p-2 text-slate-500">${c.type||'-'}</td><td class="p-2 text-slate-500">${c.dateDebut||'-'}</td><td class="p-2">${dateFinDisplay}</td><td class="p-2 text-slate-600 font-medium">${structureDisplay}</td><td class="p-2 text-slate-500">${siteDisplay}</td><td class="p-2"><span class="badge ${c.statut==='ACTIF'?'bg-green-100 text-green-700':'bg-slate-100 text-slate-600'}">${c.statut||'-'}</span></td><td class="p-2 flex gap-2">${docBtn}</td></tr>`;
+                    }).join('') || '<tr><td colspan="8" class="p-3 text-center text-slate-400">Aucun contrat.</td></tr>'
                 );
                 } catch (e) {
                 console.error(e);
-                safeRenderTbody(document.getElementById('contratsTableBody'), '<tr><td colspan="7" class="p-3 text-center text-red-500">Erreur chargement contrats</td></tr>');
+                safeRenderTbody(document.getElementById('contratsTableBody'), '<tr><td colspan="8" class="p-3 text-center text-red-500">Erreur chargement contrats</td></tr>');
             }
         }
 
