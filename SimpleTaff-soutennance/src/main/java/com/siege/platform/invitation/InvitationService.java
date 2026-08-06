@@ -117,9 +117,11 @@ public class InvitationService {
     }
 
     private void envoyerEmailInvitation(String destinataire, String nomEntreprise, String lien, String formule) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            try {
+                System.out.println("[InvitationService] Démarrage de l'envoi de l'email à " + destinataire + "...");
+                MimeMessage message = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             
             // L'adresse d'expédition doit correspondre exactement à celle du compte pour éviter le spam
             helper.setFrom("SimpleTaff <juniorehui15@gmail.com>");
@@ -208,8 +210,11 @@ public class InvitationService {
             helper.setReplyTo("juniorehui15@gmail.com");
             helper.setText(textContent, htmlContent); // Envoie le texte ET le HTML pour baisser le score de spam
             mailSender.send(message);
+            System.out.println("[InvitationService] Email envoyé avec succès à " + destinataire);
         } catch (Exception e) {
             System.err.println("[InvitationService] Erreur envoi email HTML: " + e.getMessage());
+            e.printStackTrace();
         }
+        });
     }
 }
