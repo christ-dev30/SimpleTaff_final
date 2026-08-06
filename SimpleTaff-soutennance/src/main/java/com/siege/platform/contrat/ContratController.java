@@ -6,6 +6,7 @@ import com.siege.platform.structuredemandeuse.StructureDemandeuseRepository;
 import com.siege.platform.audit.AuditLog;
 import com.siege.platform.audit.AuditLogRepository;
 import com.siege.platform.notification.NotificationService;
+import com.siege.platform.poste.AffectationRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -28,11 +29,13 @@ public class ContratController {
     private final AuditLogRepository auditLogRepository;
     private final NotificationService notificationService;
     private final IdempotencyManager idempotencyManager;
+    private final AffectationRepository affectationRepository;
 
     public ContratController(ContratAgentRepository contratRepository,
                              RenouvellementContratRepository renouvellementRepository,
                              AgentTerrainRepository agentRepository,
                              StructureDemandeuseRepository structureRepository,
+                             AffectationRepository affectationRepository,
                              CurrentTenantService tenantService,
                              AuditLogRepository auditLogRepository,
                              NotificationService notificationService,
@@ -41,6 +44,7 @@ public class ContratController {
         this.renouvellementRepository = renouvellementRepository;
         this.agentRepository = agentRepository;
         this.structureRepository = structureRepository;
+        this.affectationRepository = affectationRepository;
         this.tenantService = tenantService;
         this.auditLogRepository = auditLogRepository;
         this.notificationService = notificationService;
@@ -227,9 +231,25 @@ public class ContratController {
         m.put("type", c.getType());
         m.put("dateDebut", c.getDateDebut());
         m.put("dateFin", c.getDateFin());
-        m.put("structureCliente", c.getStructureCliente() != null
-            ? c.getStructureCliente().getRaisonSociale()
-            : (c.getEntreprise() != null ? c.getEntreprise().getNom() : null));
+        // Structure cliente = the StructureDemandeuse to which the agent is assigned via affectation
+        String structureClienteNom = null;
+        if (c.getStructureCliente() != null) {
+            structureClienteNom = c.getStructureCliente().getRaisonSociale();
+        } else if (c.getAgent() != null) {
+            // Fallback: resolve from the agent's active (or most recent) affectation
+            List<com.siege.platform.poste.Affectation> affs =
+                affectationRepository.findByAgentIdOrderByDateDebutOccupationDesc(c.getAgent().getId());
+            com.siege.platform.poste.Affectation aff = affs.stream()
+                .filter(a -> "ACTIVE".equalsIgnoreCase(a.getStatut()))
+                .findFirst()
+                .orElse(affs.isEmpty() ? null : affs.get(0));
+            if (aff != null && aff.getPoste() != null
+                    && aff.getPoste().getSite() != null
+                    && aff.getPoste().getSite().getStructureDemandeuse() != null) {
+                structureClienteNom = aff.getPoste().getSite().getStructureDemandeuse().getRaisonSociale();
+            }
+        }
+        m.put("structureCliente", structureClienteNom);
         m.put("direction", c.getDirection());
         m.put("statut", c.getStatut());
         m.put("salaireBase", c.getSalaireBase());
