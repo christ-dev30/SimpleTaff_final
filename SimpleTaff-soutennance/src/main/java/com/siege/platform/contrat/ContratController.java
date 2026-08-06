@@ -227,7 +227,9 @@ public class ContratController {
         m.put("type", c.getType());
         m.put("dateDebut", c.getDateDebut());
         m.put("dateFin", c.getDateFin());
-        m.put("structureCliente", c.getStructureCliente() != null ? c.getStructureCliente().getRaisonSociale() : null);
+        m.put("structureCliente", c.getStructureCliente() != null
+            ? c.getStructureCliente().getRaisonSociale()
+            : (c.getEntreprise() != null ? c.getEntreprise().getNom() : null));
         m.put("direction", c.getDirection());
         m.put("statut", c.getStatut());
         m.put("salaireBase", c.getSalaireBase());
