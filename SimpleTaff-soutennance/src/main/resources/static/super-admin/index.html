@@ -406,7 +406,7 @@
                 });
 
                 if (res) {
-                    const link = `http://localhost:8080/vitrine/inscription.html?token=${res.token}`;
+                    const link = `${window.location.origin}/vitrine/inscription.html?token=${res.token}`;
                     document.getElementById('inviteLinkDisplay').value = link;
                     successBox.classList.remove('hidden');
                     document.getElementById('inviteForm').reset();
