@@ -26,24 +26,56 @@ public class CongeController {
     private final CurrentTenantService tenantService;
     private final AuditLogRepository auditLogRepository;
     private final NotificationService notificationService;
+    private final com.siege.platform.poste.AffectationRepository affectationRepository;
 
     public CongeController(DemandeCongeRepository demandeRepository,
                            SoldeCongeRepository soldeRepository,
                            AgentTerrainRepository agentRepository,
                            CurrentTenantService tenantService,
                            AuditLogRepository auditLogRepository,
-                           NotificationService notificationService) {
+                           NotificationService notificationService,
+                           com.siege.platform.poste.AffectationRepository affectationRepository) {
         this.demandeRepository = demandeRepository;
         this.soldeRepository = soldeRepository;
         this.agentRepository = agentRepository;
         this.tenantService = tenantService;
         this.auditLogRepository = auditLogRepository;
         this.notificationService = notificationService;
+        this.affectationRepository = affectationRepository;
     }
 
     @GetMapping
-    public List<DemandeConge> list(@RequestParam(value = "agentId", required = false) UUID agentId) {
-        return agentId == null ? demandeRepository.findAll() : demandeRepository.findByAgentIdOrderByDateDebutDesc(agentId);
+    public List<Map<String, Object>> list(@RequestParam(value = "agentId", required = false) UUID agentId) {
+        List<DemandeConge> conges = agentId == null ? demandeRepository.findAll() : demandeRepository.findByAgentIdOrderByDateDebutDesc(agentId);
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (DemandeConge c : conges) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", c.getId());
+            map.put("type", c.getType());
+            map.put("dateDebut", c.getDateDebut());
+            map.put("dateFin", c.getDateFin());
+            map.put("motif", c.getMotif());
+            map.put("justifUrl", c.getJustificatifUrl());
+            map.put("statut", c.getStatut());
+            
+            if (c.getAgent() != null) {
+                Map<String, Object> agentMap = new HashMap<>();
+                agentMap.put("id", c.getAgent().getId());
+                agentMap.put("nom", c.getAgent().getNom());
+                agentMap.put("prenom", c.getAgent().getPrenom());
+                map.put("agent", agentMap);
+                
+                com.siege.platform.poste.Affectation activeAff = affectationRepository.findByAgentIdAndStatut(c.getAgent().getId(), "ACTIVE").orElse(null);
+                if (activeAff != null && activeAff.getPoste() != null) {
+                    map.put("posteOccupe", activeAff.getPoste().getEmploi() != null ? activeAff.getPoste().getEmploi().getLibelle() : "—");
+                    if (activeAff.getPoste().getSite() != null && activeAff.getPoste().getSite().getStructureDemandeuse() != null) {
+                        map.put("structureCliente", activeAff.getPoste().getSite().getStructureDemandeuse().getRaisonSociale());
+                    }
+                }
+            }
+            result.add(map);
+        }
+        return result;
     }
 
     @PostMapping

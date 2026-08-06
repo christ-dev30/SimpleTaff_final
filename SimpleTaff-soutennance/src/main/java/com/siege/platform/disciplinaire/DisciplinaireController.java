@@ -20,17 +20,62 @@ public class DisciplinaireController {
     private final AgentTerrainRepository agentRepository;
     private final CurrentTenantService tenantService;
 
+    private final com.siege.platform.contrat.ContratAgentRepository contratRepository;
+    private final com.siege.platform.poste.AffectationRepository affectationRepository;
+
     public DisciplinaireController(SanctionRepository sanctionRepository,
                                    AgentTerrainRepository agentRepository,
-                                   CurrentTenantService tenantService) {
+                                   CurrentTenantService tenantService,
+                                   com.siege.platform.contrat.ContratAgentRepository contratRepository,
+                                   com.siege.platform.poste.AffectationRepository affectationRepository) {
         this.sanctionRepository = sanctionRepository;
         this.agentRepository = agentRepository;
         this.tenantService = tenantService;
+        this.contratRepository = contratRepository;
+        this.affectationRepository = affectationRepository;
     }
 
     @GetMapping("/sanctions")
-    public List<Sanction> list(@RequestParam(value = "agentId", required = false) UUID agentId) {
-        return agentId == null ? sanctionRepository.findAll() : sanctionRepository.findByAgentIdOrderByDateDecisionDesc(agentId);
+    public List<Map<String, Object>> list(@RequestParam(value = "agentId", required = false) UUID agentId) {
+        List<Sanction> sanctions = agentId == null ? sanctionRepository.findAll() : sanctionRepository.findByAgentIdOrderByDateDecisionDesc(agentId);
+        return sanctions.stream().map(this::sanctionToMap).toList();
+    }
+
+    private Map<String, Object> sanctionToMap(Sanction s) {
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("id", s.getId());
+        m.put("type", s.getType());
+        m.put("motif", s.getMotif());
+        m.put("decisionUrl", s.getDecisionUrl());
+        m.put("dateDecision", s.getDateDecision());
+        m.put("dateFin", s.getDateFin());
+        m.put("clientFinal", s.getClientFinal());
+        m.put("coordonnateurRemonte", s.getCoordonnateurRemonte());
+        m.put("statut", s.getStatut());
+
+        String structure = "—";
+        if (s.getAgent() != null) {
+            List<com.siege.platform.poste.Affectation> affectations = affectationRepository.findByAgentIdOrderByDateDebutOccupationDesc(s.getAgent().getId());
+            if (!affectations.isEmpty() && affectations.get(0).getPoste() != null && affectations.get(0).getPoste().getSite() != null && affectations.get(0).getPoste().getSite().getStructureDemandeuse() != null) {
+                structure = affectations.get(0).getPoste().getSite().getStructureDemandeuse().getRaisonSociale();
+            } else {
+                List<com.siege.platform.contrat.ContratAgent> contracts = contratRepository.findByAgentIdOrderByDateDebutDesc(s.getAgent().getId());
+                if (!contracts.isEmpty() && contracts.get(0).getStructureCliente() != null) {
+                    structure = contracts.get(0).getStructureCliente().getRaisonSociale();
+                }
+            }
+        }
+        m.put("structureCliente", structure);
+
+        Map<String, Object> agentMap = new LinkedHashMap<>();
+        if (s.getAgent() != null) {
+            agentMap.put("id", s.getAgent().getId());
+            agentMap.put("nom", s.getAgent().getNom());
+            agentMap.put("prenom", s.getAgent().getPrenom());
+        }
+        m.put("agent", agentMap);
+
+        return m;
     }
 
     @PostMapping("/sanctions")

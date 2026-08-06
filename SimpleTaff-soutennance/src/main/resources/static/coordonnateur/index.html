@@ -222,8 +222,9 @@
                                 <thead>
                                     <tr class="bg-slate-100/80 font-bold text-slate-500 uppercase text-[10px] tracking-wider border-b border-slate-100">
                                         <th class="px-5 py-3">Agent</th>
-                                        <th class="px-5 py-3">Poste / Mission</th>
-                                        <th class="px-5 py-3">Date Début</th>
+                                        <th class="px-5 py-3">Client & Site</th>
+                                        <th class="px-5 py-3">Poste & Zone</th>
+                                        <th class="px-5 py-3">Dates (Début - Fin)</th>
                                         <th class="px-5 py-3 text-right">Statut</th>
                                     </tr>
                                 </thead>
@@ -355,8 +356,9 @@
                     <table class="w-full text-left">
                         <thead><tr class="bg-slate-50 text-xs font-bold text-slate-500 uppercase">
                             <th class="px-6 py-3">Agent</th>
-                            <th class="px-6 py-3">Poste</th>
-                            <th class="px-6 py-3">Début</th>
+                            <th class="px-6 py-3">Client & Site</th>
+                            <th class="px-6 py-3">Poste & Zone</th>
+                            <th class="px-6 py-3">Dates (Début - Fin)</th>
                             <th class="px-6 py-3">Statut</th>
                         </tr></thead>
                         <tbody id="affectationsTable" class="divide-y divide-slate-100 text-sm">
@@ -371,7 +373,10 @@
                 <div class="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
                     <h2 class="text-lg font-bold text-slate-900">Pointages par date</h2>
                     <div class="flex items-center gap-2">
-                        <input type="date" id="coordPointageDate" class="input-field w-auto">
+                        <select id="coordStructureFilter" class="input-field w-auto py-1.5 px-2 text-xs" onchange="filterCoordPointages()">
+                            <option value="">Toutes les structures</option>
+                        </select>
+                        <input type="date" id="coordPointageDate" class="input-field w-auto py-1.5 px-2 text-xs">
                         <button onclick="loadPointages()" class="text-xs text-violet-600 font-bold hover:underline">Actualiser</button>
                     </div>
                 </div>
@@ -382,12 +387,13 @@
                     <table class="w-full text-left">
                         <thead><tr class="bg-slate-50 text-xs font-bold text-slate-500 uppercase">
                             <th class="px-6 py-3">Agent</th>
+                            <th class="px-6 py-3">Structure</th>
                             <th class="px-6 py-3">Type</th>
                             <th class="px-6 py-3">Heure</th>
                             <th class="px-6 py-3">Site</th>
                         </tr></thead>
                         <tbody id="pointagesTable" class="divide-y divide-slate-100 text-sm">
-                            <tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Aucun pointage pour aujourd'hui.</td></tr>
+                            <tr><td colspan="5" class="px-6 py-6 text-center text-slate-400">Aucun pointage pour aujourd'hui.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -640,6 +646,7 @@
                             <thead>
                                 <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
                                     <th class="p-3">Agent</th>
+                                    <th class="p-3">Structure</th>
                                     <th class="p-3">Année</th>
                                     <th class="p-3">Date</th>
                                     <th class="p-3">Score Total</th>
@@ -647,7 +654,7 @@
                                 </tr>
                             </thead>
                             <tbody id="coordEvaluationsTable" class="divide-y divide-slate-100">
-                                <tr><td colspan="5" class="p-3 text-center text-slate-400">Chargement...</td></tr>
+                                <tr><td colspan="6" class="p-3 text-center text-slate-400">Chargement...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -673,6 +680,7 @@
                             <thead>
                                 <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
                                     <th class="p-3">Agent</th>
+                                    <th class="p-3">Structure</th>
                                     <th class="p-3">Type</th>
                                     <th class="p-3">Date Décision</th>
                                     <th class="p-3">Fin</th>
@@ -1096,6 +1104,7 @@
                     const badge = (a.statut || '').toUpperCase() === 'ACTIVE' 
                         ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 Active</span>'
                         : '<span class="badge bg-slate-100 text-slate-600 font-medium">Clôturée</span>';
+                    const clientName = a.structureCliente && a.structureCliente !== '—' ? a.structureCliente : 'Client Inconnu';
 
                     return `
                         <tr class="hover:bg-slate-50/50 transition-colors">
@@ -1105,8 +1114,9 @@
                                 </div>
                                 ${agentNom}
                             </td>
-                            <td class="px-6 py-4 text-slate-700 font-semibold">${a.posteLibelle || '—'}</td>
-                            <td class="px-6 py-4 text-slate-500 font-medium">${a.dateDebut ? formatDateLabel(a.dateDebut) : '—'}</td>
+                            <td class="px-6 py-4 text-slate-700 font-semibold">${clientName} <div class="text-xs text-slate-500 font-normal">Site: ${a.siteNom || '—'}</div></td>
+                            <td class="px-6 py-4 text-slate-700 font-semibold">${a.posteLibelle || '—'} <div class="text-xs text-slate-500 font-normal">Zone: ${a.zoneNom || '—'}</div></td>
+                            <td class="px-6 py-4 text-slate-500 font-medium"><div class="text-emerald-600 text-[11px]">Début: ${a.dateDebut ? formatDateLabel(a.dateDebut) : '—'}</div><div class="text-rose-500 text-[11px]">Fin: ${a.dateFin && a.dateFin !== '—' ? formatDateLabel(a.dateFin) : 'Indéterminée'}</div></td>
                             <td class="px-6 py-4">${badge}</td>
                         </tr>
                     `;
@@ -1117,34 +1127,58 @@
         }
         window.loadAffectations = loadAffectations;
 
+        let _coordPointages = [];
+
+        function renderCoordPointages(data) {
+            const tbody = document.getElementById('pointagesTable');
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-6 text-center text-slate-400">Aucun pointage pour cette date.</td></tr>';
+                document.getElementById('statPointages').textContent = '0';
+                return;
+            }
+            document.getElementById('statPointages').textContent = data.length;
+            tbody.innerHTML = data.map(p => {
+                const isEntree = (p.typePointage || '').toUpperCase() === 'ENTREE';
+                const badge = isEntree 
+                    ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 Entrée</span>'
+                    : '<span class="badge bg-rose-100 text-rose-700 font-bold">🔴 Sortie</span>';
+                const timeStr = p.dateHeure ? new Date(p.dateHeure).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '—';
+                return `
+                    <tr class="hover:bg-slate-50/50 transition-colors">
+                        <td class="px-6 py-4 font-bold text-slate-900">${p.agentNom || '—'}</td>
+                        <td class="px-6 py-4 font-medium text-slate-600">${p.structureCliente || '—'}</td>
+                        <td class="px-6 py-4">${badge}</td>
+                        <td class="px-6 py-4 font-mono font-bold text-slate-700">${timeStr}</td>
+                        <td class="px-6 py-4 text-slate-600 font-semibold">${p.siteNom || '—'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.filterCoordPointages = function() {
+            const filterVal = document.getElementById('coordStructureFilter')?.value || '';
+            const filtered = filterVal ? _coordPointages.filter(p => p.structureCliente === filterVal) : _coordPointages;
+            renderCoordPointages(filtered);
+        };
+
         async function loadPointages() {
             const tbody = document.getElementById('pointagesTable');
             const selectedDate = document.getElementById('coordPointageDate')?.value || new Date().toISOString().slice(0, 10);
             try {
                 const data = await apiFetch(`/coordonnateur/pointages?date=${selectedDate}`);
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Aucun pointage pour cette date.</td></tr>';
-                    document.getElementById('statPointages').textContent = '0';
-                    return;
+                _coordPointages = data || [];
+
+                const structFilter = document.getElementById('coordStructureFilter');
+                if (structFilter) {
+                    const structs = [...new Set(_coordPointages.map(p => p.structureCliente).filter(s => s && s !== '—'))];
+                    const current = structFilter.value;
+                    structFilter.innerHTML = '<option value="">Toutes les structures</option>' + structs.map(s => `<option value="${s}">${s}</option>`).join('');
+                    if (structs.includes(current)) structFilter.value = current;
                 }
-                document.getElementById('statPointages').textContent = data.length;
-                tbody.innerHTML = data.map(p => {
-                    const isEntree = (p.typePointage || '').toUpperCase() === 'ENTREE';
-                    const badge = isEntree 
-                        ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 Entrée</span>'
-                        : '<span class="badge bg-rose-100 text-rose-700 font-bold">🔴 Sortie</span>';
-                    const timeStr = p.dateHeure ? new Date(p.dateHeure).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '—';
-                    return `
-                        <tr class="hover:bg-slate-50/50 transition-colors">
-                            <td class="px-6 py-4 font-bold text-slate-900">${p.agentNom || '—'}</td>
-                            <td class="px-6 py-4">${badge}</td>
-                            <td class="px-6 py-4 font-mono font-bold text-slate-700">${timeStr}</td>
-                            <td class="px-6 py-4 text-slate-600 font-semibold">${p.siteNom || '—'}</td>
-                        </tr>
-                    `;
-                }).join('');
+
+                filterCoordPointages();
             } catch (e) {
-                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-6 text-center text-red-400">${e.message}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-6 text-center text-red-400">${e.message}</td></tr>`;
             }
         }
         window.loadPointages = loadPointages;
@@ -1479,6 +1513,7 @@
                             const badge = (a.statut || '').toUpperCase() === 'ACTIVE' 
                                 ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 En Mission</span>'
                                 : '<span class="badge bg-slate-100 text-slate-600 font-medium">Clôturé</span>';
+                            const clientName = a.structureCliente && a.structureCliente !== '—' ? a.structureCliente : 'Client Inconnu';
                             
                             return `
                                 <tr class="hover:bg-slate-50/70 transition-colors border-b border-slate-100/60">
@@ -1492,8 +1527,9 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-5 py-3.5 text-slate-700 font-semibold">${a.posteLibelle || a.siteNom || '—'}</td>
-                                    <td class="px-5 py-3.5 text-slate-500 font-medium">${a.dateDebut ? formatDateLabel(a.dateDebut) : '—'}</td>
+                                    <td class="px-5 py-3.5 text-slate-700 font-semibold">${clientName} <div class="font-normal text-[10px] text-slate-500">Site: ${a.siteNom || '—'}</div></td>
+                                    <td class="px-5 py-3.5 text-slate-700 font-semibold">${a.posteLibelle || '—'} <div class="font-normal text-[10px] text-slate-500">Zone: ${a.zoneNom || '—'}</div></td>
+                                    <td class="px-5 py-3.5 text-slate-500 font-medium"><div class="text-emerald-600 text-[10px]">Début: ${a.dateDebut ? formatDateLabel(a.dateDebut) : '—'}</div><div class="text-rose-500 text-[10px]">Fin: ${a.dateFin && a.dateFin !== '—' ? formatDateLabel(a.dateFin) : 'Indéterminée'}</div></td>
                                     <td class="px-5 py-3.5 text-right">${badge}</td>
                                 </tr>
                             `;
@@ -1642,15 +1678,17 @@
             const tbody = document.getElementById('coordEvaluationsTable');
             if (!tbody) return;
             if (!list || list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-400">Aucune évaluation enregistrée.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-slate-400">Aucune évaluation enregistrée.</td></tr>';
                 return;
             }
             tbody.innerHTML = list.map(ev => {
                 const agentNom = ev.agent ? (ev.agent.nom || 'N/A') : 'N/A';
                 const dateEval = ev.dateEvaluation || '—';
+                const structure = ev.structureCliente || '—';
                 return `
                     <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100">
                         <td class="p-3 font-bold text-slate-900">${agentNom}</td>
+                        <td class="p-3 text-slate-600">${structure}</td>
                         <td class="p-3">${ev.annee}</td>
                         <td class="p-3 text-slate-500">${dateEval}</td>
                         <td class="p-3 font-bold text-violet-600">${ev.scoreTotal || 0} / 80</td>
@@ -1687,15 +1725,17 @@
             const tbody = document.getElementById('coordSanctionsTable');
             if (!tbody) return;
             if (!list || list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-slate-400">Aucune sanction enregistrée.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">Aucune sanction enregistrée.</td></tr>';
                 return;
             }
             tbody.innerHTML = list.map(s => {
                 const agentNom = s.agent ? (s.agent.nom || 'N/A') : 'N/A';
+                const structure = s.structureCliente || s.clientFinal || '—';
                 const badgeClass = s.statut === 'EN_COURS' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700';
                 return `
                     <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100">
                         <td class="p-3 font-bold text-slate-900">${agentNom}</td>
+                        <td class="p-3 text-slate-600">${structure}</td>
                         <td class="p-3 font-medium text-slate-700">${s.type}</td>
                         <td class="p-3 text-slate-500">${s.dateDecision}</td>
                         <td class="p-3 text-slate-500">${s.dateFin || '—'}</td>

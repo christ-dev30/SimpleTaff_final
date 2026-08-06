@@ -140,6 +140,7 @@ public class PointageController {
         map.put("dureeMinutes", pointage.getDureeMinutes());
         map.put("anomalie", pointage.getAnomalie());
         map.put("siteNom", poste != null && poste.getSite() != null ? poste.getSite().getNom() : null);
+        map.put("structureCliente", poste != null && poste.getSite() != null && poste.getSite().getStructureDemandeuse() != null ? poste.getSite().getStructureDemandeuse().getRaisonSociale() : "—");
         map.put("statut", pointage.getStatut());
         return map;
     }

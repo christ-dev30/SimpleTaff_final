@@ -62,6 +62,7 @@ public class EmployeurController {
         m.put("nom", emp.getNom());
         m.put("prenom", emp.getPrenom());
         m.put("role", emp.getRole().toString());
+        m.put("structureCliente", emp.getStructureDemandeuse() != null ? emp.getStructureDemandeuse().getRaisonSociale() : "Structure non définie");
         return ResponseEntity.ok(m);
     }
 
@@ -83,6 +84,7 @@ public class EmployeurController {
                     m.put("posteLibelle", a.getPoste().getEmploi() != null ? a.getPoste().getEmploi().getLibelle() : "Agent Terrain");
                     m.put("zone", a.getPoste().getSite().getZone() != null ? a.getPoste().getSite().getZone().getNom() : "—");
                     m.put("siteNom", a.getPoste().getSite().getNom() != null ? a.getPoste().getSite().getNom() : "—");
+                    m.put("dateFin", a.getDateFinOccupation() != null ? a.getDateFinOccupation().toString() : "Indéterminée");
                     m.put("statut", a.getStatut());
                     return m;
                 })
@@ -110,6 +112,7 @@ public class EmployeurController {
                     m.put("agentId", a.getAgent().getId().toString());
                     m.put("posteLibelle", a.getPoste().getEmploi() != null ? a.getPoste().getEmploi().getLibelle() : "Agent Terrain");
                     m.put("siteNom", a.getPoste().getSite().getNom() != null ? a.getPoste().getSite().getNom() : "—");
+                    m.put("dateFin", a.getDateFinOccupation() != null ? a.getDateFinOccupation().toString() : "Indéterminée");
                     m.put("statut", a.getStatut());
 
                     // Récupération de la carte active de l'agent (le QR code est masqué pour l'employeur)

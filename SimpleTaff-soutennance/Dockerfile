@@ -54,14 +54,14 @@ USER simpletaff
 EXPOSE 8080
 
 # Variables d'env par défaut (surchargées par .env ou docker-compose)
-ENV SERVER_PORT=8080 \
-    DB_HOST=db \
-    DB_PORT=5432 \
-    DB_NAME=simpletaff_db \
-    DB_USERNAME=postgres \
+ENV PORT=8080 \
+    DB_HOST=94.130.65.236 \
+    DB_PORT=3306 \
+    DB_NAME=ehuicp_simpletaff \
+    DB_USERNAME=ehuicp \
     JWT_EXPIRATION_MS=86400000 \
     JWT_REFRESH_EXPIRATION_MS=604800000 \
-    MAIL_HOST=smtp.gmail.com \
+    MAIL_HOST=smtp-relay.brevo.com \
     MAIL_PORT=587 \
     MAX_FILE_SIZE=30MB \
     MAX_REQUEST_SIZE=30MB \

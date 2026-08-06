@@ -20,15 +20,18 @@ public class EvaluationController {
     private final AgentTerrainRepository agentRepository;
     private final CurrentTenantService tenantService;
     private final com.siege.platform.contrat.ContratAgentRepository contratRepository;
+    private final com.siege.platform.poste.AffectationRepository affectationRepository;
  
     public EvaluationController(EvaluationAgentRepository evaluationRepository,
                                 AgentTerrainRepository agentRepository,
                                 CurrentTenantService tenantService,
-                                com.siege.platform.contrat.ContratAgentRepository contratRepository) {
+                                com.siege.platform.contrat.ContratAgentRepository contratRepository,
+                                com.siege.platform.poste.AffectationRepository affectationRepository) {
         this.evaluationRepository = evaluationRepository;
         this.agentRepository = agentRepository;
         this.tenantService = tenantService;
         this.contratRepository = contratRepository;
+        this.affectationRepository = affectationRepository;
     }
  
     @GetMapping
@@ -50,12 +53,17 @@ public class EvaluationController {
         m.put("commentaire", ev.getCommentaire());
         m.put("employeurEvaluateur", ev.getEmployeurEvaluateur() != null ? ev.getEmployeurEvaluateur() : "N/A");
         
-        // Fetch structure cliente from active contract
+        // Fetch structure cliente from latest affectation or contract
         String structure = "—";
         if (ev.getAgent() != null) {
-            List<com.siege.platform.contrat.ContratAgent> contracts = contratRepository.findByAgentIdOrderByDateDebutDesc(ev.getAgent().getId());
-            if (!contracts.isEmpty() && contracts.get(0).getStructureCliente() != null) {
-                structure = contracts.get(0).getStructureCliente().getRaisonSociale();
+            List<com.siege.platform.poste.Affectation> affectations = affectationRepository.findByAgentIdOrderByDateDebutOccupationDesc(ev.getAgent().getId());
+            if (!affectations.isEmpty() && affectations.get(0).getPoste() != null && affectations.get(0).getPoste().getSite() != null && affectations.get(0).getPoste().getSite().getStructureDemandeuse() != null) {
+                structure = affectations.get(0).getPoste().getSite().getStructureDemandeuse().getRaisonSociale();
+            } else {
+                List<com.siege.platform.contrat.ContratAgent> contracts = contratRepository.findByAgentIdOrderByDateDebutDesc(ev.getAgent().getId());
+                if (!contracts.isEmpty() && contracts.get(0).getStructureCliente() != null) {
+                    structure = contracts.get(0).getStructureCliente().getRaisonSociale();
+                }
             }
         }
         m.put("structureCliente", structure);

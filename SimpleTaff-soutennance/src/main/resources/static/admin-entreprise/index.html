@@ -917,11 +917,11 @@
                                 <table class="min-w-full text-left text-xs whitespace-nowrap">
                                     <thead><tr class="bg-slate-100 font-bold">
                                         <th class="p-2">Agent</th>
-                                        <th class="p-2">Rôle / Site</th>
+                                        <th class="p-2">Client & Site</th>
                                         <th class="p-2">Zone & Ville</th>
                                         <th class="p-2">Superviseur</th>
                                         <th class="p-2">Horaires</th>
-                                        <th class="p-2">Date début</th>
+                                        <th class="p-2">Dates (Début - Fin)</th>
                                         <th class="p-2">Statut</th>
                                         <th class="p-2">Actions</th>
                                     </tr></thead>
@@ -982,13 +982,19 @@
                 <!-- Filters & Stats Bar -->
                 <div class="glass rounded-2xl p-5 space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-                        <div class="md:col-span-3">
+                        <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-slate-500 mb-1">Date</label>
                             <input type="date" id="pointageDateFilter" class="input-field" />
                         </div>
                         <div class="md:col-span-3">
+                            <label class="block text-xs font-bold text-slate-500 mb-1">Structure Cliente</label>
+                            <select id="pointageStructureFilter" class="input-field text-xs" onchange="filterPointageTable()">
+                                <option value="">Toutes</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-3">
                             <label class="block text-xs font-bold text-slate-500 mb-1">Agent (recherche)</label>
-                            <input type="text" id="pointageAgentFilter" class="input-field" placeholder="Nom de l'agent…" oninput="filterPointageTable()" />
+                            <input type="text" id="pointageAgentFilter" class="input-field" placeholder="Nom..." oninput="filterPointageTable()" />
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-xs font-bold text-slate-500 mb-1">Mode</label>
@@ -1000,15 +1006,12 @@
                                 <option value="MANUEL">Manuel</option>
                             </select>
                         </div>
-                        <div class="md:col-span-2">
-                            <button onclick="loadPointagesByDate()" class="btn-brand w-full py-2.5 text-xs">
-                                <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                                Rechercher
+                        <div class="md:col-span-2 flex gap-2">
+                            <button onclick="loadPointagesByDate()" class="btn-brand flex-1 py-2.5 text-xs">
+                                <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             </button>
-                        </div>
-                        <div class="md:col-span-2">
-                            <button onclick="loadPointagesByDate(true)" class="w-full py-2.5 text-xs border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 transition-colors">
-                                Aujourd'hui
+                            <button onclick="loadPointagesByDate(true)" class="flex-1 py-2.5 text-xs border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 transition-colors">
+                                Auj.
                             </button>
                         </div>
                     </div>
@@ -1045,6 +1048,7 @@
                             <thead>
                                 <tr class="bg-slate-100 font-bold">
                                     <th class="p-3">Agent</th>
+                                    <th class="p-3">Structure</th>
                                     <th class="p-3">Entrée</th>
                                     <th class="p-3">Sortie</th>
                                     <th class="p-3">Durée</th>
@@ -1055,7 +1059,7 @@
                                 </tr>
                             </thead>
                             <tbody id="pointagesTableBody" class="divide-y divide-slate-100">
-                                <tr><td colspan="8" class="p-4 text-center text-slate-400">Sélectionnez une date ou cliquez sur "Aujourd'hui".</td></tr>
+                                <tr><td colspan="9" class="p-4 text-center text-slate-400">Sélectionnez une date ou cliquez sur "Aujourd'hui".</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -4297,14 +4301,17 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                         const hDebut = a.heureDebut || a.heureArriveeSite || a.heureArrivee || '08:00';
                         const hFin = a.heureFin || a.heureDepartSite || a.heureDepart || '18:00';
 
+                        // Client Structure
+                        const clientName = a.structureCliente && a.structureCliente !== '—' ? a.structureCliente : (a.client || 'Client Inconnu');
+
                         return `
                         <tr class="hover:bg-slate-50/50 transition-colors">
-                            <td class="p-2 font-bold text-slate-800">${agentName}</td>
-                            <td class="p-2 text-slate-500">${posteName} <span class="text-slate-400">à</span> ${siteName}</td>
+                            <td class="p-2 font-bold text-slate-800">${agentName}<div class="font-normal text-xs text-slate-500">${posteName}</div></td>
+                            <td class="p-2 text-slate-700 font-medium">${clientName} <div class="text-xs text-slate-500">Site: ${siteName}</div></td>
                             <td class="p-2 text-slate-500"><span class="font-bold text-slate-700">${zoneName}</span> <span class="text-slate-400">(${villeName})</span></td>
                             <td class="p-2 text-slate-500">${supervisorName}</td>
                             <td class="p-2 text-slate-500 font-mono text-xs"><span class="bg-slate-100 px-1.5 py-0.5 rounded font-bold text-slate-700">${hDebut} - ${hFin}</span></td>
-                            <td class="p-2 text-slate-500">${a.dateDebut || '—'}</td>
+                            <td class="p-2 text-slate-500"><div class="font-medium text-emerald-600">Début: ${a.dateDebut || '—'}</div><div class="font-medium text-rose-500">Fin: ${a.dateFin || 'Indéterminée'}</div></td>
                             <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${a.statut === 'ACTIVE' || !a.statut ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}">${a.statut || 'ACTIVE'}</span></td>
                             <td class="p-2">
                                 ${a.statut === 'ACTIVE' || !a.statut ? `<button onclick="cloturerAff('${a.id}')" class="text-xs bg-red-50 text-red-600 px-2 py-1 rounded hover:bg-red-100 font-bold transition-colors">Clôturer</button>` : '—'}
@@ -4848,12 +4855,15 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
         function renderPointageRows(data) {
             const tbody = document.getElementById('pointagesTableBody');
             if (!data || data.length === 0) {
-                safeRenderTbody(tbody, '<tr><td colspan="8" class="p-4 text-center text-slate-400">Aucun pointage pour cette date.</td></tr>');
+                safeRenderTbody(tbody, '<tr><td colspan="9" class="p-4 text-center text-slate-400">Aucun pointage pour cette date.</td></tr>');
                 return;
             }
-            safeRenderTbody(tbody, data.map(p => `
+            safeRenderTbody(tbody, data.map(p => {
+                const struct = p.structureCliente || '—';
+                return `
                 <tr class="hover:bg-slate-50/70 transition-colors">
                     <td class="p-3 font-semibold text-slate-800">${p.agentNom || '—'}</td>
+                    <td class="p-3 text-slate-600 font-medium">${struct}</td>
                     <td class="p-3 text-slate-600">${fmtDateTime(p.dateHeureEntree)}</td>
                     <td class="p-3 text-slate-600">${fmtDateTime(p.dateHeureSortie)}</td>
                     <td class="p-3 text-slate-600 font-mono text-xs">${fmtDuree(p.dureeMinutes)}</td>
@@ -4862,7 +4872,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                     <td class="p-3 text-xs ${p.anomalie ? 'text-red-600 font-semibold' : 'text-slate-400'}">${p.anomalie || '—'}</td>
                     <td class="p-3">${statutBadge(p.statut)}</td>
                 </tr>
-            `).join(''));
+            `}).join(''));
         }
 
         function updatePointageStats(data) {
@@ -4882,10 +4892,13 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
         function filterPointageTable() {
             const agentQ = (document.getElementById('pointageAgentFilter')?.value || '').toLowerCase();
             const modeQ = document.getElementById('pointageModeFilter')?.value || '';
+            const structQ = document.getElementById('pointageStructureFilter')?.value || '';
+
             const filtered = _allPointages.filter(p => {
                 const matchAgent = !agentQ || (p.agentNom || '').toLowerCase().includes(agentQ);
                 const matchMode = !modeQ || (p.mode || '') === modeQ;
-                return matchAgent && matchMode;
+                const matchStruct = !structQ || (p.structureCliente === structQ);
+                return matchAgent && matchMode && matchStruct;
             });
             renderPointageRows(filtered);
             updatePointageStats(filtered);
@@ -4907,8 +4920,16 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                     '<tr><td colspan="8" class="p-4 text-center text-slate-400">Chargement…</td></tr>');
 
                 _allPointages = await apiFetch(url) || [];
-                renderPointageRows(_allPointages);
-                updatePointageStats(_allPointages);
+                
+                const structFilter = document.getElementById('pointageStructureFilter');
+                if (structFilter) {
+                    const structs = [...new Set(_allPointages.map(p => p.structureCliente).filter(s => s && s !== '—'))];
+                    const current = structFilter.value;
+                    structFilter.innerHTML = '<option value="">Toutes</option>' + structs.map(s => `<option value="${s}">${s}</option>`).join('');
+                    if (structs.includes(current)) structFilter.value = current;
+                }
+
+                filterPointageTable();
                 // also refresh history dates
                 loadPointageDates();
             } catch(e) {
@@ -5589,7 +5610,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                     return `
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="p-3 font-bold text-slate-800">${agentNom}</td>
-                            <td class="p-3 text-slate-600 font-medium">${s.clientFinal || '—'}</td>
+                            <td class="p-3 text-slate-600 font-medium">${s.structureCliente || s.clientFinal || '—'}</td>
                             <td class="p-3 text-slate-600 font-medium">${s.type || '—'}</td>
                             <td class="p-3 text-slate-500">${s.dateDecision || '—'}</td>
                             <td class="p-3 text-slate-500">${dateFinStr}</td>

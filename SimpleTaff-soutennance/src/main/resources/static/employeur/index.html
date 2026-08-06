@@ -73,8 +73,8 @@
     <main class="flex-1 flex flex-col relative overflow-hidden">
         <header class="h-20 flex items-center justify-between px-8 border-b border-slate-200/50 bg-white/50 backdrop-blur-sm z-10">
             <div>
-                <h1 class="text-xl font-bold tracking-tight text-slate-900" id="clientNom">Structure Cliente</h1>
-                <p class="text-xs text-slate-400">Espace Client — Validation en direct & pointages</p>
+                <h1 class="text-2xl font-extrabold tracking-tight text-slate-900" id="clientNom">Chargement...</h1>
+                <p class="text-sm font-medium text-slate-500 mt-1">Espace Client — Gestion des présences et validations</p>
             </div>
             <span class="badge bg-emerald-100 text-emerald-700">EMPLOYEUR</span>
         </header>
@@ -151,7 +151,7 @@
                                 <thead><tr class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
                                     <th class="px-5 py-3">Agent</th>
                                     <th class="px-5 py-3">Rôle / Poste</th>
-                                    <th class="px-5 py-3">Zone</th>
+                                    <th class="px-5 py-3">Zone & Fin d'affectation</th>
                                     <th class="px-5 py-3">Statut</th>
                                 </tr></thead>
                                 <tbody id="personnelTableBody" class="divide-y divide-slate-100 text-xs">
@@ -191,62 +191,72 @@
             <div id="tab-pointage" class="tab-content space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <!-- Scanner camera & input -->
-                    <div class="lg:col-span-6 glass rounded-2xl p-6 space-y-4">
-                        <h2 class="text-lg font-bold text-slate-900">Scanner QR Code de l'Agent</h2>
-                        <p class="text-xs text-slate-400">Présentez le badge de l'agent devant votre caméra ou saisissez l'identifiant pour valider l'entrée ou la sortie.</p>
+                    <div class="lg:col-span-6 glass rounded-3xl p-8 space-y-6 border border-slate-200/50 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-3xl -mr-10 -mt-10 opacity-60"></div>
+                        
+                        <div class="relative">
+                            <h2 class="text-xl font-extrabold text-slate-900">Enregistrement de Pointage</h2>
+                            <p class="text-sm text-slate-500 mt-1">Scanner le badge ou saisissez l'identifiant de l'agent pour valider son arrivée ou son départ.</p>
+                        </div>
 
                         <!-- Camera section container -->
-                        <div class="relative overflow-hidden rounded-2xl bg-slate-900 border border-slate-700/50 flex flex-col items-center justify-center p-2">
+                        <div class="relative overflow-hidden rounded-2xl bg-slate-50 border-2 border-dashed border-indigo-200 flex flex-col items-center justify-center p-4 transition-all hover:border-indigo-400 group">
                             <!-- Scanner view finder -->
-                            <div id="reader" class="w-full rounded-xl overflow-hidden bg-slate-950"></div>
+                            <div id="reader" class="w-full rounded-xl overflow-hidden bg-slate-950 shadow-inner"></div>
                             
-                            <div class="py-2 w-full flex justify-center gap-2">
-                                <button onclick="startScanning()" id="btnStartScan" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1.5 px-4 rounded-xl text-xs shadow-sm transition-colors">
-                                    Démarrer la caméra
+                            <div class="py-4 w-full flex justify-center gap-3 relative z-10">
+                                <button onclick="startScanning()" id="btnStartScan" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm shadow-md shadow-indigo-200 transition-all transform hover:scale-105 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                    Activer la caméra
                                 </button>
-                                <button onclick="stopScanning()" id="btnStopScan" class="hidden bg-red-600 hover:bg-red-700 text-white font-bold py-1.5 px-4 rounded-xl text-xs shadow-sm transition-colors">
-                                    Arrêter la caméra
+                                <button onclick="stopScanning()" id="btnStopScan" class="hidden bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 font-bold py-2.5 px-6 rounded-xl text-sm shadow-sm transition-all flex items-center gap-2 border border-slate-200 hover:border-rose-200">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    Désactiver
                                 </button>
                             </div>
                         </div>
 
                         <!-- Manual form input -->
-                        <form id="pointageForm" class="space-y-4 pt-2">
-                            <div id="pointageMsg" class="hidden text-sm p-3 rounded-lg font-bold"></div>
+                        <form id="pointageForm" class="space-y-5 pt-2 relative z-10">
+                            <div id="pointageMsg" class="hidden text-sm p-4 rounded-xl font-medium text-center border"></div>
 
                             <!-- Mode selection -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <button type="button" onclick="setPointageMode('QR_CODE')" id="modeBtnQR" class="input-minimal text-left font-bold text-xs border-2 border-indigo-600 bg-indigo-50 text-indigo-700">
-                                    QR Code
-                                </button>
-                                <button type="button" onclick="setPointageMode('NFC')" id="modeBtnNFC" class="input-minimal text-left font-bold text-xs border border-slate-200 bg-white text-slate-700">
-                                    NFC
-                                </button>
-                                <button type="button" onclick="setPointageMode('PHOTO_GPS')" id="modeBtnPHOTO" class="input-minimal text-left font-bold text-xs border border-slate-200 bg-white text-slate-700">
-                                    Photo + GPS
-                                </button>
-                                <button type="button" onclick="setPointageMode('BIOMETRIE')" id="modeBtnBIO" class="input-minimal text-left font-bold text-xs border border-slate-200 bg-white text-slate-700">
-                                    Biométrie
-                                </button>
-                            </div>
-
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 mb-1" id="labelAgentCard">Identifiant (QR / NFC / Biometrie)</label>
-                                <input type="text" id="agentCardId" class="input-minimal" placeholder="ex: a01a2b3c-4d5e-6f7a-8b9c-0d1e2f3a4b5e">
+                                <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Mode de saisie</label>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                    <button type="button" onclick="setPointageMode('QR_CODE')" id="modeBtnQR" class="input-minimal text-center font-bold text-xs border-2 border-indigo-600 bg-indigo-50 text-indigo-700 hover:bg-indigo-50 transition-colors">
+                                        QR Code
+                                    </button>
+                                    <button type="button" onclick="setPointageMode('NFC')" id="modeBtnNFC" class="input-minimal text-center font-bold text-xs border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors">
+                                        NFC
+                                    </button>
+                                    <button type="button" onclick="setPointageMode('PHOTO_GPS')" id="modeBtnPHOTO" class="input-minimal text-center font-bold text-xs border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors">
+                                        Photo+GPS
+                                    </button>
+                                    <button type="button" onclick="setPointageMode('BIOMETRIE')" id="modeBtnBIO" class="input-minimal text-center font-bold text-xs border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors">
+                                        Biométrie
+                                    </button>
+                                </div>
                             </div>
 
-                            <div id="photoGpsSection" class="hidden space-y-2">
-                                <div class="text-xs text-slate-500 font-bold">Capture Photo (optionnel si backend accepte selfieUrl) + géolocalisation</div>
-                                <input type="file" id="selfieFileInput" accept="image/*" class="input-minimal" />
-                                <div class="text-xs text-slate-400">Note: l’upload réel de l’image n’est pas implémenté ici (envoi uniquement si `selfieUrl` est fourni).</div>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider" id="labelAgentCard">Identifiant de l'agent</label>
+                                <input type="text" id="agentCardId" class="input-minimal text-base py-3" placeholder="Saisissez ou scannez l'ID de la carte...">
                             </div>
 
-                            <div class="flex gap-2">
-                                <button type="button" onclick="enregistrerPointage('ENTREE')" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm transition-all">
-                                    Pointer Entrée
+                            <div id="photoGpsSection" class="hidden space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <div class="text-xs text-slate-600 font-medium">Capture Photo (optionnelle) et géolocalisation pour authentification forte.</div>
+                                <input type="file" id="selfieFileInput" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-colors" />
+                            </div>
+
+                            <div class="flex gap-3 pt-2">
+                                <button type="button" onclick="enregistrerPointage('ENTREE')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm shadow-md shadow-emerald-200 transition-all flex justify-center items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+                                    Pointer l'Arrivée
                                 </button>
-                                <button type="button" onclick="enregistrerPointage('SORTIE')" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-sm transition-all">
-                                    Pointer Sortie
+                                <button type="button" onclick="enregistrerPointage('SORTIE')" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold py-3.5 rounded-xl text-sm shadow-md shadow-rose-200 transition-all flex justify-center items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                    Pointer le Départ
                                 </button>
                             </div>
                         </form>
@@ -391,6 +401,7 @@
                                     <thead>
                                         <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
                                             <th class="p-3">Agent</th>
+                                            <th class="p-3">Structure</th>
                                             <th class="p-3">Année</th>
                                             <th class="p-3">Date</th>
                                             <th class="p-3">Score Total</th>
@@ -398,7 +409,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="evaluationsTableBody" class="divide-y divide-slate-100">
-                                        <tr><td colspan="5" class="p-3 text-center text-slate-400">Chargement...</td></tr>
+                                        <tr><td colspan="6" class="p-3 text-center text-slate-400">Chargement...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -429,6 +440,7 @@
                                     <thead>
                                         <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
                                             <th class="p-3">Agent</th>
+                                            <th class="p-3">Structure</th>
                                             <th class="p-3">Type</th>
                                             <th class="p-3">Date Décision</th>
                                             <th class="p-3">Fin</th>
@@ -437,7 +449,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="sanctionsTableBody" class="divide-y divide-slate-100">
-                                        <tr><td colspan="6" class="p-3 text-center text-slate-400">Chargement...</td></tr>
+                                        <tr><td colspan="7" class="p-3 text-center text-slate-400">Chargement...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -750,6 +762,16 @@
         // Fetch agents assignés & Vue d'ensemble
         async function loadOverview() {
             try {
+                // Fetch structure profile for name
+                try {
+                    const meInfo = await apiFetch('/employeur/me');
+                    if (meInfo && meInfo.structureCliente) {
+                        document.getElementById('clientNom').textContent = meInfo.structureCliente;
+                    }
+                } catch (eMe) {
+                    console.warn("Could not load structure profile", eMe);
+                }
+
                 // Fetch agents
                 const response = await apiFetch('/employeur/personnel');
                 const agents = Array.isArray(response) ? response : [];
@@ -774,7 +796,10 @@
                                     </div>
                                 </td>
                                 <td class="px-5 py-3.5 text-slate-600 font-medium">${a.posteLibelle || 'Agent Terrain'}</td>
-                                <td class="px-5 py-3.5 text-slate-500">${a.zone || 'Zone Principale'}</td>
+                                <td class="px-5 py-3.5">
+                                    <div class="text-slate-800 font-medium">${a.zone || 'Zone Principale'}</div>
+                                    <div class="text-[10px] text-indigo-500 mt-0.5">Fin: ${a.dateFin || 'Indéterminée'}</div>
+                                </td>
                                 <td class="px-5 py-3.5">
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">
                                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
@@ -1130,15 +1155,17 @@
             const tbody = document.getElementById('evaluationsTableBody');
             if (!tbody) return;
             if (list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="p-3 text-center text-slate-400">Aucune évaluation enregistrée.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-slate-400">Aucune évaluation enregistrée.</td></tr>';
                 return;
             }
             tbody.innerHTML = list.map(ev => {
                 const dateEval = ev.dateEvaluation ? ev.dateEvaluation : '—';
                 const agentNom = ev.agent ? (ev.agent.nom || 'N/A') : 'N/A';
+                const structure = ev.structureCliente || '—';
                 return `
                     <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100">
                         <td class="p-3 font-bold text-slate-900">${agentNom}</td>
+                        <td class="p-3 text-slate-600">${structure}</td>
                         <td class="p-3">${ev.annee}</td>
                         <td class="p-3 text-slate-500">${dateEval}</td>
                         <td class="p-3 font-bold text-indigo-600">${ev.scoreTotal || 0} / 80</td>
@@ -1210,16 +1237,18 @@
             const tbody = document.getElementById('sanctionsTableBody');
             if (!tbody) return;
             if (list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-slate-400">Aucune sanction enregistrée.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">Aucune sanction enregistrée.</td></tr>';
                 return;
             }
             tbody.innerHTML = list.map(s => {
                 const dateFin = s.dateFin ? s.dateFin : '—';
                 const agentNom = s.agent ? (s.agent.nom || 'N/A') : 'N/A';
+                const structure = s.structureCliente || s.clientFinal || '—';
                 const badgeClass = s.statut === 'EN_COURS' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700';
                 return `
                     <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100">
                         <td class="p-3 font-bold text-slate-900">${agentNom}</td>
+                        <td class="p-3 text-slate-600">${structure}</td>
                         <td class="p-3 font-medium text-slate-700">${s.type}</td>
                         <td class="p-3 text-slate-500">${s.dateDecision}</td>
                         <td class="p-3 text-slate-500">${dateFin}</td>

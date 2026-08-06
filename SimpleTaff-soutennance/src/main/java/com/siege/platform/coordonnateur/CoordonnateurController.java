@@ -98,11 +98,15 @@ public class CoordonnateurController {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("id", af.getId());
             map.put("statut", af.getStatut());
-            map.put("dateDebut", af.getDateDebutOccupation() != null ? af.getDateDebutOccupation().toString() : null);
+            map.put("dateDebut", af.getDateDebutOccupation() != null ? af.getDateDebutOccupation().toString() : "—");
+            map.put("dateFin", af.getDateFinOccupation() != null ? af.getDateFinOccupation().toString() : "—");
             map.put("agentNom", af.getAgent() != null
-                    ? af.getAgent().getNom() + " " + af.getAgent().getPrenom() : null);
+                    ? af.getAgent().getNom() + " " + af.getAgent().getPrenom() : "—");
             map.put("posteLibelle", af.getPoste() != null && af.getPoste().getEmploi() != null
-                    ? af.getPoste().getEmploi().getLibelle() : null);
+                    ? af.getPoste().getEmploi().getLibelle() : "—");
+            map.put("siteNom", af.getPoste() != null && af.getPoste().getSite() != null ? af.getPoste().getSite().getNom() : "—");
+            map.put("zoneNom", af.getPoste() != null && af.getPoste().getSite() != null && af.getPoste().getSite().getZone() != null ? af.getPoste().getSite().getZone().getNom() : "—");
+            map.put("structureCliente", af.getPoste() != null && af.getPoste().getSite() != null && af.getPoste().getSite().getStructureDemandeuse() != null ? af.getPoste().getSite().getStructureDemandeuse().getRaisonSociale() : "—");
             result.add(map);
         }
         return ResponseEntity.ok(result);
@@ -131,6 +135,7 @@ public class CoordonnateurController {
             map.put("dateHeureEntree", p.getDateHeureEntree());
             map.put("dateHeureSortie", p.getDateHeureSortie());
             map.put("siteNom", poste != null && poste.getSite() != null ? poste.getSite().getNom() : null);
+            map.put("structureCliente", poste != null && poste.getSite() != null && poste.getSite().getStructureDemandeuse() != null ? poste.getSite().getStructureDemandeuse().getRaisonSociale() : "—");
             map.put("statut", p.getStatut());
             result.add(map);
         }

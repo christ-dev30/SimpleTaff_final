@@ -20,5 +20,8 @@ public interface AffectationRepository extends JpaRepository<Affectation, UUID> 
     @EntityGraph(attributePaths = {"agent", "poste", "poste.site"})
     List<Affectation> findAllByStatut(String statut);
     
+    @EntityGraph(attributePaths = {"agent", "poste", "poste.site"})
+    List<Affectation> findByAgentIdOrderByDateDebutOccupationDesc(UUID agentId);
+    
     boolean existsByAgentIdAndStatut(UUID agentId, String statut);
 }

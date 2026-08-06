@@ -129,6 +129,7 @@ public class EntrepriseAdminController {
             map.put("dateDebut", a.getDateDebutOccupation() != null ? a.getDateDebutOccupation().toString() : "—");
             map.put("dateFin", a.getDateFinOccupation() != null ? a.getDateFinOccupation().toString() : "—");
             map.put("statut", a.getStatut());
+            map.put("structureCliente", a.getPoste() != null && a.getPoste().getSite() != null && a.getPoste().getSite().getStructureDemandeuse() != null ? a.getPoste().getSite().getStructureDemandeuse().getRaisonSociale() : "—");
 
             // Detailed operational fields
             map.put("region", a.getRegion());
