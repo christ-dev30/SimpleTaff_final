@@ -132,9 +132,13 @@ public class EntrepriseAdminController {
             map.put("structureCliente", a.getPoste() != null && a.getPoste().getSite() != null && a.getPoste().getSite().getStructureDemandeuse() != null ? a.getPoste().getSite().getStructureDemandeuse().getRaisonSociale() : "—");
 
             // Detailed operational fields
+            String siteZone = a.getPoste() != null && a.getPoste().getSite() != null && a.getPoste().getSite().getZone() != null ? a.getPoste().getSite().getZone().getNom() : null;
+            String siteVille = a.getPoste() != null && a.getPoste().getSite() != null ? a.getPoste().getSite().getAdresse() : null;
+            
             map.put("region", a.getRegion());
-            map.put("ville", a.getVille());
+            map.put("ville", a.getVille() != null ? a.getVille() : siteVille);
             map.put("commune", a.getCommune());
+            map.put("zoneNom", siteZone);
             map.put("zoneOperationnelle", a.getZoneOperationnelle());
             map.put("superviseur", a.getSuperviseur());
             map.put("client", a.getClient());
