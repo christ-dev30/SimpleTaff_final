@@ -5567,9 +5567,12 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                             actionButtons = `<span class="text-xs text-slate-400">—</span>`;
                         }
 
+                        const today = new Date(); today.setHours(0,0,0,0);
+                        const isExpired = c.dateFin && new Date(c.dateFin) <= today;
+
                         let statusBadge = '';
-                        if (c.statut === 'VALIDEE') {
-                            statusBadge = '<span class="badge bg-green-100 text-green-700">Validée</span>';
+                        if (isExpired || c.statut === 'VALIDEE') {
+                            statusBadge = '<span class="badge bg-slate-100 text-slate-600 font-bold">✔ Terminé</span>';
                         } else if (c.statut === 'REFUSEE') {
                             statusBadge = '<span class="badge bg-red-100 text-red-700">Refusée</span>';
                         } else {
@@ -5642,7 +5645,11 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                     const agentNom = s.agent ? `${s.agent.nom || ''} ${s.agent.prenom || ''}`.trim() : (s.agentNom || '—');
                     const decisionHtml = s.decisionUrl ? `<a href="${s.decisionUrl}" target="_blank" class="text-sky-600 hover:underline inline-flex items-center gap-1 font-bold">📄 Voir</a>` : '—';
                     const dateFinStr = s.dateFin ? s.dateFin : 'Indéterminée';
-                    const badgeColor = s.statut === 'VALIDE' || s.statut === 'TERMINE' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700';
+                    const today2 = new Date(); today2.setHours(0,0,0,0);
+                    const sanctionExpired = s.dateFin && new Date(s.dateFin) <= today2;
+                    const effectifStatut = sanctionExpired ? 'TERMINE' : (s.statut || 'EN_COURS');
+                    const badgeColor = effectifStatut === 'VALIDE' || effectifStatut === 'TERMINE' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700';
+                    const badgeLabel = effectifStatut === 'TERMINE' ? '✔ Terminé' : effectifStatut;
                     return `
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="p-3 font-bold text-slate-800">${agentNom}</td>
@@ -5652,7 +5659,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                             <td class="p-3 text-slate-500">${s.dateDecision || '—'}</td>
                             <td class="p-3 text-slate-500">${dateFinStr}</td>
                             <td class="p-3 text-slate-500 max-w-xs truncate" title="${s.motif || ''}">${s.motif || '—'}</td>
-                            <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeColor}">${s.statut || 'EN_COURS'}</span></td>
+                            <td class="p-3"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${badgeColor}">${badgeLabel}</span></td>
                             <td class="p-3">${decisionHtml}</td>
                         </tr>
                     `;
