@@ -67,6 +67,16 @@ public class DisciplinaireController {
         }
         m.put("structureCliente", structure);
 
+        // Site name from affectation
+        String siteNom = "—";
+        if (s.getAgent() != null) {
+            List<com.siege.platform.poste.Affectation> siteAffs = affectationRepository.findByAgentIdOrderByDateDebutOccupationDesc(s.getAgent().getId());
+            if (!siteAffs.isEmpty() && siteAffs.get(0).getPoste() != null && siteAffs.get(0).getPoste().getSite() != null) {
+                siteNom = siteAffs.get(0).getPoste().getSite().getNom();
+            }
+        }
+        m.put("siteNom", siteNom);
+
         Map<String, Object> agentMap = new LinkedHashMap<>();
         if (s.getAgent() != null) {
             agentMap.put("id", s.getAgent().getId());

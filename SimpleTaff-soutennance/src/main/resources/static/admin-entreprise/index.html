@@ -1470,6 +1470,7 @@
                                     <th class="p-3">D&eacute;but</th>
                                     <th class="p-3">Fin</th>
                                     <th class="p-3">Structure</th>
+                                    <th class="p-3">Site</th>
                                     <th class="p-3">Poste</th>
                                     <th class="p-3">Pi&egrave;ce</th>
                                     <th class="p-3">Statut</th>
@@ -1543,6 +1544,7 @@
                                         <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
                                             <th class="p-3">Agent</th>
                                             <th class="p-3">Structure</th>
+                                            <th class="p-3">Site</th>
                                             <th class="p-3">Type</th>
                                             <th class="p-3">Date Decision</th>
                                             <th class="p-3">Fin</th>
@@ -1583,6 +1585,7 @@
                                         <tr class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100">
                                             <th class="p-3">Agent</th>
                                             <th class="p-3">Structure Cliente</th>
+                                            <th class="p-3">Site</th>
                                             <th class="p-3">Evaluateur</th>
                                             <th class="p-3">Annee</th>
                                             <th class="p-3">Date</th>
@@ -5585,6 +5588,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                                 <td class="p-3 text-slate-500">${c.dateDebut || '—'}</td>
                                 <td class="p-3 text-slate-500">${c.dateFin || '—'}</td>
                                 <td class="p-3 text-slate-500">${c.structureCliente || '—'}</td>
+                                <td class="p-3 text-slate-500">${c.siteNom || '—'}</td>
                                 <td class="p-3 text-slate-500">${c.posteOccupe || '—'}</td>
                                 <td class="p-3">${justifCell}</td>
                                 <td class="p-3">${statusBadge}</td>
@@ -5643,6 +5647,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="p-3 font-bold text-slate-800">${agentNom}</td>
                             <td class="p-3 text-slate-600 font-medium">${s.structureCliente || s.clientFinal || '—'}</td>
+                            <td class="p-3 text-slate-500">${s.siteNom || '—'}</td>
                             <td class="p-3 text-slate-600 font-medium">${s.type || '—'}</td>
                             <td class="p-3 text-slate-500">${s.dateDecision || '—'}</td>
                             <td class="p-3 text-slate-500">${dateFinStr}</td>
@@ -5700,6 +5705,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="p-3 font-bold text-slate-800">${agentNom}</td>
                             <td class="p-3 text-slate-600 font-medium">${structureEv}</td>
+                            <td class="p-3 text-slate-500">${ev.siteNom || '—'}</td>
                             <td class="p-3 text-slate-500 font-medium">${evaluateurEv}</td>
                             <td class="p-3 text-slate-600 font-medium">${ev.annee || '—'}</td>
                             <td class="p-3 text-slate-500">${dateEval}</td>

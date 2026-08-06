@@ -67,6 +67,16 @@ public class EvaluationController {
             }
         }
         m.put("structureCliente", structure);
+
+        // Site name from affectation
+        String siteNom = "—";
+        if (ev.getAgent() != null) {
+            List<com.siege.platform.poste.Affectation> siteAffs = affectationRepository.findByAgentIdOrderByDateDebutOccupationDesc(ev.getAgent().getId());
+            if (!siteAffs.isEmpty() && siteAffs.get(0).getPoste() != null && siteAffs.get(0).getPoste().getSite() != null) {
+                siteNom = siteAffs.get(0).getPoste().getSite().getNom();
+            }
+        }
+        m.put("siteNom", siteNom);
         
         // Agent details
         Map<String, Object> agentMap = new LinkedHashMap<>();

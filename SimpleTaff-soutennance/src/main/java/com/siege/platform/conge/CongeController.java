@@ -68,8 +68,11 @@ public class CongeController {
                 com.siege.platform.poste.Affectation activeAff = affectationRepository.findByAgentIdAndStatut(c.getAgent().getId(), "ACTIVE").orElse(null);
                 if (activeAff != null && activeAff.getPoste() != null) {
                     map.put("posteOccupe", activeAff.getPoste().getEmploi() != null ? activeAff.getPoste().getEmploi().getLibelle() : "—");
-                    if (activeAff.getPoste().getSite() != null && activeAff.getPoste().getSite().getStructureDemandeuse() != null) {
-                        map.put("structureCliente", activeAff.getPoste().getSite().getStructureDemandeuse().getRaisonSociale());
+                    if (activeAff.getPoste().getSite() != null) {
+                        map.put("siteNom", activeAff.getPoste().getSite().getNom());
+                        if (activeAff.getPoste().getSite().getStructureDemandeuse() != null) {
+                            map.put("structureCliente", activeAff.getPoste().getSite().getStructureDemandeuse().getRaisonSociale());
+                        }
                     }
                 }
             }
