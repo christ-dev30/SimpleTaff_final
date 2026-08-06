@@ -5736,6 +5736,9 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
 
         async function loadRapports(type) {
             try {
+                if (!type && document.getElementById('rapportAgentSelect') && document.getElementById('rapportAgentSelect').options.length <= 1) {
+                    if (typeof window.switchRapportMode === 'function') window.switchRapportMode('agent');
+                }
                 const moisInput = document.getElementById('rapportsMois');
                 let mois = moisInput?.value;
                 if (!mois) {

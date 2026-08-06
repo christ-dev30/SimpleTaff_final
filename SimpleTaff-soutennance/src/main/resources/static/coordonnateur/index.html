@@ -1465,28 +1465,28 @@
                     tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">Aucune demande enregistrée.</td></tr>';
                     return;
                 }
+                const badgeMap = {
+                    'EN_ATTENTE_RH': 'bg-amber-100 text-amber-700',
+                    'EN_ATTENTE_SUPERVISEUR': 'bg-sky-100 text-sky-700',
+                    'VALIDEE': 'bg-green-100 text-green-700',
+                    'REFUSEE': 'bg-red-100 text-red-700'
+                };
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
                 tbody.innerHTML = data.map(d => {
-                    const today = new Date(); today.setHours(0,0,0,0);
-                    const isExpired = d.dateFin && new Date(d.dateFin) <= today;
-                    let badge = '';
-                    if (isExpired || d.statut === 'VALIDEE') {
-                        badge = '<span class="badge bg-slate-100 text-slate-600 font-bold">✔ Terminé</span>';
-                    } else if (d.statut === 'REFUSEE') {
-                        badge = '<span class="badge bg-red-100 text-red-700">Refusée</span>';
+                    const isExpired = d.dateFin && new Date(d.dateFin) < today;
+                    let statBadge = '';
+                    if (isExpired) {
+                        statBadge = '<span class="badge bg-green-100 text-green-700 font-bold">Terminé</span>';
                     } else {
-                        const bm = {
-                            'EN_ATTENTE_RH': 'bg-amber-100 text-amber-700',
-                            'EN_ATTENTE_SUPERVISEUR': 'bg-sky-100 text-sky-700',
-                            'EN_ATTENTE_DIRECTION': 'bg-indigo-100 text-indigo-700'
-                        };
-                        badge = `<span class="badge ${bm[d.statut] || 'bg-slate-100 text-slate-500'}">${d.statut}</span>`;
+                        statBadge = `<span class="badge ${badgeMap[d.statut] || 'bg-slate-100 text-slate-500'}">${d.statut}</span>`;
                     }
                     return `
                     <tr class="hover:bg-slate-50/50 transition-colors">
                         <td class="p-3 font-bold text-slate-800">${d.agent ? (d.agent.nom + ' ' + d.agent.prenom) : '—'}</td>
                         <td class="p-3 text-slate-500">${d.type}</td>
                         <td class="p-3 text-slate-500">Du ${d.dateDebut} au ${d.dateFin}</td>
-                        <td class="p-3">${badge}</td>
+                        <td class="p-3">${statBadge}</td>
                     </tr>`;
                 }).join('');
             } catch (e) {
@@ -1763,11 +1763,7 @@
             tbody.innerHTML = list.map(s => {
                 const agentNom = s.agent ? (s.agent.nom || 'N/A') : 'N/A';
                 const structure = s.structureCliente || s.clientFinal || '—';
-                const today = new Date(); today.setHours(0,0,0,0);
-                const isExpired = s.dateFin && new Date(s.dateFin) <= today;
-                const effectifStatut = isExpired ? 'TERMINE' : (s.statut || 'EN_COURS');
-                const badgeClass = effectifStatut === 'TERMINE' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700';
-                const badgeLabel = effectifStatut === 'TERMINE' ? '✔ Terminé' : effectifStatut;
+                const badgeClass = s.statut === 'EN_COURS' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700';
                 return `
                     <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100">
                         <td class="p-3 font-bold text-slate-900">${agentNom}</td>
@@ -1776,7 +1772,7 @@
                         <td class="p-3 text-slate-500">${s.dateDecision}</td>
                         <td class="p-3 text-slate-500">${s.dateFin || '—'}</td>
                         <td class="p-3 text-slate-500 max-w-xs truncate" title="${s.motif || ''}">${s.motif || '—'}</td>
-                        <td class="p-3"><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+                        <td class="p-3"><span class="badge ${badgeClass}">${s.statut}</span></td>
                     </tr>
                 `;
             }).join('');

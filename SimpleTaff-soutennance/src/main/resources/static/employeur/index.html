@@ -1240,15 +1240,20 @@
                 tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">Aucune sanction enregistrée.</td></tr>';
                 return;
             }
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
             tbody.innerHTML = list.map(s => {
                 const dateFin = s.dateFin ? s.dateFin : '—';
                 const agentNom = s.agent ? (s.agent.nom || 'N/A') : 'N/A';
                 const structure = s.structureCliente || s.clientFinal || '—';
-                const today = new Date(); today.setHours(0,0,0,0);
-                const isExpired = s.dateFin && new Date(s.dateFin) <= today;
-                const effectifStatut = isExpired ? 'TERMINE' : (s.statut || 'EN_COURS');
-                const badgeClass = effectifStatut === 'TERMINE' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700';
-                const badgeLabel = effectifStatut === 'TERMINE' ? '✔ Terminé' : effectifStatut;
+                const isExpired = s.dateFin && new Date(s.dateFin) < today;
+                let badgeHTML = '';
+                if (isExpired) {
+                    badgeHTML = '<span class="badge bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-md text-xs">Terminé</span>';
+                } else {
+                    const badgeClass = s.statut === 'EN_COURS' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700';
+                    badgeHTML = `<span class="badge ${badgeClass} font-bold px-2 py-0.5 rounded-md text-xs">${s.statut}</span>`;
+                }
                 return `
                     <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100">
                         <td class="p-3 font-bold text-slate-900">${agentNom}</td>
@@ -1257,7 +1262,7 @@
                         <td class="p-3 text-slate-500">${s.dateDecision}</td>
                         <td class="p-3 text-slate-500">${dateFin}</td>
                         <td class="p-3 text-slate-500 max-w-xs truncate" title="${s.motif || ''}">${s.motif || '—'}</td>
-                        <td class="p-3"><span class="badge ${badgeClass}">${badgeLabel}</span></td>
+                        <td class="p-3"><span class="badge ${badgeClass}">${s.statut}</span></td>
                     </tr>
                 `;
             }).join('');

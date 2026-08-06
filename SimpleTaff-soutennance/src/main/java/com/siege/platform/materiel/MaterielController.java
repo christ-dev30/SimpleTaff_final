@@ -116,8 +116,37 @@ public class MaterielController {
     }
 
     @GetMapping("/demandes")
-    public List<DemandeMateriel> listDemandes() {
-        return demandeRepository.findByOrderByDateDemandeDesc();
+    public List<Map<String, Object>> listDemandes() {
+        List<DemandeMateriel> demandes = demandeRepository.findByOrderByDateDemandeDesc();
+        List<Map<String, Object>> result = new java.util.ArrayList<>();
+        for (DemandeMateriel d : demandes) {
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", d.getId());
+            map.put("libelle", d.getLibelle());
+            map.put("categorie", d.getCategorie());
+            map.put("numeroSerie", d.getNumeroSerie());
+            map.put("valeurAchat", d.getValeurAchat());
+            map.put("motif", d.getMotif());
+            map.put("statut", d.getStatut());
+            map.put("dateDemande", d.getDateDemande());
+            
+            String email = d.getCoordonnateurNom();
+            String coordName = email;
+            String zoneName = null;
+            if (email != null) {
+                com.siege.platform.utilisateur.Utilisateur u = utilisateurRepository.findByEmail(email).orElse(null);
+                if (u != null) {
+                    coordName = u.getNom() + " " + u.getPrenom();
+                    if (u instanceof com.siege.platform.utilisateur.Coordonnateur c && c.getZone() != null) {
+                        zoneName = c.getZone().getNom();
+                    }
+                }
+            }
+            map.put("coordonnateurNom", coordName);
+            map.put("zoneNom", zoneName);
+            result.add(map);
+        }
+        return result;
     }
 
     @PostMapping("/demandes")
