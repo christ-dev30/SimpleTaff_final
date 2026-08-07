@@ -2131,6 +2131,10 @@
             </div>
             <form id="finalizeEnrollmentForm" class="space-y-4">
                 <input type="hidden" id="feAgentId">
+                <div id="feCreatorInfo" class="hidden bg-purple-50 p-3 rounded-xl border border-purple-100/50 text-sm">
+                    <span class="text-xs text-purple-500 font-bold uppercase tracking-wider block mb-1">Créé par</span>
+                    <strong class="text-purple-900" id="feCreatorNameEmail"></strong>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">Date d'effet (Début) *</label>
@@ -3320,6 +3324,17 @@
             try { document.getElementById('feContratFile').value = ""; } catch (e) {}
             document.getElementById('feContratUrl').value = "";
             document.getElementById('feContratStatus').textContent = "";
+            
+            const agent = allAgents.find(a => a.id === agentId);
+            const feCreatorInfo = document.getElementById('feCreatorInfo');
+            if (agent && agent.createdByCoordonnateurNomPrenom) {
+                const creatorName = agent.createdByCoordonnateurNomPrenom;
+                const creatorEmail = agent.createdByCoordonnateurEmail ? ` (${agent.createdByCoordonnateurEmail})` : '';
+                document.getElementById('feCreatorNameEmail').textContent = `${creatorName}${creatorEmail}`;
+                feCreatorInfo.classList.remove('hidden');
+            } else {
+                feCreatorInfo.classList.add('hidden');
+            }
 
             try {
                 const sites = await apiFetch('/organisation/sites');
