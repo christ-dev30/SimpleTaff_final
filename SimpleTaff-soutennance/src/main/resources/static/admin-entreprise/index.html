@@ -3297,7 +3297,10 @@
                                 ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">Création par coordonnateur</span>`
                                 : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">Contrat en attente</span>`}
                         </td>
-                        <td class="p-2 flex gap-1">
+                        <td class="p-2 flex flex-wrap gap-1 items-center">
+                            <button onclick="openAgentFolder('${a.id}')" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold px-2 py-1 rounded-lg text-xs border border-indigo-200">
+                                Voir dossier
+                            </button>
                             ${a.statut === 'EN_ATTENTE_FINALISATION_ADMIN'
                                 ? `<button onclick="openFinaliserAgentAdminModal('${a.id}')" class="bg-purple-50 text-purple-700 hover:bg-purple-100 font-bold px-2 py-1 rounded-lg text-xs border border-purple-200">
                                     Finaliser
