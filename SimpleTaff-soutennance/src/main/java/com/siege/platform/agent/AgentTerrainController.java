@@ -89,6 +89,11 @@ public class AgentTerrainController {
             map.put("commune", a.getCommune());
             map.put("ville", a.getVille());
             map.put("email", a.getEmail());
+            
+            if (a.getCreatedByCoordonnateur() != null) {
+                map.put("createdByCoordonnateurId", a.getCreatedByCoordonnateur().getId());
+                map.put("createdByCoordonnateurNomPrenom", a.getCreatedByCoordonnateur().getNom() + " " + a.getCreatedByCoordonnateur().getPrenom());
+            }
 
             CarteAgent card = agentCarteMap.get(a.getId());
             String qr = card != null ? card.getCodeQr() : null;
@@ -266,6 +271,25 @@ public class AgentTerrainController {
             agent.setStatut("ACTIF");
             agentTerrainRepository.save(agent);
             return ResponseEntity.ok(Map.of("message", "Agent activé."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{id}/finaliser")
+    @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
+    public ResponseEntity<?> finaliserAgent(@PathVariable("id") UUID id) {
+        try {
+            AgentTerrain agent = agentTerrainRepository.findById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Agent introuvable."));
+            
+            if (!"EN_ATTENTE_FINALISATION_ADMIN".equals(agent.getStatut())) {
+                return ResponseEntity.badRequest().body(Map.of("message", "L'agent n'est pas en attente de finalisation."));
+            }
+            
+            agent.setStatut("EN_ATTENTE_CONTRAT_SIGNE");
+            agentTerrainRepository.save(agent);
+            return ResponseEntity.ok(Map.of("message", "Agent finalisé avec succès."));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

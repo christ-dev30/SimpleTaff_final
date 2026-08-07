@@ -980,7 +980,7 @@
             const tbody = document.getElementById('agentsTableBody');
             if (!tbody) return;
 
-            const activeList = window.allCoordAgents.filter(a => a.statut !== 'EN_ATTENTE_CONTRAT_SIGNE');
+            const activeList = window.allCoordAgents.filter(a => a.statut !== 'EN_ATTENTE_CONTRAT_SIGNE' && a.statut !== 'EN_ATTENTE_FINALISATION_ADMIN');
             const filtered = activeList.filter(a => {
                 const fullName = `${a.nom || ''} ${a.prenom || ''}`.toLowerCase();
                 const matchesSearch = fullName.includes(searchVal) || 
@@ -1051,12 +1051,16 @@
                         <td class="p-2 text-slate-500">${a.contact}</td>
                         <td class="p-2 text-slate-500">${a.zoneNom || '—'}</td>
                         <td class="p-2">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">Contrat en attente</span>
+                            ${a.statut === 'EN_ATTENTE_FINALISATION_ADMIN' 
+                                ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700">En attente de finalisation par l'admin</span>` 
+                                : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">Contrat en attente</span>`}
                         </td>
                         <td class="p-2 flex gap-1">
-                            <button onclick="openFinalizeEnrollmentModal('${a.id}')" class="bg-sky-50 text-sky-700 hover:bg-sky-100 font-bold px-2 py-1 rounded-lg text-xs border border-sky-200">
-                                Finaliser & Activer
-                            </button>
+                            ${a.statut === 'EN_ATTENTE_FINALISATION_ADMIN' 
+                                ? `<span class="text-xs text-slate-400 italic">Validation admin requise</span>` 
+                                : `<button onclick="openFinalizeEnrollmentModal('${a.id}')" class="bg-sky-50 text-sky-700 hover:bg-sky-100 font-bold px-2 py-1 rounded-lg text-xs border border-sky-200">
+                                    Finaliser & Activer
+                                </button>`}
                             <button onclick="deleteAgent('${a.id}')" class="text-red-500 hover:underline text-xs ml-2">Supprimer</button>
                         </td>
                     </tr>`).join('') || '<tr><td colspan="6" class="p-3 text-center text-slate-400">Aucun agent en cours d\'enrôlement.</td></tr>';
@@ -1064,7 +1068,7 @@
         };
 
         window.filterEnrolementAgents = function() {
-            const pendingList = window.allCoordAgents.filter(a => a.statut === 'EN_ATTENTE_CONTRAT_SIGNE');
+            const pendingList = window.allCoordAgents.filter(a => a.statut === 'EN_ATTENTE_CONTRAT_SIGNE' || a.statut === 'EN_ATTENTE_FINALISATION_ADMIN');
             renderEnrolementAgents(pendingList);
         };
 
@@ -1077,7 +1081,7 @@
                 filterAgents();
                 
                 // Update enrolement badge and list
-                const pendingList = window.allCoordAgents.filter(a => a.statut === 'EN_ATTENTE_CONTRAT_SIGNE');
+                const pendingList = window.allCoordAgents.filter(a => a.statut === 'EN_ATTENTE_CONTRAT_SIGNE' || a.statut === 'EN_ATTENTE_FINALISATION_ADMIN');
                 const badge = document.getElementById('enrolementQueueBadge');
                 if (badge) {
                     if (pendingList.length > 0) {

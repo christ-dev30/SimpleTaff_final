@@ -64,7 +64,13 @@ public class AgentTerrainService {
         agent.setNom(nom);
         agent.setPrenom(prenom);
         agent.setContact(contact);
-        agent.setStatut("EN_ATTENTE_CONTRAT_SIGNE");
+
+        if (user.getRole() == com.siege.platform.common.enums.Role.COORDONNATEUR) {
+            agent.setStatut("EN_ATTENTE_FINALISATION_ADMIN");
+            agent.setCreatedByCoordonnateur(user);
+        } else {
+            agent.setStatut("EN_ATTENTE_CONTRAT_SIGNE");
+        }
 
         AgentTerrain savedAgent = agentTerrainRepository.save(agent);
 

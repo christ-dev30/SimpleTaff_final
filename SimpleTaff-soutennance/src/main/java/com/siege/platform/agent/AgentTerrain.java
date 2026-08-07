@@ -78,4 +78,9 @@ public class AgentTerrain {
             inverseJoinColumns = @JoinColumn(name = "emploi_id")
     )
     private Set<Emploi> emplois = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by_coordonnateur_id")
+    private com.siege.platform.utilisateur.Utilisateur createdByCoordonnateur;
 }
