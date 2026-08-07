@@ -3347,7 +3347,9 @@
             document.getElementById('finaliserAdminNomPrenom').textContent = `${agent.nom || ''} ${agent.prenom || ''}`;
             document.getElementById('finaliserAdminContact').textContent = agent.contact || 'Non renseigné';
             document.getElementById('finaliserAdminZone').textContent = agent.zoneNom || 'Non renseignée';
-            document.getElementById('finaliserAdminCreator').textContent = agent.createdByCoordonnateurNomPrenom || 'Inconnu';
+            const creatorName = agent.createdByCoordonnateurNomPrenom || 'Inconnu';
+            const creatorEmail = agent.createdByCoordonnateurEmail ? ` (${agent.createdByCoordonnateurEmail})` : '';
+            document.getElementById('finaliserAdminCreator').textContent = `${creatorName}${creatorEmail}`;
             
             document.getElementById('finaliserAgentAdminModal').classList.remove('hidden');
         };

@@ -93,6 +93,7 @@ public class AgentTerrainController {
             if (a.getCreatedByCoordonnateur() != null) {
                 map.put("createdByCoordonnateurId", a.getCreatedByCoordonnateur().getId());
                 map.put("createdByCoordonnateurNomPrenom", a.getCreatedByCoordonnateur().getNom() + " " + a.getCreatedByCoordonnateur().getPrenom());
+                map.put("createdByCoordonnateurEmail", a.getCreatedByCoordonnateur().getEmail());
             }
 
             CarteAgent card = agentCarteMap.get(a.getId());
