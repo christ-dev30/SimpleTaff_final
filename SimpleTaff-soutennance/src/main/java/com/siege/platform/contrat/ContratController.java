@@ -111,7 +111,7 @@ public class ContratController {
         if (ag != null) {
             if ("ACTIF".equalsIgnoreCase(reqStatut)) {
                 ag.setStatut("ACTIF");
-            } else {
+            } else if (!"EN_ATTENTE_FINALISATION_ADMIN".equals(ag.getStatut())) {
                 ag.setStatut("EN_ATTENTE_CONTRAT_SIGNE");
             }
             agentRepository.save(ag);
