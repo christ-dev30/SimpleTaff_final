@@ -896,7 +896,7 @@
 
                 // Fetch Evaluations for score stat
                 try {
-                    const evals = await apiFetch('/employeur/evaluations');
+                    const evals = await apiFetch('/evaluations');
                     if (Array.isArray(evals) && evals.length > 0) {
                         const totalScore = evals.reduce((sum, e) => sum + (e.scoreGlobal || e.scoreTotal || 8), 0);
                         const avg = (totalScore / evals.length).toFixed(1);
@@ -1305,7 +1305,7 @@
                         <td class="p-3 text-slate-500">${s.dateDecision}</td>
                         <td class="p-3 text-slate-500">${dateFin}</td>
                         <td class="p-3 text-slate-500 max-w-xs truncate" title="${s.motif || ''}">${s.motif || '—'}</td>
-                        <td class="p-3"><span class="badge ${badgeClass}">${s.statut}</span></td>
+                        <td class="p-3">${badgeHTML}</td>
                     </tr>
                 `;
             }).join('');
