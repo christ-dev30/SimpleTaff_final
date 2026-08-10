@@ -470,7 +470,7 @@ public class RapportService {
                     "ANA : Abs. non autorisée    ACH : Autre chantier",
                     smallFont);
                 legend.setAlignment(Element.ALIGN_CENTER);
-                legend.setSpacingAfter(8);
+                legend.setSpacingAfter(3);
                 document.add(legend);
 
                 // === MAIN TIMESHEET TABLE ===
@@ -485,7 +485,7 @@ public class RapportService {
                     hc.setBackgroundColor(headerBg);
                     hc.setHorizontalAlignment(Element.ALIGN_CENTER);
                     hc.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    hc.setPadding(4);
+                    hc.setPadding(1.5f);
                     table.addCell(hc);
                 }
 
@@ -521,7 +521,7 @@ public class RapportService {
                     // Day cell
                     PdfPCell dayCell = new PdfPCell(new Phrase(dayNames[d] + "\n" + day.format(dateFmt), dayFont));
                     dayCell.setBackgroundColor(rowBg);
-                    dayCell.setPadding(4);
+                    dayCell.setPadding(1.5f);
                     dayCell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     dayCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     table.addCell(dayCell);
@@ -577,7 +577,7 @@ public class RapportService {
                 PdfPCell totLabel = new PdfPCell(new Phrase("TOTAUX", boldFont));
                 totLabel.setColspan(3);
                 totLabel.setHorizontalAlignment(Element.ALIGN_RIGHT);
-                totLabel.setPadding(4);
+                totLabel.setPadding(1.5f);
                 totLabel.setBackgroundColor(lightGray);
                 table.addCell(totLabel);
 
@@ -588,7 +588,7 @@ public class RapportService {
                 addPresCell(table, "—", normalFont, lightGray, false);
                 addPresCell(table, totalRetards + " retard(s)", boldFont, lightGray, true);
 
-                table.setSpacingAfter(10);
+                table.setSpacingAfter(4);
                 document.add(table);
 
                 // Footer note
@@ -609,7 +609,7 @@ public class RapportService {
 
     private void addPresCell(PdfPTable table, String text, Font font, Color bg, boolean centered) {
         PdfPCell cell = new PdfPCell(new Phrase(text != null ? text : "—", font));
-        cell.setPadding(4);
+        cell.setPadding(1.5f);
         cell.setBackgroundColor(bg);
         cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
         cell.setHorizontalAlignment(centered ? Element.ALIGN_CENTER : Element.ALIGN_LEFT);
@@ -771,16 +771,16 @@ public class RapportService {
             
             document.open();
             
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, Color.DARK_GRAY);
-            Font sectionTitleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, new Color(15, 23, 42));
-            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 9, Color.BLACK);
-            Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9, Color.BLACK);
-            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9, Color.WHITE);
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, Color.DARK_GRAY);
+            Font sectionTitleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, new Color(15, 23, 42));
+            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 7, Color.BLACK);
+            Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7, Color.BLACK);
+            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7, Color.WHITE);
             Color headerBg = new Color(30, 41, 59);
             
             Paragraph title = new Paragraph((String) report.getOrDefault("titre", "RAPPORT DE SYNTHÈSE OPERATIONNELLE"), titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
-            title.setSpacingAfter(10);
+            title.setSpacingAfter(4);
             document.add(title);
             
             Paragraph meta = new Paragraph();
@@ -788,14 +788,14 @@ public class RapportService {
             meta.add(new Chunk(report.getOrDefault("dateGeneration", LocalDate.now()).toString() + "  |  ", normalFont));
             meta.add(new Chunk("Période : ", boldFont));
             meta.add(new Chunk(report.getOrDefault("period", "Global").toString() + "\n", normalFont));
-            meta.setSpacingAfter(15);
+            meta.setSpacingAfter(6);
             document.add(meta);
 
             if (report.containsKey("presences")) {
                 Map<String, Object> sec = (Map<String, Object>) report.get("presences");
                 document.add(new Paragraph("1. PRÉSENCES & POINTAGES", sectionTitleFont));
                 Paragraph sub = new Paragraph("Entrées totales : " + sec.getOrDefault("nombre_entrees", 0) + "  |  Journées de présence : " + sec.getOrDefault("journees_presentes", 0), normalFont);
-                sub.setSpacingAfter(8);
+                sub.setSpacingAfter(3);
                 document.add(sub);
 
                 PdfPTable table = new PdfPTable(5);
@@ -816,7 +816,7 @@ public class RapportService {
                     addTableCell(table, p.get("heureDepart") != null ? p.get("heureDepart").toString() : "—", normalFont, null, false);
                     addTableCell(table, (p.get("dureeMinutes") != null ? p.get("dureeMinutes").toString() : "0") + " min", normalFont, null, false);
                 }
-                table.setSpacingAfter(15);
+                table.setSpacingAfter(6);
                 document.add(table);
             }
 
@@ -824,7 +824,7 @@ public class RapportService {
                 Map<String, Object> sec = (Map<String, Object>) report.get("conges");
                 document.add(new Paragraph("2. CONGÉS & ABSENCES", sectionTitleFont));
                 Paragraph sub = new Paragraph("Demandes : " + sec.getOrDefault("total_demandes", 0) + "  |  Approuvés : " + sec.getOrDefault("approuves", 0) + "  |  En attente : " + sec.getOrDefault("en_attente", 0), normalFont);
-                sub.setSpacingAfter(8);
+                sub.setSpacingAfter(3);
                 document.add(sub);
 
                 PdfPTable table = new PdfPTable(6);
@@ -847,7 +847,7 @@ public class RapportService {
                     addTableCell(table, c.get("jours") != null ? c.get("jours").toString() : "—", normalFont, null, false);
                     addTableCell(table, c.get("statut") != null ? c.get("statut").toString() : "—", normalFont, null, false);
                 }
-                table.setSpacingAfter(15);
+                table.setSpacingAfter(6);
                 document.add(table);
             }
 
@@ -858,7 +858,7 @@ public class RapportService {
                         "  |  Disponibles : " + sec.getOrDefault("disponibles", 0) + 
                         "  |  Défaut/Panne : " + sec.getOrDefault("en_panne", 0) +
                         "  |  Perdu/HS : " + sec.getOrDefault("perdu_ou_inutilisable", 0), normalFont);
-                sub.setSpacingAfter(8);
+                sub.setSpacingAfter(3);
                 document.add(sub);
 
                 PdfPTable table = new PdfPTable(5);
@@ -879,7 +879,7 @@ public class RapportService {
                     addTableCell(table, m.get("valeur") != null ? m.get("valeur").toString() : "—", normalFont, null, false);
                     addTableCell(table, m.get("statut") != null ? m.get("statut").toString() : "—", normalFont, null, false);
                 }
-                table.setSpacingAfter(15);
+                table.setSpacingAfter(6);
                 document.add(table);
             }
 
@@ -887,7 +887,7 @@ public class RapportService {
                 Map<String, Object> sec = (Map<String, Object>) report.get("disciplinaire");
                 document.add(new Paragraph("4. DISCIPLINAIRE & SANCTIONS", sectionTitleFont));
                 Paragraph sub = new Paragraph("Total Sanctions du mois : " + sec.getOrDefault("total_sanctions", 0), normalFont);
-                sub.setSpacingAfter(8);
+                sub.setSpacingAfter(3);
                 document.add(sub);
 
                 PdfPTable table = new PdfPTable(5);
@@ -908,7 +908,7 @@ public class RapportService {
                     addTableCell(table, s.get("date") != null ? s.get("date").toString() : "—", normalFont, null, false);
                     addTableCell(table, s.get("statut") != null ? s.get("statut").toString() : "—", normalFont, null, false);
                 }
-                table.setSpacingAfter(15);
+                table.setSpacingAfter(6);
                 document.add(table);
             }
 
@@ -916,7 +916,7 @@ public class RapportService {
                 Map<String, Object> sec = (Map<String, Object>) report.get("missions");
                 document.add(new Paragraph("5. MISSIONS & DÉPLACEMENTS", sectionTitleFont));
                 Paragraph sub = new Paragraph("Missions du mois : " + sec.getOrDefault("total_missions", 0) + "  |  En cours : " + sec.getOrDefault("en_cours", 0) + "  |  Terminées : " + sec.getOrDefault("terminees", 0), normalFont);
-                sub.setSpacingAfter(8);
+                sub.setSpacingAfter(3);
                 document.add(sub);
 
                 PdfPTable table = new PdfPTable(5);
@@ -937,7 +937,7 @@ public class RapportService {
                     addTableCell(table, ms.get("fin") != null ? ms.get("fin").toString() : "—", normalFont, null, false);
                     addTableCell(table, ms.get("statut") != null ? ms.get("statut").toString() : "—", normalFont, null, false);
                 }
-                table.setSpacingAfter(15);
+                table.setSpacingAfter(6);
                 document.add(table);
             }
 
@@ -955,7 +955,7 @@ public class RapportService {
 
     private void addTableCell(PdfPTable table, String text, Font font, Color bgColor, boolean isHeader) {
         PdfPCell cell = new PdfPCell(new Phrase(text != null ? text : "—", font));
-        cell.setPadding(5);
+        cell.setPadding(2f);
         if (bgColor != null) {
             cell.setBackgroundColor(bgColor);
         }
