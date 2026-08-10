@@ -105,7 +105,13 @@
                 <h1 class="text-2xl font-extrabold tracking-tight text-slate-900" id="clientNom">Chargement...</h1>
                 <p class="text-sm font-medium text-slate-500 mt-1">Espace Client — Gestion des présences et validations</p>
             </div>
-            <span class="badge bg-emerald-100 text-emerald-700">EMPLOYEUR</span>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-bold text-slate-900" id="profilNom">Chargement...</p>
+                    <p class="text-xs text-slate-500" id="profilEmail">...</p>
+                </div>
+                <span class="badge bg-emerald-100 text-emerald-700">EMPLOYEUR</span>
+            </div>
         </header>
 
         <div class="flex-grow overflow-y-auto p-8 space-y-6">
@@ -256,13 +262,13 @@
                                     <button type="button" onclick="setPointageMode('QR_CODE')" id="modeBtnQR" class="input-minimal text-center font-bold text-xs border-2 border-indigo-600 bg-indigo-50 text-indigo-700 hover:bg-indigo-50 transition-colors">
                                         QR Code
                                     </button>
-                                    <button type="button" onclick="setPointageMode('NFC')" id="modeBtnNFC" class="input-minimal text-center font-bold text-xs border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors">
+                                    <button type="button" disabled id="modeBtnNFC" class="input-minimal text-center font-bold text-xs border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed" title="Non disponible">
                                         NFC
                                     </button>
-                                    <button type="button" onclick="setPointageMode('PHOTO_GPS')" id="modeBtnPHOTO" class="input-minimal text-center font-bold text-xs border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors">
+                                    <button type="button" disabled id="modeBtnPHOTO" class="input-minimal text-center font-bold text-xs border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed" title="Non disponible">
                                         Photo+GPS
                                     </button>
-                                    <button type="button" onclick="setPointageMode('BIOMETRIE')" id="modeBtnBIO" class="input-minimal text-center font-bold text-xs border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors">
+                                    <button type="button" disabled id="modeBtnBIO" class="input-minimal text-center font-bold text-xs border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed" title="Non disponible">
                                         Biométrie
                                     </button>
                                 </div>
@@ -794,8 +800,16 @@
                 // Fetch structure profile for name
                 try {
                     const meInfo = await apiFetch('/employeur/me');
-                    if (meInfo && meInfo.structureCliente) {
-                        document.getElementById('clientNom').textContent = meInfo.structureCliente;
+                    if (meInfo) {
+                        if(meInfo.structureCliente) { document.getElementById('clientNom').textContent = meInfo.structureCliente; }
+                        if(meInfo.nom && meInfo.prenom) { 
+                            const profilNom = document.getElementById('profilNom');
+                            if(profilNom) profilNom.textContent = meInfo.prenom + ' ' + meInfo.nom; 
+                        }
+                        if(meInfo.email) { 
+                            const profilEmail = document.getElementById('profilEmail');
+                            if(profilEmail) profilEmail.textContent = meInfo.email; 
+                        }
                     }
                 } catch (eMe) {
                     console.warn("Could not load structure profile", eMe);

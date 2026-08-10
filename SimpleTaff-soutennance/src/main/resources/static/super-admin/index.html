@@ -150,8 +150,7 @@
                     <table class="w-full text-left">
                         <thead><tr class="bg-slate-50 text-xs font-bold text-slate-500 uppercase">
                             <th class="px-6 py-3">Entreprise</th>
-                            <th class="px-6 py-3">Abonnement</th>
-                            <th class="px-6 py-3">Taux Cotis.</th>
+                            <th class="px-6 py-3">Formule</th>
                             <th class="px-6 py-3">Statut</th>
                             <th class="px-6 py-3">Actions</th>
                         </tr></thead>
@@ -198,10 +197,7 @@
                                     <option value="ENTERPRISE">ENTERPRISE (Sur devis)</option>
                                 </select>
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 mb-1.5">Taux de cotisation (%)</label>
-                                <input type="number" id="invTaux" value="5.50" step="0.01" min="0" max="100" class="input-field">
-                            </div>
+
                             <div class="flex items-center gap-2 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5 text-xs text-amber-700">
                                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                 Le lien sera à usage unique et expirera dans <strong>&nbsp;30 minutes</strong>.
@@ -339,7 +335,6 @@
                             </div>
                         </td>
                         <td class="px-6 py-4"><span class="badge bg-indigo-50 border border-indigo-100 text-indigo-700">${e.formuleAbonnement || 'PRO'}</span></td>
-                        <td class="px-6 py-4 text-slate-600 font-bold">${e.tauxCotisation || '5.5'} %</td>
                         <td class="px-6 py-4"><span class="badge ${statusColor}">${e.statut}</span></td>
                         <td class="px-6 py-4 flex items-center">${actionBtn}${deleteBtn}</td>
                     </tr>`;
@@ -402,8 +397,7 @@
                     body: JSON.stringify({
                         nomEntreprise: document.getElementById('invNom').value,
                         emailDestinataire: document.getElementById('invEmail').value,
-                        formuleAbonnement: document.getElementById('invFormule').value,
-                        tauxCotisation: parseFloat(document.getElementById('invTaux').value)
+                        formuleAbonnement: document.getElementById('invFormule').value
                     })
                 });
 

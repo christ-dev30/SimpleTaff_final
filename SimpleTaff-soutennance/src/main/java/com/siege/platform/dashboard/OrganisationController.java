@@ -170,6 +170,21 @@ public class OrganisationController {
         return ResponseEntity.ok(Map.of("message", "Coordonnateur supprimé."));
     }
 
+    @PutMapping("/coordonnateurs/{id}/password")
+    @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
+    public ResponseEntity<?> updateCoordonnateurPassword(@PathVariable("id") UUID id, @RequestBody Map<String, String> payload) {
+        Optional<Utilisateur> opt = utilisateurRepo.findById(id);
+        if (opt.isEmpty() || !(opt.get() instanceof Coordonnateur)) return ResponseEntity.notFound().build();
+        String newPassword = payload.get("motDePasse");
+        if (newPassword == null || newPassword.length() < 8) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Le mot de passe doit contenir au moins 8 caractères."));
+        }
+        Utilisateur user = opt.get();
+        user.setMotDePasseHash(passwordEncoder.encode(newPassword));
+        utilisateurRepo.save(user);
+        return ResponseEntity.ok(Map.of("message", "Mot de passe réinitialisé avec succès."));
+    }
+
     // ========================= EMPLOIS (CATALOGUE) =========================
 
     @GetMapping("/emplois")
@@ -195,9 +210,17 @@ public class OrganisationController {
     public ResponseEntity<?> createEmploi(@RequestBody Map<String, Object> payload, HttpServletRequest request) {
         try {
             Entreprise entreprise = getEntrepriseFromToken(request);
+            String libelle = (String) payload.get("libelle");
+
+            boolean exists = emploiRepo.findByEntrepriseId(entreprise.getId()).stream()
+                    .anyMatch(e -> e.getLibelle().equalsIgnoreCase(libelle));
+            if (exists) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Un emploi avec ce nom existe déjà pour cette entreprise."));
+            }
+
             Emploi emploi = new Emploi();
             emploi.setEntreprise(entreprise);
-            emploi.setLibelle((String) payload.get("libelle"));
+            emploi.setLibelle(libelle);
             emploi.setDescription((String) payload.get("description"));
             emploi.setCategorie((String) payload.get("categorie"));
             emploi.setCompetencesRequises((String) payload.get("competencesRequises"));
@@ -398,6 +421,21 @@ public class OrganisationController {
         if (opt.isEmpty()) return ResponseEntity.notFound().build();
         utilisateurRepo.deleteById(id);
         return ResponseEntity.ok(Map.of("message", "Employeur supprimé."));
+    }
+
+    @PutMapping("/employeurs/{id}/password")
+    @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
+    public ResponseEntity<?> updateEmployeurPassword(@PathVariable("id") UUID id, @RequestBody Map<String, String> payload) {
+        Optional<Utilisateur> opt = utilisateurRepo.findById(id);
+        if (opt.isEmpty() || !(opt.get() instanceof Employeur)) return ResponseEntity.notFound().build();
+        String newPassword = payload.get("motDePasse");
+        if (newPassword == null || newPassword.length() < 8) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Le mot de passe doit contenir au moins 8 caractères."));
+        }
+        Utilisateur user = opt.get();
+        user.setMotDePasseHash(passwordEncoder.encode(newPassword));
+        utilisateurRepo.save(user);
+        return ResponseEntity.ok(Map.of("message", "Mot de passe réinitialisé avec succès."));
     }
 
     // =================== HELPER ===================

@@ -157,7 +157,7 @@
                 const res = await fetch(`/api/invitations/verifier?token=${token}`);
                 const data = await res.json();
 
-                if (!data.valid) { showError(data.message || "Lien invalide."); return; }
+                if (!data.valid) { const msg = (data.message || "Lien invalide.") + " Veuillez contacter le support au +225 00 00 00 00 00."; showError(msg); return; }
 
                 // Populate form
                 document.getElementById('entrepriseNom').textContent = data.entreprise;

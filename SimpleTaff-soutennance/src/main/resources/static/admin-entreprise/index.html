@@ -2621,7 +2621,7 @@
                         <td class="p-2 font-bold">${c.nom} ${c.prenom}</td>
                         <td class="p-2 text-slate-500">${c.email}</td>
                         <td class="p-2"><span class="badge bg-slate-100 text-slate-600">${c.zoneNom || 'Non assigné'}</span></td>
-                        <td class="p-2"><button onclick="deleteCoord('${c.id}')" class="text-red-500 hover:underline">Supprimer</button></td>
+                        <td class="p-2 flex gap-2"><button onclick="resetCoordPassword('${c.id}')" class="text-sky-500 hover:underline">Réinit. MDP</button><button onclick="deleteCoord('${c.id}')" class="text-red-500 hover:underline">Supprimer</button></td>
                     </tr>`).join('') || '<tr><td colspan="4" class="p-3 text-center text-slate-400">Aucun coordonnateur.</td></tr>';
             } catch(e) {
                 console.error(e);
@@ -2641,6 +2641,19 @@
             try {
                 await apiFetch(`/organisation/coordonnateurs/${id}`, { method: 'DELETE' });
                 loadOrg();
+            } catch (e) { alert(e.message); }
+        };
+
+        window.resetCoordPassword = async function(id) {
+            const newPassword = prompt("Entrez le nouveau mot de passe (min 8 caractères):");
+            if (!newPassword) return;
+            if (newPassword.length < 8) { alert("Le mot de passe doit contenir au moins 8 caractères."); return; }
+            try {
+                await apiFetch(`/organisation/coordonnateurs/${id}/password`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ motDePasse: newPassword })
+                });
+                alert("Mot de passe réinitialisé avec succès.");
             } catch (e) { alert(e.message); }
         };
 
@@ -4209,7 +4222,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                         <td class="p-2 font-bold">${emp.nom} ${emp.prenom}</td>
                         <td class="p-2 text-slate-500">${emp.structureNom}</td>
                         <td class="p-2 text-slate-500">${emp.sites.join(', ') || '—'}</td>
-                        <td class="p-2"><button onclick="deleteEmployeur('${emp.id}')" class="text-red-500 hover:underline">Supprimer</button></td>
+                        <td class="p-2 flex gap-2"><button onclick="resetEmployeurPassword('${emp.id}')" class="text-sky-500 hover:underline">Réinit. MDP</button><button onclick="deleteEmployeur('${emp.id}')" class="text-red-500 hover:underline">Supprimer</button></td>
                     </tr>`).join('') || '<tr><td colspan="4" class="p-3 text-center text-slate-400">Aucun compte employeur.</td></tr>';
             } catch(e) {
                 console.error(e);
@@ -4237,6 +4250,19 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
             try {
                 await apiFetch(`/organisation/employeurs/${id}`, { method: 'DELETE' });
                 loadClients();
+            } catch (e) { alert(e.message); }
+        };
+
+        window.resetEmployeurPassword = async function(id) {
+            const newPassword = prompt("Entrez le nouveau mot de passe (min 8 caractères):");
+            if (!newPassword) return;
+            if (newPassword.length < 8) { alert("Le mot de passe doit contenir au moins 8 caractères."); return; }
+            try {
+                await apiFetch(`/organisation/employeurs/${id}/password`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ motDePasse: newPassword })
+                });
+                alert("Mot de passe réinitialisé avec succès.");
             } catch (e) { alert(e.message); }
         };
 
