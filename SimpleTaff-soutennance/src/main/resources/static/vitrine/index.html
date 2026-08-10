@@ -1,161 +1,299 @@
-<!DOCTYPE html>
-<html lang="fr">
+﻿<!DOCTYPE html>
+<html lang="fr" class="antialiased scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimpleTaff — Gérez votre main-d'œuvre temporaire</title>
+    <title>SimpleTaff ?" Le pointage rÇ¸inventÇ¸</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        onyx: '#18181b',
+                        pearl: '#fafafa',
+                        surface: '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        * { font-family: 'Inter', sans-serif; }
-        body { background-color: #fafafa; color: #0f172a; }
-        .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(24px); border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 10px 40px rgba(0,0,0,0.03); }
-        .card-hover { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease-out; transform-style: preserve-3d; perspective: 1000px; }
-        .card-hover:hover { transform: translateY(-8px) rotateX(2deg) rotateY(-2deg); box-shadow: 0 30px 60px rgba(0,0,0,0.06); }
-        .tag { background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.05); color: #475569; }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-        .float { animation: float 6s ease-in-out infinite; }
-        @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
-        .fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .delay-1 { animation-delay: 0.1s; opacity: 0; }
-        .delay-2 { animation-delay: 0.2s; opacity: 0; }
-        .delay-3 { animation-delay: 0.3s; opacity: 0; }
-        .btn-primary { background: #0f172a; color: white; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .btn-primary:hover { transform: scale(1.02); box-shadow: 0 15px 30px rgba(15, 23, 42, 0.15); }
-        .nav-link { transition: color 0.3s ease-out; }
+        /* Digital Velvet & Emil Kowalski Rules */
+        :root {
+            --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --smooth: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        body { background-color: var(--pearl); color: var(--onyx); }
+        h1, h2, h3, h4, .font-display { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.02em; }
+        
+        /* Premium Buttons */
+        .btn-onyx {
+            background: var(--onyx);
+            color: white;
+            transition: all 0.2s var(--smooth);
+            will-change: transform, box-shadow;
+        }
+        .btn-onyx:hover { transform: translateY(-1px); box-shadow: 0 12px 24px -8px rgba(24, 24, 27, 0.3); }
+        .btn-onyx:active { transform: scale(0.97); }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.2s var(--smooth);
+        }
+        .btn-glass:hover { background: rgba(255, 255, 255, 1); box-shadow: 0 8px 20px -6px rgba(0,0,0,0.05); }
+        .btn-glass:active { transform: scale(0.97); }
+
+        /* Bento Grid Cards (Impecable spacing & shadows) */
+        .bento-card {
+            background: var(--surface);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: 0 4px 24px -8px rgba(0,0,0,0.03);
+            transition: transform 0.4s var(--spring), box-shadow 0.4s var(--smooth);
+            overflow: hidden;
+            position: relative;
+        }
+        .bento-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        /* Nav Glass */
+        .nav-glass {
+            background: rgba(250, 250, 250, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+        }
+
+        /* 3D Parallax Image */
+        .parallax-img {
+            transition: transform 0.6s var(--spring);
+            transform-style: preserve-3d;
+        }
+        .bento-card:hover .parallax-img {
+            transform: scale(1.05) rotate(1deg);
+        }
+
+        /* Glowing background for hero */
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, rgba(250,250,250,0) 70%);
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            pointer-events: none;
+        }
     </style>
 </head>
-<body class="min-h-screen selection:bg-slate-200">
+<body class="bg-pearl relative">
 
-    <!-- NAV -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-200/60">
-        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-xl btn-primary flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+    <div class="hero-glow"></div>
+
+    <!-- NAVBAR -->
+    <nav class="fixed top-0 left-0 right-0 z-50 nav-glass">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-onyx rounded-lg flex items-center justify-center">
+                    <span class="text-white font-display font-bold text-lg">S</span>
                 </div>
-                <span class="font-extrabold tracking-tight text-lg">SimpleTaff</span>
+                <span class="font-display font-bold text-xl tracking-tight">SimpleTaff</span>
             </div>
-            <div class="hidden md:flex items-center gap-10">
-                <a href="#features" class="nav-link text-slate-500 hover:text-slate-900 text-sm font-semibold">Le Produit</a>
-                <a href="#how" class="nav-link text-slate-500 hover:text-slate-900 text-sm font-semibold">Concept</a>
-                <a href="#pricing" class="nav-link text-slate-500 hover:text-slate-900 text-sm font-semibold">Tarifs</a>
-                <a href="/vitrine/login.html" class="btn-primary px-6 py-2.5 rounded-xl text-sm font-bold shadow-sm">Connexion</a>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-500">
+                <a href="#produit" class="hover:text-onyx transition-colors">Produit</a>
+                <a href="#tarifs" class="hover:text-onyx transition-colors">Tarifs</a>
+                <a href="/vitrine/login.html" class="btn-onyx px-5 py-2.5 rounded-xl font-medium">Se connecter</a>
             </div>
-            <div class="md:hidden flex items-center">
-                <button id="mobile-menu-toggle" class="text-slate-900 hover:text-slate-600 focus:outline-none">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                </button>
-            </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden glass border-b border-slate-200 absolute top-16 left-0 w-full flex-col items-center gap-6 py-8 shadow-2xl bg-white/95">
-            <a href="#features" class="mobile-link text-base font-bold text-slate-600 hover:text-slate-900">Le Produit</a>
-            <a href="#how" class="mobile-link text-base font-bold text-slate-600 hover:text-slate-900">Concept</a>
-            <a href="#pricing" class="mobile-link text-base font-bold text-slate-600 hover:text-slate-900">Tarifs</a>
-            <a href="/vitrine/login.html" class="mobile-link btn-primary px-6 py-3 rounded-xl text-base font-bold shadow-md w-11/12 text-center mt-2">Connexion</a>
         </div>
     </nav>
 
-    <!-- HERO -->
-    <section class="pt-40 pb-16 px-6 text-center max-w-5xl mx-auto">
-        <div class="tag inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold mb-8 fade-up shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-slate-400 inline-block"></span>
-            Le futur de la gestion RH temporaire
-        </div>
-        <h1 class="text-6xl md:text-[5.5rem] font-extrabold leading-[1.05] mb-8 fade-up delay-1 tracking-tight">
-            L'excellence pour votre<br>
-            <span class="text-slate-400">main-d'œuvre.</span>
-        </h1>
-        <p class="text-slate-500 text-xl max-w-[55ch] mx-auto mb-12 fade-up delay-2 leading-relaxed font-medium">
-            Déployez, pointez et gérez vos agents avec une précision absolue. Une interface de luxe conçue pour les PME qui exigent la perfection.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-5 justify-center fade-up delay-3">
-            <a href="/vitrine/login.html" class="btn-primary px-8 py-4 rounded-2xl font-bold text-sm">Démarrer gratuitement</a>
-            <a href="#how" class="bg-white border border-slate-200 shadow-sm px-8 py-4 rounded-2xl font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors">Découvrir le Concept</a>
-        </div>
+    <!-- HERO SECTION -->
+    <section class="pt-40 pb-20 px-6">
+        <div class="max-w-5xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm text-xs font-semibold text-slate-600 mb-8">
+                <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                Nouveau standard du pointage mobile
+            </div>
+            <h1 class="font-display text-5xl md:text-7xl font-extrabold leading-[1.1] mb-6">
+                Le pointage rÇ¸inventÇ¸.<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-onyx to-slate-500">Simple et invisible.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
+                Ç¸liminez la paperasse et les erreurs. Transformez le smartphone de vos agents en une pointeuse NFC ultra-fiable et instantanÇ¸e.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/vitrine/login.html" class="btn-onyx px-8 py-4 rounded-xl font-medium text-lg w-full sm:w-auto">DÇ¸marrer l'expÇ¸rience</a>
+                <a href="#produit" class="btn-glass px-8 py-4 rounded-xl font-medium text-lg text-onyx w-full sm:w-auto">DÇ¸couvrir le produit</a>
+            </div>
 
-        <!-- HERO IMAGE 3D -->
-        <div class="mt-24 relative rounded-[2.5rem] overflow-hidden float fade-up delay-3 border border-slate-200/60 shadow-[0_40px_100px_rgba(0,0,0,0.08)]">
-            <img src="/assets/hero_3d.png" alt="SaaS 3D Dashboard" class="w-full h-auto object-cover" style="max-height: 600px;" />
+            <div class="mt-20 relative max-w-4xl mx-auto bento-card p-4 bg-white/50 backdrop-blur-3xl">
+                <img src="/assets/hero_3d.png" alt="Dashboard SimpleTaff" class="w-full h-auto rounded-xl shadow-sm border border-slate-100 parallax-img">
+            </div>
         </div>
     </section>
 
-    <!-- FEATURES -->
-    <section id="features" class="py-32 px-6 max-w-6xl mx-auto">
-        <div class="text-center mb-24">
-            <h2 class="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">Un design sans compromis.</h2>
-            <p class="text-slate-500 mx-auto max-w-[65ch] text-lg font-medium">Pensé dans les moindres détails pour offrir une expérience fluide, rapide et esthétiquement parfaite à vos coordonnateurs.</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="glass rounded-[2rem] p-10 card-hover flex flex-col justify-between" style="min-height: 400px;">
-                <div>
-                    <h3 class="text-2xl font-bold mb-4">Gestion des Agents</h3>
-                    <p class="text-slate-500 text-base leading-relaxed max-w-[45ch]">Fiches complètes, pièces justificatives, et compétences. Tout est centralisé en un clic avec une interface épurée.</p>
-                </div>
-                <img src="/assets/feat_hr.png" alt="HR 3D" class="w-48 h-48 object-contain self-end drop-shadow-2xl" />
+    <!-- LOGOS -->
+    <section class="py-10 border-y border-slate-200/50 bg-white/30">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Ils gèrent leurs Ç¸quipes avec SimpleTaff</p>
+            <div class="flex flex-wrap justify-center gap-12 opacity-40 grayscale">
+                <!-- Placeholder SVG Logos for premium feel -->
+                <svg class="h-8" viewBox="0 0 100 30" fill="currentColor"><path d="M10 20h20v-4H14v-2h16v-4H14v-2h16V4H10z"/></svg>
+                <svg class="h-8" viewBox="0 0 100 30" fill="currentColor"><circle cx="20" cy="15" r="10"/><path d="M40 5h10v20H40z"/></svg>
+                <svg class="h-8" viewBox="0 0 100 30" fill="currentColor"><path d="M10 25L20 5l10 20h-4l-6-12-6 12z"/></svg>
             </div>
-            
-            <div class="glass rounded-[2rem] p-10 card-hover flex flex-col justify-between" style="min-height: 400px;">
-                <div>
-                    <h3 class="text-2xl font-bold mb-4">Pointage Nouvelle Génération</h3>
-                    <p class="text-slate-500 text-base leading-relaxed max-w-[45ch]">Validation des présences en temps réel. La technologie rencontre la simplicité grâce à l'interface employeur dédiée.</p>
+        </div>
+    </section>
+
+    <!-- BENTO GRID FEATURES -->
+    <section id="produit" class="py-32 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-16">
+                <h2 class="font-display text-4xl font-extrabold mb-4">Une architecture <br>pensÇ¸e pour le terrain.</h2>
+                <p class="text-slate-500 text-lg">Chaque dÇ¸tail a Ç¸tÇ¸ poli pour garantir une fiabilitÇ¸ absolue.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Bento 1 : Large (NFC) -->
+                <div class="bento-card md:col-span-2 p-10 flex flex-col justify-between bg-gradient-to-br from-white to-slate-50">
+                    <div class="max-w-sm mb-10 z-10">
+                        <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 text-indigo-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h3 class="font-display text-2xl font-bold mb-3">Technologie NFC InstantanÇ¸e</h3>
+                        <p class="text-slate-500 leading-relaxed">Approchez simplement le tÇ¸lÇ¸phone du badge. Le pointage est enregistrÇ¸ et gÇ¸olocalisÇ¸ en 300 millisecondes.</p>
+                    </div>
+                    <div class="relative h-48 -mr-10 -mb-10">
+                        <img src="/assets/feat_nfc.png" alt="NFC Scan" class="absolute right-0 bottom-0 h-64 object-cover parallax-img drop-shadow-2xl">
+                    </div>
                 </div>
-                <img src="/assets/feat_nfc.png" alt="NFC 3D" class="w-48 h-48 object-contain self-end drop-shadow-2xl" />
+
+                <!-- Bento 2 : Small (Coordination) -->
+                <div class="bento-card p-10 flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center mb-6 text-rose-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </div>
+                        <h3 class="font-display text-xl font-bold mb-3">Gestion de Flotte</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed">Affectez vos agents sur le terrain en un glissement de doigt. Vos coordonnateurs ont le contrle total.</p>
+                    </div>
+                </div>
+
+                <!-- Bento 3 : Small (Dossiers RH) -->
+                <div class="bento-card p-10">
+                    <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6 text-emerald-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3">Dossiers RH DigitalisÇ¸s</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">Finis les classeurs. Toutes les pièces d'identitÇ¸ et contrats sont stockÇ¸s dans le cloud sÇ¸curisÇ¸.</p>
+                    <img src="/assets/feat_hr.png" alt="HR Files" class="w-full h-32 object-cover rounded-xl parallax-img shadow-sm border border-slate-100">
+                </div>
+
+                <!-- Bento 4 : Large (Dashboard) -->
+                <div class="bento-card md:col-span-2 p-10 flex flex-col justify-center bg-onyx text-white">
+                    <h3 class="font-display text-3xl font-bold mb-4">La vÇ¸ritÇ¸ en temps rÇ¸el.</h3>
+                    <p class="text-slate-400 text-lg max-w-md leading-relaxed mb-8">Un tableau de bord conu pour les dÇ¸cideurs. Ne demandez plus  vos Ç¸quipes où elles sont, regardez simplement votre Ç¸cran.</p>
+                    <a href="/vitrine/login.html" class="inline-flex w-max items-center gap-2 bg-white text-onyx px-6 py-3 rounded-xl font-semibold hover:bg-slate-100 transition-colors">
+                        AccÇ¸der au Dashboard
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+
             </div>
         </div>
     </section>
 
     <!-- PRICING -->
-    <section id="pricing" class="py-32 px-6 max-w-5xl mx-auto">
-        <div class="text-center mb-20">
-            <h2 class="text-4xl font-extrabold mb-6 tracking-tight">Investissez dans l'excellence.</h2>
-            <p class="text-slate-500 text-lg">Aucun frais caché. Une transparence absolue.</p>
+    <section id="tarifs" class="py-32 px-6 border-t border-slate-200/50">
+        <div class="max-w-4xl mx-auto text-center mb-16">
+            <h2 class="font-display text-4xl font-extrabold mb-4">Un modle transparent.</h2>
+            <p class="text-slate-500 text-lg">Conu pour grandir avec vous, sans frais cachÇ¸s.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div class="glass rounded-[2.5rem] p-12 card-hover">
-                <p class="text-slate-400 font-bold tracking-widest uppercase text-xs mb-4">Starter</p>
-                <p class="text-5xl font-extrabold mb-2 tracking-tight">49k <span class="text-lg font-medium text-slate-400">FCFA/mo</span></p>
-                <p class="text-slate-400 text-sm mb-10 font-medium">Jusqu'à 50 agents gérés.</p>
-                <ul class="space-y-4 text-slate-600 font-medium mb-12">
-                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-slate-900" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Gestion agents & postes</li>
-                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-slate-900" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Pointage QR Code</li>
-                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-slate-900" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> 1 coordonnateur inclus</li>
-                </ul>
-                <a href="/vitrine/contact-souscription.html?plan=Starter" class="block text-center border-2 border-slate-200 rounded-2xl py-4 font-bold hover:bg-slate-50 transition-colors">Choisir Starter</a>
-            </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             
-            <div class="rounded-[2.5rem] p-12 card-hover relative bg-slate-900 text-white shadow-2xl">
-                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-md">Recommandé</div>
-                <p class="text-slate-400 font-bold tracking-widest uppercase text-xs mb-4">Pro</p>
-                <p class="text-5xl font-extrabold mb-2 tracking-tight text-white">120k <span class="text-lg font-medium text-slate-400">FCFA/mo</span></p>
-                <p class="text-slate-400 text-sm mb-10 font-medium">Jusqu'à 150 agents gérés.</p>
-                <ul class="space-y-4 text-slate-300 font-medium mb-12">
-                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Tout Starter inclus</li>
-                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Calcul de paie <span class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-[10px] ml-2 font-bold tracking-widest uppercase">En cours de développement</span></li>
-                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> 4 coordonnateurs</li>
+            <!-- Starter -->
+            <div class="bento-card p-10 flex flex-col relative">
+                <h3 class="font-display text-2xl font-bold mb-2">Starter</h3>
+                <p class="text-slate-500 text-sm mb-8">Pour les agences en pleine croissance.</p>
+                <div class="text-5xl font-extrabold font-display mb-8">25 000 <span class="text-lg text-slate-400 font-medium">FCFA/mois</span></div>
+                
+                <ul class="space-y-4 mb-10 flex-1">
+                    <li class="flex items-center gap-3 text-sm font-medium text-slate-600">
+                        <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        Jusqu'à 50 agents gÇ¸rÇ¸s
+                    </li>
+                    <li class="flex items-center gap-3 text-sm font-medium text-slate-600">
+                        <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        Pointages illimitÇ¸s
+                    </li>
+                    <li class="flex items-center gap-3 text-sm font-medium text-slate-600">
+                        <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        1 Coordonnateur inclus
+                    </li>
                 </ul>
-                <a href="/vitrine/contact-souscription.html?plan=Pro" class="block text-center bg-white text-slate-900 rounded-2xl py-4 font-bold hover:bg-slate-100 transition-colors shadow-lg">Choisir Pro</a>
+                <a href="/vitrine/contact-souscription.html?plan=Starter" class="btn-glass w-full text-center py-3 rounded-xl font-semibold">Choisir Starter</a>
             </div>
+
+            <!-- Pro -->
+            <div class="bento-card p-10 flex flex-col bg-onyx text-white border-0 ring-1 ring-white/10 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
+                <div class="inline-flex justify-between items-center mb-2">
+                    <h3 class="font-display text-2xl font-bold">Pro</h3>
+                    <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 text-xs font-bold rounded-full uppercase tracking-wider">Populaire</span>
+                </div>
+                <p class="text-slate-400 text-sm mb-8">La solution complète de dÇ¸ploiement.</p>
+                <div class="text-5xl font-extrabold font-display mb-8">50 000 <span class="text-lg text-slate-400 font-medium">FCFA/mois</span></div>
+                
+                <ul class="space-y-4 mb-10 flex-1">
+                    <li class="flex items-center gap-3 text-sm font-medium text-slate-300">
+                        <svg class="w-5 h-5 text-indigo-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        Jusqu'à 150 agents gÇ¸rÇ¸s
+                    </li>
+                    <li class="flex items-center gap-3 text-sm font-medium text-slate-300">
+                        <svg class="w-5 h-5 text-indigo-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        4 Coordonnateurs inclus
+                    </li>
+                    <li class="flex items-center gap-3 text-sm font-medium text-slate-300">
+                        <svg class="w-5 h-5 text-indigo-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                        Calcul de paie <span class="ml-2 text-[10px] uppercase tracking-widest font-bold bg-white/10 px-2 py-0.5 rounded text-white">En cours de dÇ¸veloppement</span>
+                    </li>
+                </ul>
+                <a href="/vitrine/contact-souscription.html?plan=Pro" class="btn-glass w-full text-center py-3 rounded-xl font-semibold !bg-white !text-onyx hover:!bg-slate-100">Choisir Pro</a>
+            </div>
+
         </div>
     </section>
 
-    <footer class="border-t border-slate-200 mt-20 py-12 text-center text-slate-500 font-medium text-sm">
-        <p>&copy; 2026 SimpleTaff. L'art de la gestion RH.</p>
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200/50 py-12 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-onyx rounded flex items-center justify-center">
+                    <span class="text-white font-display font-bold text-xs">S</span>
+                </div>
+                <span class="font-display font-bold text-lg">SimpleTaff</span>
+            </div>
+            <div class="text-sm text-slate-400 font-medium">
+                Â© 2026 SimpleTaff. Studio Design Premium.
+            </div>
+        </div>
     </footer>
 
-    <script>
-        document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-            menu.classList.toggle('flex');
-        });
-        document.querySelectorAll('.mobile-link').forEach(link => {
-            link.addEventListener('click', () => {
-                const menu = document.getElementById('mobile-menu');
-                menu.classList.add('hidden');
-                menu.classList.remove('flex');
-            });
-        });
-    </script>
 </body>
 </html>
+
