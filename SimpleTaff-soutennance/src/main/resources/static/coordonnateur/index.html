@@ -1311,7 +1311,7 @@
                     const approvedDemands = data.filter(d => d.statut === 'APPROUVE' || d.statut === 'APPROUVEE' || d.statut === 'ACCORDE');
                     if (tbodyApproved) {
                         if (approvedDemands.length === 0) {
-                            tbodyApproved.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400">Aucune demande acceptée pour le moment.</td></tr>';
+                            tbodyApproved.innerHTML = '<tr><td colspan="7" class="p-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucune demande acceptée pour le moment.</div></td></tr>';
                         } else {
                             tbodyApproved.innerHTML = approvedDemands.map(d => {
                                 const coord = d.coordonnateurNom || '—';
@@ -1344,7 +1344,7 @@
                 if (countElem) countElem.textContent = `${materiels.length} matériel(s)`;
                 if (tbodyInventory) {
                     if (materiels.length === 0) {
-                        tbodyInventory.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400">Aucun matériel dans l\'inventaire de l\'entreprise.</td></tr>';
+                        tbodyInventory.innerHTML = '<tr><td colspan="7" class="p-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucun matériel dans l\'inventaire.</div></td></tr>';
                     } else {
                         tbodyInventory.innerHTML = materiels.map(m => {
                             let statusBadge = '';
@@ -1477,7 +1477,7 @@
             try {
                 const data = await apiFetch('/conges');
                 if (!data || data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">Aucune demande enregistrée.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" class="p-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucune demande enregistrée.</div></td></tr>';
                     return;
                 }
                 const badgeMap = {
@@ -1537,7 +1537,7 @@
                 const affectations = await apiFetch('/coordonnateur/affectations') || [];
                 if (tbodyAffRec) {
                     if (affectations.length === 0) {
-                        tbodyAffRec.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400 font-medium">Aucune affectation active.</td></tr>';
+                        tbodyAffRec.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucune affectation active.</div></td></tr>';
                     } else {
                         tbodyAffRec.innerHTML = affectations.slice(0, 6).map(a => {
                             const agentNom = a.agentNom || 'Agent Inconnu';
@@ -1579,7 +1579,7 @@
                 const pointages = await apiFetch(`/coordonnateur/pointages?date=${todayStr}`) || [];
                 if (tbodyPtRec) {
                     if (pointages.length === 0) {
-                        tbodyPtRec.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400 font-medium">Aucun pointage enregistré aujourd\'hui.</td></tr>';
+                        tbodyPtRec.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucun pointage enregistré aujourd\'hui.</div></td></tr>';
                     } else {
                         tbodyPtRec.innerHTML = pointages.slice(0, 6).map(p => {
                             const isEntree = (p.typePointage || '').toUpperCase() === 'ENTREE';

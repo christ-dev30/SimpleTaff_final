@@ -5030,7 +5030,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
         function renderPointageRows(data) {
             const tbody = document.getElementById('pointagesTableBody');
             if (!data || data.length === 0) {
-                safeRenderTbody(tbody, '<tr><td colspan="9" class="p-4 text-center text-slate-400">Aucun pointage pour cette date.</td></tr>');
+                safeRenderTbody(tbody, '<tr><td colspan="9" class="p-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucun pointage pour cette date.</div></td></tr>');
                 return;
             }
             safeRenderTbody(tbody, data.map(p => {
@@ -5119,7 +5119,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 const dates = await apiFetch('/pointages/dates') || [];
                 const tbody = document.getElementById('pointageDatesBody');
                 if (!dates.length) {
-                    safeRenderTbody(tbody, '<tr><td colspan="3" class="p-4 text-center text-slate-400">Aucun historique disponible.</td></tr>');
+                    safeRenderTbody(tbody, '<tr><td colspan="3" class="p-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucun historique disponible.</div></td></tr>');
                     return;
                 }
                 safeRenderTbody(tbody, dates.map(d => `
@@ -5198,7 +5198,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 ` : '';
 
                 safeRenderTbody(document.getElementById('presencesTableBody'),
-                    (rowsHtml || '<tr><td colspan="8" class="p-3 text-center text-slate-400">Aucune présence.</td></tr>') + totalRowHtml
+                    (rowsHtml || '<tr><td colspan="8" class="p-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucune présence.</div></td></tr>') + totalRowHtml
                 );
             } catch (e) {
                 console.error(e);
@@ -5438,7 +5438,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                                     <td class="p-3">${statBadge}</td>
                                 </tr>
                             `;
-                        }).join('') || '<tr><td colspan="8" class="p-3 text-center text-slate-400">Aucun historique d\'affectation.</td></tr>'
+                        }).join('') || '<tr><td colspan="8" class="p-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucun historique d\'affectation.</div></td></tr>'
                     );
                 } catch (e) {
                     console.error("Erreur historique matériel:", e);

@@ -535,7 +535,7 @@
             try {
                 const agents = await apiFetch('/employeur/personnel/qr');
                 if (!agents || agents.length === 0) {
-                    grid.innerHTML = `<div class="glass p-8 rounded-2xl text-center text-slate-400 text-sm col-span-full">Aucun agent assigné à vos sites pour le moment.</div>`;
+                    grid.innerHTML = `<div class="glass p-8 rounded-2xl text-center text-slate-400 text-sm col-span-full flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-24 h-24 mb-3 opacity-60 mix-blend-multiply" alt="Vide"/>Aucun agent assigné à vos sites pour le moment.</div>`;
                     return;
                 }
                 grid.innerHTML = '';
@@ -823,12 +823,12 @@
                 // Render Personnel Table
                 const tbody = document.getElementById('personnelTableBody');
                 if (!agents || agents.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Aucun agent assigné sur votre site.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucun agent assigné sur votre site.</div></td></tr>';
                 } else {
                     tbody.innerHTML = agents.map(a => {
                         const initiales = (a.agentNom || 'AG').split(' ').map(p => p[0]).join('').toUpperCase().slice(0, 2);
                         return `
-                            <tr class="hover:bg-slate-50/60 transition-colors">
+                            <tr class="hover:bg-slate-50 transition-all duration-300 ease-out">
                                 <td class="px-5 py-3.5 flex items-center gap-3">
                                     <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-sky-500 text-white font-extrabold text-xs flex items-center justify-center shadow-sm">
                                         ${initiales}
@@ -877,10 +877,10 @@
                 const streamTbody = document.getElementById('overviewPointagesStream');
                 if (streamTbody) {
                     if (!pointages || pointages.length === 0) {
-                        streamTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Aucun pointage enregistré aujourd\'hui.</td></tr>';
+                        streamTbody.innerHTML = '<tr><td colspan="4" class="px-6 py-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucun pointage enregistré aujourd\'hui.</div></td></tr>';
                     } else {
                         streamTbody.innerHTML = pointages.slice(0, 5).map(p => `
-                            <tr class="hover:bg-slate-50/60 transition-colors">
+                            <tr class="hover:bg-slate-50 transition-all duration-300 ease-out">
                                 <td class="px-5 py-3.5 font-bold text-slate-800">${p.agent_nom || 'Agent'}</td>
                                 <td class="px-5 py-3.5 text-emerald-600 font-bold">${formatTime(p.heure_entree)}</td>
                                 <td class="px-5 py-3.5 text-rose-600 font-bold">${formatTime(p.heure_sortie)}</td>
@@ -942,7 +942,7 @@
                         document.getElementById('statOverviewDernier').textContent = pointages[0].agent_nom + (pointages[0].heure_sortie ? " (Sortie)" : " (Entree)");
                     }
                 } else {
-                    tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-slate-400">Aucun pointage le ${formatDateLabel(selectedDate)}.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-12 text-center text-slate-400"><div class="flex flex-col items-center justify-center"><img src="/assets/empty_state.png" class="w-32 h-32 mb-4 opacity-70 mix-blend-multiply" alt="Vide"/>Aucun pointage le ${formatDateLabel(selectedDate)}.</div></td></tr>`;
                 }
             } catch(e) {
                 console.error("Error loading pointages log", e);
@@ -963,7 +963,7 @@
                 const selectedDate = document.getElementById('employeurPointageDate')?.value;
                 container.innerHTML = dates.map(d => `
                     <button type="button" onclick="selectEmployeurPointageDate('${d.date}')"
-                        class="px-3 py-2 rounded-xl font-bold transition-colors ${d.date === selectedDate ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 hover:bg-indigo-50 hover:text-indigo-700'}">
+                        class="px-3 py-2 rounded-xl font-bold transition-all duration-300 ease-out ${d.date === selectedDate ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 hover:bg-indigo-50 hover:text-indigo-700'}">
                         ${formatDateLabel(d.date)} (${d.total})
                     </button>
                 `).join('');

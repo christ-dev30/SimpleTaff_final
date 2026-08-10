@@ -8,22 +8,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(255,255,255,0.06); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
-        .hero-gradient { background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,0.3) 0%, transparent 70%), #080810; }
-        .card-hover { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(99,102,241,0.2); }
-        .tag { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-        .float { animation: float 5s ease-in-out infinite; }
+        .glass { background: rgba(255,255,255,0.04); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
+        .hero-gradient { background: #0f172a; }
+        .card-hover { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease-out; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .tag { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        .float { animation: float 6s ease-in-out infinite; }
         @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-        .fade-up { animation: fadeUp 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        .fade-up { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .delay-1 { animation-delay: 0.1s; opacity: 0; }
         .delay-2 { animation-delay: 0.2s; opacity: 0; }
         .delay-3 { animation-delay: 0.3s; opacity: 0; }
-        .btn-primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1); }
-        .btn-primary:hover { transform: scale(1.04); box-shadow: 0 8px 30px rgba(99,102,241,0.5); }
-        .nav-link { transition: color 0.2s ease; }
-        .glow { box-shadow: 0 0 80px rgba(99,102,241,0.25); }
+        .btn-primary { background: #3b82f6; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .btn-primary:hover { transform: scale(1.02); box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4); background: #2563eb; }
+        .nav-link { transition: color 0.3s ease-out; }
+        .glow { box-shadow: 0 0 80px rgba(59, 130, 246, 0.15); }
     </style>
 </head>
 <body class="hero-gradient text-white min-h-screen">
@@ -71,7 +71,7 @@
             <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">main-d'œuvre temporaire</span><br>
             sans friction.
         </h1>
-        <p class="text-white/50 text-lg max-w-2xl mx-auto mb-10 fade-up delay-2" style="max-width:60ch">
+        <p class="text-white/60 text-lg max-w-[65ch] mx-auto mb-10 fade-up delay-2 leading-relaxed">
             SimpleTaff centralise le déploiement d'agents, la gestion des postes, le pointage QR et la paie — en un seul outil simple et sécurisé.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center fade-up delay-3">
@@ -79,49 +79,10 @@
             <a href="#how" class="glass px-7 py-3.5 rounded-xl font-semibold text-sm text-white/70 hover:text-white nav-link">Voir la démo</a>
         </div>
 
-        <!-- DASHBOARD PREVIEW -->
-        <div class="mt-20 relative glow rounded-2xl overflow-hidden float">
-            <div class="glass rounded-2xl p-6 border border-white/10">
-                <div class="flex items-center gap-2 mb-4">
-                    <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
-                    <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
-                    <div class="w-3 h-3 rounded-full bg-green-500/60"></div>
-                </div>
-                <div class="grid grid-cols-3 gap-4 mb-6">
-                    <div class="glass rounded-xl p-4 text-left">
-                        <p class="text-white/40 text-xs mb-1">Agents déployés</p>
-                        <p class="text-2xl font-bold">247</p>
-                        <p class="text-green-400 text-xs mt-1">↑ +12 ce mois</p>
-                    </div>
-                    <div class="glass rounded-xl p-4 text-left">
-                        <p class="text-white/40 text-xs mb-1">Postes ouverts</p>
-                        <p class="text-2xl font-bold">38</p>
-                        <p class="text-indigo-400 text-xs mt-1">Sur 5 sites actifs</p>
-                    </div>
-                    <div class="glass rounded-xl p-4 text-left">
-                        <p class="text-white/40 text-xs mb-1">CA ce mois</p>
-                        <p class="text-2xl font-bold">14.5M</p>
-                        <p class="text-white/40 text-xs mt-1">FCFA</p>
-                    </div>
-                </div>
-                <div class="glass rounded-xl p-4 text-left">
-                    <p class="text-white/40 text-xs mb-3">Affectations récentes</p>
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm">Junior Ehui → Port de Bolloré</span>
-                            <span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Active</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm">Marc Konan → Usine Nord</span>
-                            <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full">Remplacement</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm">Aya Bamba → Site Cocody</span>
-                            <span class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">En attente</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- HERO IMAGE -->
+        <div class="mt-20 relative glow rounded-3xl overflow-hidden float fade-up delay-3">
+            <img src="/assets/hero_abstract.png" alt="SimpleTaff Management" class="w-full h-auto rounded-3xl opacity-90 object-cover" style="max-height: 500px;" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] to-transparent pointer-events-none"></div>
         </div>
     </section>
 
@@ -129,7 +90,7 @@
     <section id="features" class="py-24 px-6 max-w-6xl mx-auto">
         <div class="text-center mb-16">
             <h2 class="text-3xl font-bold mb-4">Tout ce dont vous avez besoin, rien de superflu</h2>
-            <p class="text-white/40 max-w-xl mx-auto" style="max-width:55ch">Chaque fonctionnalité a été pensée pour les réalités opérationnelles des agences de placement ivoiriennes.</p>
+            <p class="text-white/60 mx-auto max-w-[65ch]">Chaque fonctionnalité a été pensée pour les réalités opérationnelles des agences de placement ivoiriennes.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="glass rounded-2xl p-6 card-hover">
