@@ -134,17 +134,17 @@ public class OrganisationController {
     public ResponseEntity<?> createCoordonnateur(@RequestBody Map<String, Object> payload, HttpServletRequest request) {
         try {
             Entreprise entreprise = getEntrepriseFromToken(request);
+
+            if (entreprise.getFormuleAbonnement() == com.siege.platform.common.enums.FormuleAbonnement.PRO) {
+                long coordCount = utilisateurRepo.findCoordsByEntrepriseId(entreprise.getId()).size();
+                if (coordCount >= 4) {
+                    return ResponseEntity.badRequest().body(Map.of("message", "La formule PRO est limitée à 4 coordonnateurs maximum."));
+                }
+            }
+
             String email = (String) payload.get("email");
             if (utilisateurRepo.findByEmail(email).isPresent()) {
                 return ResponseEntity.badRequest().body(Map.of("message", "Un compte avec cet email existe déjà."));
-            }
-
-            long currentCoords = utilisateurRepo.countCoordsByEntrepriseId(entreprise.getId());
-            if (entreprise.getFormuleAbonnement() == com.siege.platform.common.enums.FormuleAbonnement.STARTER && currentCoords >= 1) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Limite d'un (1) coordonnateur atteinte pour la formule Starter."));
-            }
-            if (entreprise.getFormuleAbonnement() == com.siege.platform.common.enums.FormuleAbonnement.PRO && currentCoords >= 4) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Limite de quatre (4) coordonnateurs atteinte pour la formule Pro."));
             }
 
             Coordonnateur coord = new Coordonnateur();

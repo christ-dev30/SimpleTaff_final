@@ -58,16 +58,14 @@ public class AgentTerrainService {
         Zone zone = zoneRepository.findById(zoneId)
                 .orElseThrow(() -> new IllegalArgumentException("Zone introuvable."));
 
-        AgentTerrain agent = new AgentTerrain();
-        
-        long currentAgents = agentTerrainRepository.countByEntrepriseId(user.getEntreprise().getId());
-        if (user.getEntreprise().getFormuleAbonnement() == com.siege.platform.common.enums.FormuleAbonnement.STARTER && currentAgents >= 50) {
-            throw new IllegalArgumentException("Limite de 50 agents atteinte pour la formule Starter.");
-        }
-        if (user.getEntreprise().getFormuleAbonnement() == com.siege.platform.common.enums.FormuleAbonnement.PRO && currentAgents >= 150) {
-            throw new IllegalArgumentException("Limite de 150 agents atteinte pour la formule Pro.");
+        if (user.getEntreprise().getFormuleAbonnement() == com.siege.platform.common.enums.FormuleAbonnement.STARTER) {
+            long currentAgents = agentTerrainRepository.countByEntrepriseId(user.getEntreprise().getId());
+            if (currentAgents >= 50) {
+                throw new IllegalArgumentException("La formule STARTER est limitée à 50 agents maximum.");
+            }
         }
 
+        AgentTerrain agent = new AgentTerrain();
         agent.setEntreprise(user.getEntreprise());
         agent.setZone(zone);
         agent.setNom(nom);

@@ -1,298 +1,501 @@
 <!DOCTYPE html>
-<html lang="fr" class="antialiased scroll-smooth">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimpleTaff - Le pointage réinventé</title>
+    <title>SimpleTaff — Gérez votre main-d'œuvre temporaire</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Plus Jakarta Sans', 'sans-serif'],
-                    },
-                    colors: {
-                        onyx: '#18181b',
-                        pearl: '#fafafa',
-                        surface: '#ffffff',
-                    }
-                }
-            }
-        }
-    </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Digital Velvet & Emil Kowalski Rules */
-        :root {
-            --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            --smooth: cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        body { background-color: var(--pearl); color: var(--onyx); }
-        h1, h2, h3, h4, .font-display { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.02em; }
-        
-        /* Premium Buttons */
-        .btn-onyx {
-            background: var(--onyx);
-            color: white;
-            transition: all 0.2s var(--smooth);
-            will-change: transform, box-shadow;
-        }
-        .btn-onyx:hover { transform: translateY(-1px); box-shadow: 0 12px 24px -8px rgba(24, 24, 27, 0.3); }
-        .btn-onyx:active { transform: scale(0.97); }
-
-        .btn-glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0,0,0,0.05);
-            transition: all 0.2s var(--smooth);
-        }
-        .btn-glass:hover { background: rgba(255, 255, 255, 1); box-shadow: 0 8px 20px -6px rgba(0,0,0,0.05); }
-        .btn-glass:active { transform: scale(0.97); }
-
-        /* Bento Grid Cards (Impecable spacing & shadows) */
-        .bento-card {
-            background: var(--surface);
-            border-radius: 1.5rem;
-            border: 1px solid rgba(0,0,0,0.03);
-            box-shadow: 0 4px 24px -8px rgba(0,0,0,0.03);
-            transition: transform 0.4s var(--spring), box-shadow 0.4s var(--smooth);
-            overflow: hidden;
-            position: relative;
-        }
-        .bento-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.06);
-        }
-
-        /* Nav Glass */
-        .nav-glass {
-            background: rgba(250, 250, 250, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0,0,0,0.03);
-        }
-
-        /* 3D Parallax Image */
-        .parallax-img {
-            transition: transform 0.6s var(--spring);
-            transform-style: preserve-3d;
-        }
-        .bento-card:hover .parallax-img {
-            transform: scale(1.05) rotate(1deg);
-        }
-
-        /* Glowing background for hero */
-        .hero-glow {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, rgba(250,250,250,0) 70%);
-            top: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: -1;
-            pointer-events: none;
-        }
+        * { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255,255,255,0.06); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .hero-gradient { background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,0.3) 0%, transparent 70%), #080810; }
+        .card-hover { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(99,102,241,0.2); }
+        .tag { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+        .float { animation: float 5s ease-in-out infinite; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+        .fade-up { animation: fadeUp 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .btn-primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+        .btn-primary:hover { transform: scale(1.04); box-shadow: 0 8px 30px rgba(99,102,241,0.5); }
+        .nav-link { transition: color 0.2s ease; }
+        .glow { box-shadow: 0 0 80px rgba(99,102,241,0.25); }
     </style>
 </head>
-<body class="bg-pearl relative">
+<body class="hero-gradient text-white min-h-screen">
 
-    <div class="hero-glow"></div>
-
-    <!-- NAVBAR -->
-    <nav class="fixed top-0 left-0 right-0 z-50 nav-glass">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-onyx rounded-lg flex items-center justify-center">
-                    <span class="text-white font-display font-bold text-lg">S</span>
+    <!-- NAV -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg btn-primary flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 </div>
-                <span class="font-display font-bold text-xl tracking-tight">SimpleTaff</span>
+                <span class="font-bold text-lg">SimpleTaff</span>
             </div>
-            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-500">
-                <a href="#produit" class="hover:text-onyx transition-colors">Produit</a>
-                <a href="#tarifs" class="hover:text-onyx transition-colors">Tarifs</a>
-                <a href="/vitrine/login.html" class="btn-onyx px-5 py-2.5 rounded-xl font-medium">Se connecter</a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="nav-link text-white/60 hover:text-white text-sm">Fonctionnalités</a>
+                <a href="#how" class="nav-link text-white/60 hover:text-white text-sm">Comment ça marche</a>
+                <a href="#pricing" class="nav-link text-white/60 hover:text-white text-sm">Tarifs</a>
+                <a href="/vitrine/login.html" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">Connexion</a>
             </div>
+            <!-- Mobile Menu Toggle Button -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-toggle" class="text-white hover:text-indigo-300 focus:outline-none">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden glass border-b border-white/10 absolute top-16 left-0 w-full flex-col items-center gap-4 py-6 shadow-xl bg-slate-900/95">
+            <a href="#features" class="mobile-link text-sm font-semibold text-white/80 hover:text-white transition-colors">Fonctionnalités</a>
+            <a href="#how" class="mobile-link text-sm font-semibold text-white/80 hover:text-white transition-colors">Comment ça marche</a>
+            <a href="#pricing" class="mobile-link text-sm font-semibold text-white/80 hover:text-white transition-colors">Tarifs</a>
+            <a href="/vitrine/login.html" class="mobile-link btn-primary px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-md w-11/12 text-center mt-2">Connexion</a>
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
-    <section class="pt-40 pb-20 px-6">
-        <div class="max-w-5xl mx-auto text-center">
-            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm text-xs font-semibold text-slate-600 mb-8">
-                <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                Nouveau standard du pointage mobile
-            </div>
-            <h1 class="font-display text-5xl md:text-7xl font-extrabold leading-[1.1] mb-6">
-                Le pointage réinventé.<br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-onyx to-slate-500">Simple et invisible.</span>
-            </h1>
-            <p class="text-lg md:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
-                Éliminez la paperasse et les erreurs. Transformez le smartphone de vos agents en une pointeuse NFC ultra-fiable et instantanée.
-            </p>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="/vitrine/login.html" class="btn-onyx px-8 py-4 rounded-xl font-medium text-lg w-full sm:w-auto">Démarrer l'expérience</a>
-                <a href="#produit" class="btn-glass px-8 py-4 rounded-xl font-medium text-lg text-onyx w-full sm:w-auto">Découvrir le produit</a>
-            </div>
+    <!-- HERO -->
+    <section class="pt-36 pb-24 px-6 text-center max-w-4xl mx-auto">
+        <div class="tag inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-indigo-300 mb-8 fade-up">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block"></span>
+            Plateforme SaaS multi-tenant — Conçu pour les PME ivoiriennes
+        </div>
+        <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-6 fade-up delay-1">
+            Gérez votre<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">main-d'œuvre temporaire</span><br>
+            sans friction.
+        </h1>
+        <p class="text-white/50 text-lg max-w-2xl mx-auto mb-10 fade-up delay-2" style="max-width:60ch">
+            SimpleTaff centralise le déploiement d'agents, la gestion des postes, le pointage QR et la paie — en un seul outil simple et sécurisé.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center fade-up delay-3">
+            <a href="/vitrine/login.html" class="btn-primary px-7 py-3.5 rounded-xl font-semibold text-sm">Démarrer gratuitement →</a>
+            <a href="#how" class="glass px-7 py-3.5 rounded-xl font-semibold text-sm text-white/70 hover:text-white nav-link">Voir la démo</a>
+        </div>
 
-            <div class="mt-20 relative max-w-4xl mx-auto bento-card p-4 bg-white/50 backdrop-blur-3xl">
-                <img src="/assets/hero_3d.png" alt="Dashboard SimpleTaff" class="w-full h-auto rounded-xl shadow-sm border border-slate-100 parallax-img">
+        <!-- DASHBOARD PREVIEW -->
+        <div class="mt-20 relative glow rounded-2xl overflow-hidden float">
+            <div class="glass rounded-2xl p-6 border border-white/10">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500/60"></div>
+                </div>
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                    <div class="glass rounded-xl p-4 text-left">
+                        <p class="text-white/40 text-xs mb-1">Agents déployés</p>
+                        <p class="text-2xl font-bold">247</p>
+                        <p class="text-green-400 text-xs mt-1">↑ +12 ce mois</p>
+                    </div>
+                    <div class="glass rounded-xl p-4 text-left">
+                        <p class="text-white/40 text-xs mb-1">Postes ouverts</p>
+                        <p class="text-2xl font-bold">38</p>
+                        <p class="text-indigo-400 text-xs mt-1">Sur 5 sites actifs</p>
+                    </div>
+                    <div class="glass rounded-xl p-4 text-left">
+                        <p class="text-white/40 text-xs mb-1">CA ce mois</p>
+                        <p class="text-2xl font-bold">14.5M</p>
+                        <p class="text-white/40 text-xs mt-1">FCFA</p>
+                    </div>
+                </div>
+                <div class="glass rounded-xl p-4 text-left">
+                    <p class="text-white/40 text-xs mb-3">Affectations récentes</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm">Junior Ehui → Port de Bolloré</span>
+                            <span class="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Active</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm">Marc Konan → Usine Nord</span>
+                            <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full">Remplacement</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm">Aya Bamba → Site Cocody</span>
+                            <span class="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">En attente</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- LOGOS -->
-    <section class="py-10 border-y border-slate-200/50 bg-white/30">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Ils gèrent leurs équipes avec SimpleTaff</p>
-            <div class="flex flex-wrap justify-center gap-12 opacity-40 grayscale">
-                <!-- Placeholder SVG Logos for premium feel -->
-                <svg class="h-8" viewBox="0 0 100 30" fill="currentColor"><path d="M10 20h20v-4H14v-2h16v-4H14v-2h16V4H10z"/></svg>
-                <svg class="h-8" viewBox="0 0 100 30" fill="currentColor"><circle cx="20" cy="15" r="10"/><path d="M40 5h10v20H40z"/></svg>
-                <svg class="h-8" viewBox="0 0 100 30" fill="currentColor"><path d="M10 25L20 5l10 20h-4l-6-12-6 12z"/></svg>
+    <!-- FEATURES -->
+    <section id="features" class="py-24 px-6 max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4">Tout ce dont vous avez besoin, rien de superflu</h2>
+            <p class="text-white/40 max-w-xl mx-auto" style="max-width:55ch">Chaque fonctionnalité a été pensée pour les réalités opérationnelles des agences de placement ivoiriennes.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass rounded-2xl p-6 card-hover">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-4">
+                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
+                </div>
+                <h3 class="font-semibold mb-2">Gestion des Agents</h3>
+                <p class="text-white/40 text-sm">Fiches complètes, pièces justificatives, zones et compétences. Tout centralisé en un clic.</p>
             </div>
+            <div class="glass rounded-2xl p-6 card-hover">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4">
+                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+                </div>
+                <h3 class="font-semibold mb-2">Postes & Remplacement</h3>
+                <p class="text-white/40 text-sm">Séparation stricte Poste / Affectation. Remplacement atomique garanti — aucun poste ne reste vide.</p>
+            </div>
+            <div class="glass rounded-2xl p-6 card-hover">
+                <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center mb-4">
+                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+                </div>
+                <h3 class="font-semibold mb-2">Pointage par QR Code</h3>
+                <p class="text-white/40 text-sm">Chaque agent possède une carte QR signée. L'employeur valide les présences en temps réel.</p>
+            </div>
+            <div class="glass rounded-2xl p-6 card-hover">
+                <div class="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center mb-4">
+                    <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                </div>
+                <h3 class="font-semibold mb-2 flex items-center gap-2">Calcul de Paie <span class="bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded text-[10px] uppercase font-bold">En dev</span></h3>
+                <p class="text-white/40 text-sm">4 régimes d'absence appliqués automatiquement. Bulletins générés en un clic avec cotisations.</p>
+            </div>
+
         </div>
     </section>
 
-    <!-- BENTO GRID FEATURES -->
-    <section id="produit" class="py-32 px-6">
-        <div class="max-w-6xl mx-auto">
-            <div class="mb-16">
-                <h2 class="font-display text-4xl font-extrabold mb-4">Une architecture <br>pensée pour le terrain.</h2>
-                <p class="text-slate-500 text-lg">Chaque détail a été poli pour garantir une fiabilité absolue.</p>
+    <!-- HOW IT WORKS -->
+    <section id="how" class="py-24 px-6 max-w-4xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4">Opérationnel en 4 étapes</h2>
+        </div>
+        <div class="space-y-6">
+            <div class="glass rounded-2xl p-6 flex items-start gap-5 card-hover">
+                <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center flex-shrink-0 font-bold">1</div>
+                <div>
+                    <h3 class="font-semibold mb-1">Créez votre espace entreprise</h3>
+                    <p class="text-white/40 text-sm">Le Super Admin vous ouvre un compte. Vous configurez vos zones, emplois, et structures clientes.</p>
+                </div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <!-- Bento 1 : Large (NFC) -->
-                <div class="bento-card md:col-span-2 p-10 flex flex-col justify-between bg-gradient-to-br from-white to-slate-50">
-                    <div class="max-w-sm mb-10 z-10">
-                        <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 text-indigo-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                        </div>
-                        <h3 class="font-display text-2xl font-bold mb-3">Technologie NFC Instantanée</h3>
-                        <p class="text-slate-500 leading-relaxed">Approchez simplement le téléphone du badge. Le pointage est enregistré et géolocalisé en 300 millisecondes.</p>
-                    </div>
-                    <div class="relative h-48 -mr-10 -mb-10">
-                        <img src="/assets/feat_nfc.png" alt="NFC Scan" class="absolute right-0 bottom-0 h-64 object-cover parallax-img drop-shadow-2xl">
-                    </div>
+            <div class="glass rounded-2xl p-6 flex items-start gap-5 card-hover">
+                <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center flex-shrink-0 font-bold">2</div>
+                <div>
+                    <h3 class="font-semibold mb-1">Enregistrez vos agents</h3>
+                    <p class="text-white/40 text-sm">Ajoutez les agents avec leurs pièces justificatives, compétences et zone d'affectation. Les coordonnateurs gèrent leur équipe via leur espace dédié.</p>
                 </div>
-
-                <!-- Bento 2 : Small (Coordination) -->
-                <div class="bento-card p-10 flex flex-col justify-between">
-                    <div>
-                        <div class="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center mb-6 text-rose-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        </div>
-                        <h3 class="font-display text-xl font-bold mb-3">Gestion de Flotte</h3>
-                        <p class="text-slate-500 text-sm leading-relaxed">Affectez vos agents sur le terrain en un glissement de doigt. Vos coordonnateurs ont le contrôle total.</p>
-                    </div>
+            </div>
+            <div class="glass rounded-2xl p-6 flex items-start gap-5 card-hover">
+                <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center flex-shrink-0 font-bold">3</div>
+                <div>
+                    <h3 class="font-semibold mb-1">Déployez et pointez</h3>
+                    <p class="text-white/40 text-sm">Créez des postes sur les sites clients, affectez vos agents, et laissez le système QR Code gérer les entrées/sorties automatiquement.</p>
                 </div>
-
-                <!-- Bento 3 : Small (Dossiers RH) -->
-                <div class="bento-card p-10">
-                    <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6 text-emerald-600">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    </div>
-                    <h3 class="font-display text-xl font-bold mb-3">Dossiers RH Digitalisés</h3>
-                    <p class="text-slate-500 text-sm leading-relaxed mb-6">Finis les classeurs. Toutes les pièces d'identité et contrats sont stockés dans le cloud sécurisé.</p>
-                    <img src="/assets/feat_hr.png" alt="HR Files" class="w-full h-32 object-cover rounded-xl parallax-img shadow-sm border border-slate-100">
+            </div>
+            <div class="glass rounded-2xl p-6 flex items-start gap-5 card-hover">
+                <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center flex-shrink-0 font-bold">4</div>
+                <div>
+                    <h3 class="font-semibold mb-1">Clôturez</h3>
+                    <p class="text-white/40 text-sm">En fin de mois, préparez les bulletins de paie (en cours de développement) en un clic pour simplifier vos opérations.</p>
                 </div>
-
-                <!-- Bento 4 : Large (Dashboard) -->
-                <div class="bento-card md:col-span-2 p-10 flex flex-col justify-center bg-onyx text-white">
-                    <h3 class="font-display text-3xl font-bold mb-4">La vérité en temps réel.</h3>
-                    <p class="text-slate-400 text-lg max-w-md leading-relaxed mb-8">Un tableau de bord conçu pour les décideurs. Ne demandez plus à vos équipes où elles sont, regardez simplement votre écran.</p>
-                    <a href="/vitrine/login.html" class="inline-flex w-max items-center gap-2 bg-white text-onyx px-6 py-3 rounded-xl font-semibold hover:bg-slate-100 transition-colors">
-                        Accéder au Dashboard
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </a>
-                </div>
-
             </div>
         </div>
     </section>
 
     <!-- PRICING -->
-    <section id="tarifs" class="py-32 px-6 border-t border-slate-200/50">
-        <div class="max-w-4xl mx-auto text-center mb-16">
-            <h2 class="font-display text-4xl font-extrabold mb-4">Un modèle transparent.</h2>
-            <p class="text-slate-500 text-lg">Conçu pour grandir avec vous, sans frais cachés.</p>
+    <section id="pricing" class="py-24 px-6 max-w-5xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4">Des tarifs transparents</h2>
+            <p class="text-white/40">Aucun frais caché. Évoluez à votre rythme.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass rounded-2xl p-6 card-hover">
+                <p class="text-white/40 text-sm mb-2">Starter</p>
+                <p class="text-3xl font-bold mb-1">49 000 <span class="text-base font-normal text-white/40">FCFA/mois</span></p>
+                <p class="text-white/30 text-xs mb-6">Jusqu'à 50 agents</p>
+                <ul class="space-y-3 text-sm text-white/60 mb-8">
+                    <li class="flex gap-2">✓ Gestion agents & postes</li>
+                    <li class="flex gap-2">✓ Pointage QR Code</li>
+                    <li class="flex gap-2">✓ 1 coordonnateur</li>
+                </ul>
+                <a href="/vitrine/contact-souscription.html?plan=Starter" class="block text-center glass rounded-xl py-2.5 text-sm font-medium hover:bg-white/10 transition-colors">Choisir Starter</a>
+            </div>
+            <div class="rounded-2xl p-6 card-hover relative" style="background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2)); border: 1px solid rgba(99,102,241,0.4);">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-500 to-purple-500 px-3 py-1 rounded-full text-xs font-medium">Recommandé</div>
+                <p class="text-indigo-300 text-sm mb-2">Pro</p>
+                <p class="text-3xl font-bold mb-1">120 000 <span class="text-base font-normal text-white/40">FCFA/mois</span></p>
+                <p class="text-white/30 text-xs mb-6">Jusqu'à 150 agents</p>
+                <ul class="space-y-3 text-sm text-white/70 mb-8">
+                    <li class="flex gap-2">✓ Tout Starter inclus</li>
+                    <li class="flex gap-2">✓ Calcul de paie <span class="text-[10px] uppercase text-indigo-300 ml-1">(En dev)</span></li>
+                    <li class="flex gap-2">✓ 4 coordonnateurs</li>
+                </ul>
+                <a href="/vitrine/contact-souscription.html?plan=Pro" class="block text-center btn-primary rounded-xl py-2.5 text-sm font-medium">Choisir Pro</a>
+            </div>
+            <div class="glass rounded-2xl p-6 card-hover">
+                <p class="text-white/40 text-sm mb-2">Enterprise</p>
+                <p class="text-3xl font-bold mb-1">Sur devis</p>
+                <p class="text-white/30 text-xs mb-6">Agents illimités</p>
+                <ul class="space-y-3 text-sm text-white/60 mb-8">
+                    <li class="flex gap-2">✓ Tout Pro inclus</li>
+                    <li class="flex gap-2">✓ SLA garanti</li>
+                    <li class="flex gap-2">✓ Intégration sur mesure</li>
+                    <li class="flex gap-2">✓ Support dédié</li>
+                </ul>
+                <a href="/vitrine/contact-souscription.html?plan=Enterprise" class="block text-center glass rounded-xl py-2.5 text-sm font-medium hover:bg-white/10 transition-colors">Nous contacter</a>
+            </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <!-- SIMULATEUR DE DEVIS -->
+        <div class="mt-16 glass rounded-3xl p-8 border border-white/10 max-w-3xl mx-auto">
+            <div class="text-center mb-8">
+                <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Simulateur Budget</span>
+                <h3 class="text-2xl font-bold mt-1">Estimez votre abonnement & obtenez un devis</h3>
+                <p class="text-white/40 text-sm mt-2">Ajustez le curseur selon vos effectifs pour voir la formule adaptée.</p>
+            </div>
             
-            <!-- Starter -->
-            <div class="bento-card p-10 flex flex-col relative">
-                <h3 class="font-display text-2xl font-bold mb-2">Starter</h3>
-                <p class="text-slate-500 text-sm mb-8">Pour les agences en pleine croissance.</p>
-                <div class="text-5xl font-extrabold font-display mb-8">25 000 <span class="text-lg text-slate-400 font-medium">FCFA/mois</span></div>
-                
-                <ul class="space-y-4 mb-10 flex-1">
-                    <li class="flex items-center gap-3 text-sm font-medium text-slate-600">
-                        <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                        Jusqu'à 50 agents gérés
-                    </li>
-                    <li class="flex items-center gap-3 text-sm font-medium text-slate-600">
-                        <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                        Pointages illimités
-                    </li>
-                    <li class="flex items-center gap-3 text-sm font-medium text-slate-600">
-                        <svg class="w-5 h-5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                        1 Coordonnateur inclus
-                    </li>
-                </ul>
-                <a href="/vitrine/contact-souscription.html?plan=Starter" class="btn-glass w-full text-center py-3 rounded-xl font-semibold">Choisir Starter</a>
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-white/70 mb-2 flex justify-between">
+                            <span>Nombre d'agents à gérer :</span>
+                            <span id="agent-count-val" class="font-bold text-indigo-400 text-lg">50 agents</span>
+                        </label>
+                        <input id="agent-slider" type="range" min="5" max="300" value="50" class="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+                        <div class="flex justify-between text-xs text-white/30 mt-1">
+                            <span>5 agents</span>
+                            <span>150 agents</span>
+                            <span>300+ agents</span>
+                        </div>
+                    </div>
 
-            <!-- Pro -->
-            <div class="bento-card p-10 flex flex-col bg-onyx text-white border-0 ring-1 ring-white/10 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                <div class="inline-flex justify-between items-center mb-2">
-                    <h3 class="font-display text-2xl font-bold">Pro</h3>
-                    <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 text-xs font-bold rounded-full uppercase tracking-wider">Populaire</span>
+                    <div>
+                        <span class="block text-sm font-medium text-white/70 mb-2">Formule recommandée :</span>
+                        <div id="recommended-badge" class="inline-block bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3.5 py-1.5 rounded-full text-sm font-semibold">
+                            Formule Pro
+                        </div>
+                    </div>
                 </div>
-                <p class="text-slate-400 text-sm mb-8">La solution complète de déploiement.</p>
-                <div class="text-5xl font-extrabold font-display mb-8">50 000 <span class="text-lg text-slate-400 font-medium">FCFA/mois</span></div>
-                
-                <ul class="space-y-4 mb-10 flex-1">
-                    <li class="flex items-center gap-3 text-sm font-medium text-slate-300">
-                        <svg class="w-5 h-5 text-indigo-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                        Jusqu'à 150 agents gérés
-                    </li>
-                    <li class="flex items-center gap-3 text-sm font-medium text-slate-300">
-                        <svg class="w-5 h-5 text-indigo-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                        4 Coordonnateurs inclus
-                    </li>
-                    <li class="flex items-center gap-3 text-sm font-medium text-slate-300">
-                        <svg class="w-5 h-5 text-indigo-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                        Calcul de paie <span class="ml-2 text-[10px] uppercase tracking-widest font-bold bg-white/10 px-2 py-0.5 rounded text-white">En cours de développement</span>
-                    </li>
-                </ul>
-                <a href="/vitrine/contact-souscription.html?plan=Pro" class="btn-glass w-full text-center py-3 rounded-xl font-semibold !bg-white !text-onyx hover:!bg-slate-100">Choisir Pro</a>
-            </div>
 
+                <div class="glass rounded-2xl p-6 border border-white/5 bg-white/5 text-center space-y-4">
+                    <p class="text-white/40 text-xs uppercase tracking-wider">Coût mensuel estimé</p>
+                    <p id="estimated-cost" class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">120 000 FCFA</p>
+                    <p class="text-white/30 text-xs">Abonnement sans engagement, résiliable à tout moment.</p>
+                    
+                    <button onclick="openDevisModal()" class="w-full btn-primary py-3 rounded-xl font-bold text-sm text-white transition-all">
+                        Obtenir un Devis Officiel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-24 px-6 text-center">
+        <div class="glass rounded-3xl max-w-2xl mx-auto p-12" style="background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); border: 1px solid rgba(99,102,241,0.2);">
+            <h2 class="text-3xl font-bold mb-4">Prêt à moderniser votre agence ?</h2>
+            <p class="text-white/40 mb-8" style="max-width:50ch;margin-left:auto;margin-right:auto">Rejoignez les agences qui ont déjà digitalisé leur gestion de main-d'œuvre avec SimpleTaff.</p>
+            <a href="/vitrine/login.html" class="btn-primary inline-block px-8 py-4 rounded-xl font-semibold">Démarrer maintenant — C'est gratuit →</a>
         </div>
     </section>
 
     <!-- FOOTER -->
-    <footer class="bg-white border-t border-slate-200/50 py-12 px-6">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="flex items-center gap-2">
-                <div class="w-6 h-6 bg-onyx rounded flex items-center justify-center">
-                    <span class="text-white font-display font-bold text-xs">S</span>
-                </div>
-                <span class="font-display font-bold text-lg">SimpleTaff</span>
+    <footer class="border-t border-white/10 py-10 px-6 text-center text-white/30 text-sm">
+        <div class="flex items-center justify-center gap-2 mb-4">
+            <div class="w-6 h-6 rounded-md btn-primary flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
             </div>
-            <div class="text-sm text-slate-400 font-medium">
-                © 2026 SimpleTaff. Studio Design Premium.
-            </div>
+            <span class="font-semibold text-white/60">SimpleTaff</span>
         </div>
+        <p>© 2026 SimpleTaff. Tous droits réservés. — Conçu avec ❤️ pour les agences ivoiriennes.</p>
     </footer>
 
+    <!-- DEVIS MODAL -->
+    <div id="devis-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div class="glass rounded-3xl p-8 max-w-md w-full border border-white/15 mx-4 relative">
+            <button onclick="closeDevisModal()" class="absolute top-4 right-4 text-white/40 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold">Votre Devis Estimatif</h3>
+                <p class="text-white/50 text-sm mt-1">Remplissez les informations ci-dessous pour recevoir votre devis officiel PDF par e-mail.</p>
+            </div>
+            <form id="devis-form" onsubmit="submitDevis(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs text-white/60 mb-1">Nom de l'entreprise</label>
+                    <input type="text" required placeholder="Ex: Bolloré Côte d'Ivoire" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-white/60 mb-1">Votre Nom complet</label>
+                    <input type="text" required placeholder="Ex: Jean Koffi" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-white/60 mb-1">Adresse e-mail</label>
+                    <input type="email" required placeholder="Ex: contact@entreprise.ci" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-white">
+                </div>
+                <div>
+                    <label class="block text-xs text-white/60 mb-1">Téléphone</label>
+                    <input type="tel" required placeholder="Ex: +225 07 00 00 00 00" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-white">
+                </div>
+                <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-3 text-xs text-indigo-300">
+                    <span class="font-bold">Estimation sélectionnée :</span> <span id="modal-summary">Formule Pro (50 agents) - 120 000 FCFA/mois</span>
+                </div>
+                <button type="submit" class="w-full btn-primary py-3 rounded-xl font-bold text-sm text-white">
+                    Générer et envoyer le devis
+                </button>
+            </form>
+            <div id="devis-success" class="hidden text-center py-6 space-y-4">
+                <div class="w-16 h-16 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <h4 class="text-xl font-bold">Devis envoyé avec succès !</h4>
+                <p class="text-white/50 text-sm">Un e-mail contenant le devis officiel PDF a été envoyé à l'adresse indiquée.</p>
+                <div class="bg-white/5 border border-white/10 rounded-xl p-4 text-left text-xs space-y-2">
+                    <div class="flex justify-between"><span class="text-white/40">Numéro de Devis :</span> <span class="font-mono text-indigo-300">DEVIS-2026-0042</span></div>
+                    <div class="flex justify-between"><span class="text-white/40">Destinataire :</span> <span id="success-email">contact@entreprise.ci</span></div>
+                    <div class="flex justify-between"><span class="text-white/40">Total Mensuel :</span> <span id="success-cost" class="font-bold">120 000 FCFA</span></div>
+                </div>
+                <div class="flex gap-3 mt-4">
+                    <a href="#" id="download-devis-btn" onclick="downloadMockDevisPdf(event)" class="flex-1 text-center btn-primary py-2.5 rounded-xl font-semibold text-xs text-white">
+                        Télécharger le PDF
+                    </a>
+                    <button onclick="closeDevisModal()" class="flex-1 glass py-2.5 rounded-xl font-semibold text-xs text-white/70 hover:text-white">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.remove('hidden');
+                    mobileMenu.classList.add('flex');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('flex');
+                }
+            });
+
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('flex');
+                });
+            });
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        // Intersection observer for fade-up animations on scroll
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('fade-up'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.card-hover').forEach(el => observer.observe(el));
+
+        // Devis Simulator Logic
+        const agentSlider = document.getElementById('agent-slider');
+        const agentCountVal = document.getElementById('agent-count-val');
+        const recommendedBadge = document.getElementById('recommended-badge');
+        const estimatedCost = document.getElementById('estimated-cost');
+        const modalSummary = document.getElementById('modal-summary');
+
+        function updatePricing() {
+            const count = parseInt(agentSlider.value);
+            agentCountVal.textContent = `${count} agent${count > 1 ? 's' : ''}`;
+            
+            let formula = '';
+            let price = '';
+            if (count <= 30) {
+                formula = 'Formule Starter';
+                price = '49 000 FCFA';
+            } else if (count <= 150) {
+                formula = 'Formule Pro';
+                price = '120 000 FCFA';
+            } else {
+                formula = 'Formule Enterprise';
+                price = 'Sur devis';
+            }
+            
+            recommendedBadge.textContent = formula;
+            estimatedCost.textContent = price;
+            modalSummary.textContent = `${formula} (${count} agents) - ${price}/mois`;
+        }
+
+        if (agentSlider) {
+            agentSlider.addEventListener('input', updatePricing);
+            updatePricing();
+        }
+
+        // Modal Operations
+        const devisModal = document.getElementById('devis-modal');
+        function openDevisModal() {
+            devisModal.classList.remove('hidden');
+            setTimeout(() => {
+                devisModal.classList.remove('opacity-0');
+            }, 50);
+        }
+        function closeDevisModal() {
+            devisModal.classList.add('opacity-0');
+            setTimeout(() => {
+                devisModal.classList.add('hidden');
+                document.getElementById('devis-form').classList.remove('hidden');
+                document.getElementById('devis-success').classList.add('hidden');
+            }, 300);
+        }
+        function submitDevis(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input[type="email"]').value;
+            document.getElementById('success-email').textContent = email;
+            document.getElementById('success-cost').textContent = estimatedCost.textContent;
+            
+            document.getElementById('devis-form').classList.add('hidden');
+            document.getElementById('devis-success').classList.remove('hidden');
+        }
+        function downloadMockDevisPdf(e) {
+            e.preventDefault();
+            const companyName = document.querySelector('#devis-form input[type="text"]').value || "Votre Entreprise";
+            const agentCount = agentSlider.value;
+            const cost = estimatedCost.textContent;
+            const formula = recommendedBadge.textContent;
+            
+            let pdfText = `====================================================\n`;
+            pdfText += `               DEVIS OFFICIEL - SIMPLETTAFF          \n`;
+            pdfText += `====================================================\n`;
+            pdfText += `Numéro : DEVIS-2026-0042\n`;
+            pdfText += `Date   : ${new Date().toLocaleDateString('fr-FR')}\n`;
+            pdfText += `Validité : 30 jours\n\n`;
+            pdfText += `Destinataire :\n`;
+            pdfText += `  Entreprise : ${companyName}\n\n`;
+            pdfText += `Détails de l'offre :\n`;
+            pdfText += `  - Formule : ${formula}\n`;
+            pdfText += `  - Capacité : Jusqu'à ${agentCount} agents gérés\n`;
+            pdfText += `  - Hébergement & Support inclus\n`;
+            pdfText += `  - Configuration initiale : Offerte (Frais d'installation : 0 FCFA)\n\n`;
+            pdfText += `----------------------------------------------------\n`;
+            pdfText += `TOTAL MENSUEL : ${cost} / mois HT\n`;
+            pdfText += `----------------------------------------------------\n\n`;
+            pdfText += `Merci pour votre confiance.\n`;
+            pdfText += `SimpleTaff Platform - www.simpletaff.ci\n`;
+            pdfText += `====================================================\n`;
+
+            const blob = new Blob([pdfText], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `devis_simpletaff_${companyName.toLowerCase().replace(/\s+/g, '_')}.txt`;
+            link.click();
+        }
+    </script>
 </body>
 </html>

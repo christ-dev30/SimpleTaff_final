@@ -58,7 +58,7 @@ public class RapportPdfBuilder {
     // =========================================================================
     public static byte[] build(Map<String, Object> report, String mois) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            Document doc = new Document(PageSize.A4, 36, 36, 36, 50);
+            Document doc = new Document(PageSize.A3.rotate(), 36, 36, 36, 50);
             PdfWriter writer = PdfWriter.getInstance(doc, baos);
             writer.setPageEvent(new FooterEvent());
             doc.open();

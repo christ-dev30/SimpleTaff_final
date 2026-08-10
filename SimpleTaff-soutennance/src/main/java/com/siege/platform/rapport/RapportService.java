@@ -394,7 +394,7 @@ public class RapportService {
     @SuppressWarnings("unchecked")
     public byte[] exportPresencesToPdf(String mois, List<Pointage> pointages) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            Document document = new Document(PageSize.A4.rotate(), 28, 28, 36, 28);
+            Document document = new Document(PageSize.A3.rotate(), 28, 28, 36, 28);
             PdfWriter.getInstance(document, baos);
             document.open();
 

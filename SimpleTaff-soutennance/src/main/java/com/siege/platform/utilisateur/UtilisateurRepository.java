@@ -22,9 +22,6 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, UUID> 
     @Query("SELECT u FROM Coordonnateur u WHERE u.entreprise.id = :entrepriseId")
     List<Coordonnateur> findCoordsByEntrepriseId(@Param("entrepriseId") UUID entrepriseId);
 
-    @Query("SELECT COUNT(u) FROM Coordonnateur u WHERE u.entreprise.id = :entrepriseId")
-    long countCoordsByEntrepriseId(@Param("entrepriseId") UUID entrepriseId);
-
     @Query("SELECT u FROM Employeur u WHERE u.entreprise.id = :entrepriseId")
     List<Employeur> findEmployeursByEntrepriseId(@Param("entrepriseId") UUID entrepriseId);
 }
