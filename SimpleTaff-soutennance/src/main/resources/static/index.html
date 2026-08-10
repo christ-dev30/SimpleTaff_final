@@ -30,6 +30,8 @@
                 </div>
                 <span class="font-extrabold text-2xl tracking-tight text-slate-900">SimpleTaff</span>
             </div>
+            
+            <!-- Desktop Menu -->
             <div class="hidden md:flex items-center gap-8">
                 <a href="#concept" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Concept</a>
                 <a href="#processus" class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Fonctionnement</a>
@@ -39,6 +41,24 @@
                 <a href="/vitrine/login.html" class="text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">Connexion</a>
                 <a href="/vitrine/demo.html" class="btn-gradient px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-md">Essayer la démo</a>
             </div>
+
+            <!-- Mobile Menu Toggle Button -->
+            <div class="md:hidden flex items-center">
+                <button id="mobile-menu-toggle" class="text-slate-600 hover:text-slate-900 focus:outline-none">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden glass-light border-b border-slate-200/50 absolute top-20 left-0 w-full flex-col items-center gap-4 py-6 shadow-xl bg-white/95">
+            <a href="#concept" class="mobile-link text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Concept</a>
+            <a href="#processus" class="mobile-link text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Fonctionnement</a>
+            <a href="#roles" class="mobile-link text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Espaces Dédiés</a>
+            <a href="#technologie" class="mobile-link text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Sécurité</a>
+            <a href="#pricing" class="mobile-link text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Tarifs</a>
+            <a href="/vitrine/login.html" class="mobile-link text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors">Connexion</a>
+            <a href="/vitrine/demo.html" class="mobile-link btn-gradient px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-md w-11/12 text-center mt-2">Essayer la démo</a>
         </div>
     </nav>
 
@@ -480,6 +500,30 @@
     </div>
 
     <script>
+        // Mobile Menu Toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', () => {
+                if (mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.remove('hidden');
+                    mobileMenu.classList.add('flex');
+                } else {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('flex');
+                }
+            });
+
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('flex');
+                });
+            });
+        }
+
         // Devis Simulator Logic
         const agentSlider = document.getElementById('agent-slider');
         const agentCountVal = document.getElementById('agent-count-val');
