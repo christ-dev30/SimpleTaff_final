@@ -139,6 +139,14 @@ public class OrganisationController {
                 return ResponseEntity.badRequest().body(Map.of("message", "Un compte avec cet email existe déjà."));
             }
 
+            long currentCoords = utilisateurRepo.countCoordsByEntrepriseId(entreprise.getId());
+            if (entreprise.getFormuleAbonnement() == com.siege.platform.common.enums.FormuleAbonnement.STARTER && currentCoords >= 1) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Limite d'un (1) coordonnateur atteinte pour la formule Starter."));
+            }
+            if (entreprise.getFormuleAbonnement() == com.siege.platform.common.enums.FormuleAbonnement.PRO && currentCoords >= 4) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Limite de quatre (4) coordonnateurs atteinte pour la formule Pro."));
+            }
+
             Coordonnateur coord = new Coordonnateur();
             coord.setNom((String) payload.get("nom"));
             coord.setPrenom((String) payload.get("prenom"));

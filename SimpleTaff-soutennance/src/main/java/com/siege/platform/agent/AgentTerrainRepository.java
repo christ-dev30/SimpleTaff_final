@@ -9,4 +9,5 @@ import java.util.UUID;
 @Repository
 public interface AgentTerrainRepository extends JpaRepository<AgentTerrain, UUID> {
     List<AgentTerrain> findByEntrepriseId(UUID entrepriseId);
+    long countByEntrepriseId(UUID entrepriseId);
 }
