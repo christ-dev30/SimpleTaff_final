@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr" class="antialiased scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espace Super Admin — SimpleTaff</title>
+    <title>Espace Super Admin â€” SimpleTaff</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -42,6 +42,37 @@
         #sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.5); backdrop-filter: blur(4px); z-index: 550; opacity: 0; transition: opacity 0.3s ease; }
         #sidebar-overlay.active { display: block; opacity: 1; }
     </style>
+<style id="boutique-style">
+    /* Boutique Premium Overrides */
+    body { background-color: #f8fafc !important; }
+    .glass, .bg-white.rounded-2xl, .bg-white.rounded-xl {
+        background: #ffffff !important;
+        border: 1px solid rgba(0,0,0,0.03) !important;
+        box-shadow: 0 10px 40px -10px rgba(0,0,0,0.04) !important;
+        border-radius: 20px !important;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease-out !important;
+        transform-style: preserve-3d; 
+        perspective: 1000px;
+    }
+    .glass:hover, .bg-white.rounded-2xl:hover, .bg-white.rounded-xl:hover {
+        transform: translateY(-4px) rotateX(1deg) rotateY(-0.5deg) !important; 
+        box-shadow: 0 30px 60px rgba(0,0,0,0.08) !important;
+    }
+    .sidebar-link { transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1) !important; }
+    .sidebar-link:hover { background: #f1f5f9 !important; color: #0f172a !important; transform: translateX(4px) !important; }
+    .sidebar-link.active { background: #0f172a !important; color: #ffffff !important; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2) !important; }
+    .btn-primary, button.bg-indigo-600 {
+        background: #0f172a !important;
+        color: #ffffff !important;
+        border-radius: 12px !important;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .btn-primary:hover, button.bg-indigo-600:hover {
+        transform: scale(1.02) !important; 
+        box-shadow: 0 15px 30px rgba(15, 23, 42, 0.15) !important;
+    }
+    .badge.bg-indigo-100 { background: #f1f5f9 !important; color: #0f172a !important; }
+</style>
 </head>
 <body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden relative">
     <div id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
@@ -83,7 +114,7 @@
         <div class="p-4 border-t border-slate-100">
             <button onclick="logout()" class="flex w-full items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                Déconnexion
+                DÃ©connexion
             </button>
         </div>
     </aside>
@@ -93,7 +124,7 @@
         <header class="h-20 flex items-center justify-between px-8 border-b border-slate-200/60 bg-white/60 backdrop-blur-sm z-10">
             <div>
                 <h1 class="text-xl font-bold text-slate-900">Espace Super Admin</h1>
-                <p class="text-xs text-slate-400">Contrôle global de la plateforme SaaS SimpleTaff</p>
+                <p class="text-xs text-slate-400">ContrÃ´le global de la plateforme SaaS SimpleTaff</p>
             </div>
             <span class="badge bg-indigo-100 text-indigo-700">SUPER_ADMIN</span>
         </header>
@@ -109,9 +140,9 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                         </div>
                     </div>
-                    <div class="text-3xl font-extrabold text-slate-900 mt-3" id="statActives">—</div>
+                    <div class="text-3xl font-extrabold text-slate-900 mt-3" id="statActives">â€”</div>
                     <div class="flex items-center gap-1.5 mt-2">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Comptes opérationnels</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Comptes opÃ©rationnels</span>
                     </div>
                 </div>
                 <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
@@ -121,7 +152,7 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
                     </div>
-                    <div class="text-3xl font-extrabold text-amber-600 mt-3" id="statPending">—</div>
+                    <div class="text-3xl font-extrabold text-amber-600 mt-3" id="statPending">â€”</div>
                     <div class="flex items-center gap-1.5 mt-2">
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">Invitations ou suspendus</span>
                     </div>
@@ -133,18 +164,18 @@
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
                         </div>
                     </div>
-                    <div class="text-3xl font-extrabold text-indigo-600 mt-3" id="statTotal">—</div>
+                    <div class="text-3xl font-extrabold text-indigo-600 mt-3" id="statTotal">â€”</div>
                     <div class="flex items-center gap-1.5 mt-2">
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700">Volume total SaaS</span>
                     </div>
                 </div>
             </div>
 
-            <!-- ═══════════════ TAB: Entreprises ═══════════════ -->
+            <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TAB: Entreprises â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
             <div id="tab-entreprises" class="tab-content active space-y-4">
                 <div class="flex justify-between items-center">
-                    <h2 class="text-lg font-bold text-slate-900">Entreprises enregistrées</h2>
-                    <button onclick="loadEntreprises()" class="text-xs text-indigo-600 font-bold hover:underline">↻ Actualiser</button>
+                    <h2 class="text-lg font-bold text-slate-900">Entreprises enregistrÃ©es</h2>
+                    <button onclick="loadEntreprises()" class="text-xs text-indigo-600 font-bold hover:underline">â†» Actualiser</button>
                 </div>
                 <div class="glass rounded-2xl overflow-hidden">
                     <table class="w-full text-left">
@@ -155,13 +186,13 @@
                             <th class="px-6 py-3">Actions</th>
                         </tr></thead>
                         <tbody id="entreprisesTable" class="divide-y divide-slate-100 text-sm">
-                            <tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Chargement…</td></tr>
+                            <tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Chargementâ€¦</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- ═══════════════ TAB: Invitations ═══════════════ -->
+            <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TAB: Invitations â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
             <div id="tab-invitations" class="tab-content space-y-6">
                 <h2 class="text-lg font-bold text-slate-900">Envoyer une invitation d'abonnement</h2>
 
@@ -172,7 +203,7 @@
 
                         <!-- Success link display -->
                         <div id="inviteSuccess" class="hidden bg-green-50 border border-green-200 rounded-xl p-4 space-y-2">
-                            <p class="text-green-700 font-bold text-sm">✅ Invitation envoyée !</p>
+                            <p class="text-green-700 font-bold text-sm">âœ… Invitation envoyÃ©e !</p>
                             <p class="text-xs text-green-600">Si l'email n'arrive pas, copiez ce lien manuellement :</p>
                             <div class="flex gap-2 items-center">
                                 <input type="text" id="inviteLinkDisplay" readonly="readonly" class="flex-1 text-xs border border-green-200 rounded-lg p-2 bg-white font-mono">
@@ -183,7 +214,7 @@
                         <form id="inviteForm" class="space-y-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 mb-1.5">Nom de l'entreprise cliente</label>
-                                <input type="text" id="invNom" required="required" class="input-field" placeholder="ex: Bolloré Transport">
+                                <input type="text" id="invNom" required="required" class="input-field" placeholder="ex: BollorÃ© Transport">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 mb-1.5">Email du contact (Admin de l'entreprise)</label>
@@ -200,7 +231,7 @@
 
                             <div class="flex items-center gap-2 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5 text-xs text-amber-700">
                                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                Le lien sera à usage unique et expirera dans <strong>&nbsp;30 minutes</strong>.
+                                Le lien sera Ã  usage unique et expirera dans <strong>&nbsp;30 minutes</strong>.
                             </div>
                             <button type="submit" id="invBtn" class="btn-indigo w-full py-3 flex items-center justify-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
@@ -212,7 +243,7 @@
                     <!-- Info card -->
                     <div class="lg:col-span-7 space-y-4">
                         <div class="glass rounded-2xl p-6 space-y-4">
-                            <h3 class="font-bold text-slate-900">Comment ça fonctionne ?</h3>
+                            <h3 class="font-bold text-slate-900">Comment Ã§a fonctionne ?</h3>
                             <ol class="space-y-3">
                                 <li class="flex gap-3">
                                     <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs flex-shrink-0">1</div>
@@ -220,14 +251,14 @@
                                 </li>
                                 <li class="flex gap-3">
                                     <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
-                                    <p class="text-sm text-slate-600 mt-0.5">Un email est automatiquement envoyé à l'entreprise avec un lien unique d'activation.</p>
+                                    <p class="text-sm text-slate-600 mt-0.5">Un email est automatiquement envoyÃ© Ã  l'entreprise avec un lien unique d'activation.</p>
                                 </li>
                                 <li class="flex gap-3">
                                     <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
-                                    <p class="text-sm text-slate-600 mt-0.5">L'entreprise clique sur le lien, crée son compte administrateur, et son abonnement est activé.</p>
+                                    <p class="text-sm text-slate-600 mt-0.5">L'entreprise clique sur le lien, crÃ©e son compte administrateur, et son abonnement est activÃ©.</p>
                                 </li>
                                 <li class="flex gap-3">
-                                    <div class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs flex-shrink-0">⚠</div>
+                                    <div class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs flex-shrink-0">âš </div>
                                     <p class="text-sm text-slate-600 mt-0.5">Si l'entreprise ne s'inscrit pas dans les <strong>30 minutes</strong>, le lien expire et l'abonnement reste <strong>inactif</strong>. Vous devrez renvoyer une invitation.</p>
                                 </li>
                             </ol>
@@ -236,18 +267,18 @@
                 </div>
             </div>
 
-            <!-- ═══════════════ TAB: Abonnements ═══════════════ -->
+            <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TAB: Abonnements â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
             <div id="tab-abonnements" class="tab-content">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="glass rounded-2xl p-6 space-y-3 border-2 border-slate-200">
                         <p class="text-xs font-bold text-slate-400 uppercase">STARTER</p>
                         <p class="text-3xl font-extrabold text-slate-900">49 000 <span class="text-base font-semibold text-slate-400">FCFA/mois</span></p>
                         <ul class="text-sm text-slate-600 space-y-1">
-                            <li>✔ Jusqu'à 20 agents</li>
-                            <li>✔ 1 site</li>
-                            <li>✔ Pointage QR</li>
-                            <li>✖ Multi-sites</li>
-                            <li>✖ Rapports avancés</li>
+                            <li>âœ” Jusqu'Ã  20 agents</li>
+                            <li>âœ” 1 site</li>
+                            <li>âœ” Pointage QR</li>
+                            <li>âœ– Multi-sites</li>
+                            <li>âœ– Rapports avancÃ©s</li>
                         </ul>
                     </div>
                     <div class="glass rounded-2xl p-6 space-y-3 border-2 border-indigo-400 relative">
@@ -255,22 +286,22 @@
                         <p class="text-xs font-bold text-indigo-400 uppercase">PRO</p>
                         <p class="text-3xl font-extrabold text-slate-900">120 000 <span class="text-base font-semibold text-slate-400">FCFA/mois</span></p>
                         <ul class="text-sm text-slate-600 space-y-1">
-                            <li>✔ Agents illimités</li>
-                            <li>✔ Multi-sites</li>
-                            <li>✔ Pointage QR</li>
-                            <li>✔ Rapports avancés</li>
-                            <li>✔ Gestion paie</li>
+                            <li>âœ” Agents illimitÃ©s</li>
+                            <li>âœ” Multi-sites</li>
+                            <li>âœ” Pointage QR</li>
+                            <li>âœ” Rapports avancÃ©s</li>
+                            <li>âœ” Gestion paie</li>
                         </ul>
                     </div>
                     <div class="glass rounded-2xl p-6 space-y-3 border-2 border-slate-200">
                         <p class="text-xs font-bold text-slate-400 uppercase">ENTERPRISE</p>
                         <p class="text-3xl font-extrabold text-slate-900">Sur devis</p>
                         <ul class="text-sm text-slate-600 space-y-1">
-                            <li>✔ Tout le plan PRO</li>
-                            <li>✔ API dédiée</li>
-                            <li>✔ Support prioritaire</li>
-                            <li>✔ SLA garanti</li>
-                            <li>✔ Personnalisation</li>
+                            <li>âœ” Tout le plan PRO</li>
+                            <li>âœ” API dÃ©diÃ©e</li>
+                            <li>âœ” Support prioritaire</li>
+                            <li>âœ” SLA garanti</li>
+                            <li>âœ” Personnalisation</li>
                         </ul>
                     </div>
                 </div>
@@ -350,20 +381,20 @@
                 await apiFetch(`/superadmin/entreprises/${id}/${action}`, {
                     method: 'PUT'
                 });
-                alert(`L'action "${action}" a été effectuée avec succès.`);
+                alert(`L'action "${action}" a Ã©tÃ© effectuÃ©e avec succÃ¨s.`);
                 loadEntreprises();
             } catch (err) {
-                alert("Erreur lors de la mise à jour : " + err.message);
+                alert("Erreur lors de la mise Ã  jour : " + err.message);
             }
         };
 
         window.deleteEntreprise = async function(id, nom) {
-            if (!confirm(`ATTENTION : Voulez-vous vraiment supprimer définitivement l'entreprise "${nom}" ? Cette action est irréversible et effacera toutes les données (agents, utilisateurs, pointages, factures...) de cette entreprise.`)) return;
+            if (!confirm(`ATTENTION : Voulez-vous vraiment supprimer dÃ©finitivement l'entreprise "${nom}" ? Cette action est irrÃ©versible et effacera toutes les donnÃ©es (agents, utilisateurs, pointages, factures...) de cette entreprise.`)) return;
             try {
                 await apiFetch(`/superadmin/entreprises/${id}`, {
                     method: 'DELETE'
                 });
-                alert(`L'entreprise "${nom}" a été supprimée définitivement.`);
+                alert(`L'entreprise "${nom}" a Ã©tÃ© supprimÃ©e dÃ©finitivement.`);
                 loadEntreprises();
             } catch (err) {
                 alert("Erreur lors de la suppression : " + err.message);
@@ -375,7 +406,7 @@
             const input = document.getElementById('inviteLinkDisplay');
             input.select();
             navigator.clipboard.writeText(input.value).then(() => {
-                alert('Lien copié !');
+                alert('Lien copiÃ© !');
             });
         };
 
@@ -388,7 +419,7 @@
 
             msg.className = 'hidden text-sm p-3 rounded-xl';
             successBox.classList.add('hidden');
-            btnText.textContent = 'Envoi en cours…';
+            btnText.textContent = 'Envoi en coursâ€¦';
             btn.disabled = true;
 
             try {
@@ -445,4 +476,5 @@
     </script>
 </body>
 </html>
+
 

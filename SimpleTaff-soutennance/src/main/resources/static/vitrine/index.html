@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -8,455 +8,154 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(255,255,255,0.04); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
-        .hero-gradient { background: #0f172a; }
-        .card-hover { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease-out; }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .tag { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        body { background-color: #fafafa; color: #0f172a; }
+        .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(24px); border: 1px solid rgba(0,0,0,0.04); box-shadow: 0 10px 40px rgba(0,0,0,0.03); }
+        .card-hover { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease-out; transform-style: preserve-3d; perspective: 1000px; }
+        .card-hover:hover { transform: translateY(-8px) rotateX(2deg) rotateY(-2deg); box-shadow: 0 30px 60px rgba(0,0,0,0.06); }
+        .tag { background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.05); color: #475569; }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
         .float { animation: float 6s ease-in-out infinite; }
-        @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-        .fade-up { animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        .fade-up { animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .delay-1 { animation-delay: 0.1s; opacity: 0; }
         .delay-2 { animation-delay: 0.2s; opacity: 0; }
         .delay-3 { animation-delay: 0.3s; opacity: 0; }
-        .btn-primary { background: #3b82f6; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .btn-primary:hover { transform: scale(1.02); box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4); background: #2563eb; }
+        .btn-primary { background: #0f172a; color: white; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        .btn-primary:hover { transform: scale(1.02); box-shadow: 0 15px 30px rgba(15, 23, 42, 0.15); }
         .nav-link { transition: color 0.3s ease-out; }
-        .glow { box-shadow: 0 0 80px rgba(59, 130, 246, 0.15); }
     </style>
 </head>
-<body class="hero-gradient text-white min-h-screen">
+<body class="min-h-screen selection:bg-slate-200">
 
     <!-- NAV -->
-    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/10">
+    <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-200/60">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg btn-primary flex items-center justify-center">
+                <div class="w-8 h-8 rounded-xl btn-primary flex items-center justify-center">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 </div>
-                <span class="font-bold text-lg">SimpleTaff</span>
+                <span class="font-extrabold tracking-tight text-lg">SimpleTaff</span>
             </div>
-            <div class="hidden md:flex items-center gap-8">
-                <a href="#features" class="nav-link text-white/60 hover:text-white text-sm">Fonctionnalités</a>
-                <a href="#how" class="nav-link text-white/60 hover:text-white text-sm">Comment ça marche</a>
-                <a href="#pricing" class="nav-link text-white/60 hover:text-white text-sm">Tarifs</a>
-                <a href="/vitrine/login.html" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium">Connexion</a>
+            <div class="hidden md:flex items-center gap-10">
+                <a href="#features" class="nav-link text-slate-500 hover:text-slate-900 text-sm font-semibold">Le Produit</a>
+                <a href="#how" class="nav-link text-slate-500 hover:text-slate-900 text-sm font-semibold">Concept</a>
+                <a href="#pricing" class="nav-link text-slate-500 hover:text-slate-900 text-sm font-semibold">Tarifs</a>
+                <a href="/vitrine/login.html" class="btn-primary px-6 py-2.5 rounded-xl text-sm font-bold shadow-sm">Connexion</a>
             </div>
-            <!-- Mobile Menu Toggle Button -->
             <div class="md:hidden flex items-center">
-                <button id="mobile-menu-toggle" class="text-white hover:text-indigo-300 focus:outline-none">
+                <button id="mobile-menu-toggle" class="text-slate-900 hover:text-slate-600 focus:outline-none">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
             </div>
         </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden glass border-b border-white/10 absolute top-16 left-0 w-full flex-col items-center gap-4 py-6 shadow-xl bg-slate-900/95">
-            <a href="#features" class="mobile-link text-sm font-semibold text-white/80 hover:text-white transition-colors">Fonctionnalités</a>
-            <a href="#how" class="mobile-link text-sm font-semibold text-white/80 hover:text-white transition-colors">Comment ça marche</a>
-            <a href="#pricing" class="mobile-link text-sm font-semibold text-white/80 hover:text-white transition-colors">Tarifs</a>
-            <a href="/vitrine/login.html" class="mobile-link btn-primary px-5 py-2.5 rounded-xl text-sm font-bold text-white shadow-md w-11/12 text-center mt-2">Connexion</a>
+        <div id="mobile-menu" class="hidden md:hidden glass border-b border-slate-200 absolute top-16 left-0 w-full flex-col items-center gap-6 py-8 shadow-2xl bg-white/95">
+            <a href="#features" class="mobile-link text-base font-bold text-slate-600 hover:text-slate-900">Le Produit</a>
+            <a href="#how" class="mobile-link text-base font-bold text-slate-600 hover:text-slate-900">Concept</a>
+            <a href="#pricing" class="mobile-link text-base font-bold text-slate-600 hover:text-slate-900">Tarifs</a>
+            <a href="/vitrine/login.html" class="mobile-link btn-primary px-6 py-3 rounded-xl text-base font-bold shadow-md w-11/12 text-center mt-2">Connexion</a>
         </div>
     </nav>
 
     <!-- HERO -->
-    <section class="pt-36 pb-24 px-6 text-center max-w-4xl mx-auto">
-        <div class="tag inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium text-indigo-300 mb-8 fade-up">
-            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 inline-block"></span>
-            Plateforme SaaS multi-tenant — Conçu pour les PME ivoiriennes
+    <section class="pt-40 pb-16 px-6 text-center max-w-5xl mx-auto">
+        <div class="tag inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold mb-8 fade-up shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-slate-400 inline-block"></span>
+            Le futur de la gestion RH temporaire
         </div>
-        <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-6 fade-up delay-1">
-            Gérez votre<br>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">main-d'œuvre temporaire</span><br>
-            sans friction.
+        <h1 class="text-6xl md:text-[5.5rem] font-extrabold leading-[1.05] mb-8 fade-up delay-1 tracking-tight">
+            L'excellence pour votre<br>
+            <span class="text-slate-400">main-d'œuvre.</span>
         </h1>
-        <p class="text-white/60 text-lg max-w-[65ch] mx-auto mb-10 fade-up delay-2 leading-relaxed">
-            SimpleTaff centralise le déploiement d'agents, la gestion des postes, le pointage QR et la paie — en un seul outil simple et sécurisé.
+        <p class="text-slate-500 text-xl max-w-[55ch] mx-auto mb-12 fade-up delay-2 leading-relaxed font-medium">
+            Déployez, pointez et gérez vos agents avec une précision absolue. Une interface de luxe conçue pour les PME qui exigent la perfection.
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center fade-up delay-3">
-            <a href="/vitrine/login.html" class="btn-primary px-7 py-3.5 rounded-xl font-semibold text-sm">Démarrer gratuitement →</a>
-            <a href="#how" class="glass px-7 py-3.5 rounded-xl font-semibold text-sm text-white/70 hover:text-white nav-link">Voir la démo</a>
+        <div class="flex flex-col sm:flex-row gap-5 justify-center fade-up delay-3">
+            <a href="/vitrine/login.html" class="btn-primary px-8 py-4 rounded-2xl font-bold text-sm">Démarrer gratuitement</a>
+            <a href="#how" class="bg-white border border-slate-200 shadow-sm px-8 py-4 rounded-2xl font-bold text-sm text-slate-700 hover:bg-slate-50 transition-colors">Découvrir le Concept</a>
         </div>
 
-        <!-- HERO IMAGE -->
-        <div class="mt-20 relative glow rounded-3xl overflow-hidden float fade-up delay-3">
-            <img src="/assets/hero_abstract.png" alt="SimpleTaff Management" class="w-full h-auto rounded-3xl opacity-90 object-cover" style="max-height: 500px;" />
-            <div class="absolute inset-0 bg-gradient-to-t from-[#0f172a] to-transparent pointer-events-none"></div>
+        <!-- HERO IMAGE 3D -->
+        <div class="mt-24 relative rounded-[2.5rem] overflow-hidden float fade-up delay-3 border border-slate-200/60 shadow-[0_40px_100px_rgba(0,0,0,0.08)]">
+            <img src="/assets/hero_3d.png" alt="SaaS 3D Dashboard" class="w-full h-auto object-cover" style="max-height: 600px;" />
         </div>
     </section>
 
     <!-- FEATURES -->
-    <section id="features" class="py-24 px-6 max-w-6xl mx-auto">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold mb-4">Tout ce dont vous avez besoin, rien de superflu</h2>
-            <p class="text-white/60 mx-auto max-w-[65ch]">Chaque fonctionnalité a été pensée pour les réalités opérationnelles des agences de placement ivoiriennes.</p>
+    <section id="features" class="py-32 px-6 max-w-6xl mx-auto">
+        <div class="text-center mb-24">
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">Un design sans compromis.</h2>
+            <p class="text-slate-500 mx-auto max-w-[65ch] text-lg font-medium">Pensé dans les moindres détails pour offrir une expérience fluide, rapide et esthétiquement parfaite à vos coordonnateurs.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass rounded-2xl p-6 card-hover">
-                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-4">
-                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
-                </div>
-                <h3 class="font-semibold mb-2">Gestion des Agents</h3>
-                <p class="text-white/40 text-sm">Fiches complètes, pièces justificatives, zones et compétences. Tout centralisé en un clic.</p>
-            </div>
-            <div class="glass rounded-2xl p-6 card-hover">
-                <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4">
-                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-                </div>
-                <h3 class="font-semibold mb-2">Postes & Remplacement</h3>
-                <p class="text-white/40 text-sm">Séparation stricte Poste / Affectation. Remplacement atomique garanti — aucun poste ne reste vide.</p>
-            </div>
-            <div class="glass rounded-2xl p-6 card-hover">
-                <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center mb-4">
-                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
-                </div>
-                <h3 class="font-semibold mb-2">Pointage par QR Code</h3>
-                <p class="text-white/40 text-sm">Chaque agent possède une carte QR signée. L'employeur valide les présences en temps réel.</p>
-            </div>
-            <div class="glass rounded-2xl p-6 card-hover">
-                <div class="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center mb-4">
-                    <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
-                </div>
-                <h3 class="font-semibold mb-2 flex items-center gap-2">Calcul de Paie <span class="bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded text-[10px] uppercase font-bold">En dev</span></h3>
-                <p class="text-white/40 text-sm">4 régimes d'absence appliqués automatiquement. Bulletins générés en un clic avec cotisations.</p>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- HOW IT WORKS -->
-    <section id="how" class="py-24 px-6 max-w-4xl mx-auto">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold mb-4">Opérationnel en 4 étapes</h2>
-        </div>
-        <div class="space-y-6">
-            <div class="glass rounded-2xl p-6 flex items-start gap-5 card-hover">
-                <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center flex-shrink-0 font-bold">1</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="glass rounded-[2rem] p-10 card-hover flex flex-col justify-between" style="min-height: 400px;">
                 <div>
-                    <h3 class="font-semibold mb-1">Créez votre espace entreprise</h3>
-                    <p class="text-white/40 text-sm">Le Super Admin vous ouvre un compte. Vous configurez vos zones, emplois, et structures clientes.</p>
+                    <h3 class="text-2xl font-bold mb-4">Gestion des Agents</h3>
+                    <p class="text-slate-500 text-base leading-relaxed max-w-[45ch]">Fiches complètes, pièces justificatives, et compétences. Tout est centralisé en un clic avec une interface épurée.</p>
                 </div>
+                <img src="/assets/feat_hr.png" alt="HR 3D" class="w-48 h-48 object-contain self-end drop-shadow-2xl" />
             </div>
-            <div class="glass rounded-2xl p-6 flex items-start gap-5 card-hover">
-                <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center flex-shrink-0 font-bold">2</div>
+            
+            <div class="glass rounded-[2rem] p-10 card-hover flex flex-col justify-between" style="min-height: 400px;">
                 <div>
-                    <h3 class="font-semibold mb-1">Enregistrez vos agents</h3>
-                    <p class="text-white/40 text-sm">Ajoutez les agents avec leurs pièces justificatives, compétences et zone d'affectation. Les coordonnateurs gèrent leur équipe via leur espace dédié.</p>
+                    <h3 class="text-2xl font-bold mb-4">Pointage Nouvelle Génération</h3>
+                    <p class="text-slate-500 text-base leading-relaxed max-w-[45ch]">Validation des présences en temps réel. La technologie rencontre la simplicité grâce à l'interface employeur dédiée.</p>
                 </div>
-            </div>
-            <div class="glass rounded-2xl p-6 flex items-start gap-5 card-hover">
-                <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center flex-shrink-0 font-bold">3</div>
-                <div>
-                    <h3 class="font-semibold mb-1">Déployez et pointez</h3>
-                    <p class="text-white/40 text-sm">Créez des postes sur les sites clients, affectez vos agents, et laissez le système QR Code gérer les entrées/sorties automatiquement.</p>
-                </div>
-            </div>
-            <div class="glass rounded-2xl p-6 flex items-start gap-5 card-hover">
-                <div class="w-10 h-10 rounded-xl btn-primary flex items-center justify-center flex-shrink-0 font-bold">4</div>
-                <div>
-                    <h3 class="font-semibold mb-1">Clôturez</h3>
-                    <p class="text-white/40 text-sm">En fin de mois, préparez les bulletins de paie (en cours de développement) en un clic pour simplifier vos opérations.</p>
-                </div>
+                <img src="/assets/feat_nfc.png" alt="NFC 3D" class="w-48 h-48 object-contain self-end drop-shadow-2xl" />
             </div>
         </div>
     </section>
 
     <!-- PRICING -->
-    <section id="pricing" class="py-24 px-6 max-w-5xl mx-auto">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold mb-4">Des tarifs transparents</h2>
-            <p class="text-white/40">Aucun frais caché. Évoluez à votre rythme.</p>
+    <section id="pricing" class="py-32 px-6 max-w-5xl mx-auto">
+        <div class="text-center mb-20">
+            <h2 class="text-4xl font-extrabold mb-6 tracking-tight">Investissez dans l'excellence.</h2>
+            <p class="text-slate-500 text-lg">Aucun frais caché. Une transparence absolue.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass rounded-2xl p-6 card-hover">
-                <p class="text-white/40 text-sm mb-2">Starter</p>
-                <p class="text-3xl font-bold mb-1">49 000 <span class="text-base font-normal text-white/40">FCFA/mois</span></p>
-                <p class="text-white/30 text-xs mb-6">Jusqu'à 50 agents</p>
-                <ul class="space-y-3 text-sm text-white/60 mb-8">
-                    <li class="flex gap-2">✓ Gestion agents & postes</li>
-                    <li class="flex gap-2">✓ Pointage QR Code</li>
-                    <li class="flex gap-2">✓ 1 coordonnateur</li>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div class="glass rounded-[2.5rem] p-12 card-hover">
+                <p class="text-slate-400 font-bold tracking-widest uppercase text-xs mb-4">Starter</p>
+                <p class="text-5xl font-extrabold mb-2 tracking-tight">49k <span class="text-lg font-medium text-slate-400">FCFA/mo</span></p>
+                <p class="text-slate-400 text-sm mb-10 font-medium">Jusqu'à 50 agents gérés.</p>
+                <ul class="space-y-4 text-slate-600 font-medium mb-12">
+                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-slate-900" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Gestion agents & postes</li>
+                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-slate-900" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Pointage QR Code</li>
+                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-slate-900" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> 1 coordonnateur inclus</li>
                 </ul>
-                <a href="/vitrine/contact-souscription.html?plan=Starter" class="block text-center glass rounded-xl py-2.5 text-sm font-medium hover:bg-white/10 transition-colors">Choisir Starter</a>
-            </div>
-            <div class="rounded-2xl p-6 card-hover relative" style="background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2)); border: 1px solid rgba(99,102,241,0.4);">
-                <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-500 to-purple-500 px-3 py-1 rounded-full text-xs font-medium">Recommandé</div>
-                <p class="text-indigo-300 text-sm mb-2">Pro</p>
-                <p class="text-3xl font-bold mb-1">120 000 <span class="text-base font-normal text-white/40">FCFA/mois</span></p>
-                <p class="text-white/30 text-xs mb-6">Jusqu'à 150 agents</p>
-                <ul class="space-y-3 text-sm text-white/70 mb-8">
-                    <li class="flex gap-2">✓ Tout Starter inclus</li>
-                    <li class="flex gap-2">✓ Calcul de paie <span class="text-[10px] uppercase text-indigo-300 ml-1">(En dev)</span></li>
-                    <li class="flex gap-2">✓ 4 coordonnateurs</li>
-                </ul>
-                <a href="/vitrine/contact-souscription.html?plan=Pro" class="block text-center btn-primary rounded-xl py-2.5 text-sm font-medium">Choisir Pro</a>
-            </div>
-            <div class="glass rounded-2xl p-6 card-hover">
-                <p class="text-white/40 text-sm mb-2">Enterprise</p>
-                <p class="text-3xl font-bold mb-1">Sur devis</p>
-                <p class="text-white/30 text-xs mb-6">Agents illimités</p>
-                <ul class="space-y-3 text-sm text-white/60 mb-8">
-                    <li class="flex gap-2">✓ Tout Pro inclus</li>
-                    <li class="flex gap-2">✓ SLA garanti</li>
-                    <li class="flex gap-2">✓ Intégration sur mesure</li>
-                    <li class="flex gap-2">✓ Support dédié</li>
-                </ul>
-                <a href="/vitrine/contact-souscription.html?plan=Enterprise" class="block text-center glass rounded-xl py-2.5 text-sm font-medium hover:bg-white/10 transition-colors">Nous contacter</a>
-            </div>
-        </div>
-
-        <!-- SIMULATEUR DE DEVIS -->
-        <div class="mt-16 glass rounded-3xl p-8 border border-white/10 max-w-3xl mx-auto">
-            <div class="text-center mb-8">
-                <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Simulateur Budget</span>
-                <h3 class="text-2xl font-bold mt-1">Estimez votre abonnement & obtenez un devis</h3>
-                <p class="text-white/40 text-sm mt-2">Ajustez le curseur selon vos effectifs pour voir la formule adaptée.</p>
+                <a href="/vitrine/contact-souscription.html?plan=Starter" class="block text-center border-2 border-slate-200 rounded-2xl py-4 font-bold hover:bg-slate-50 transition-colors">Choisir Starter</a>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-white/70 mb-2 flex justify-between">
-                            <span>Nombre d'agents à gérer :</span>
-                            <span id="agent-count-val" class="font-bold text-indigo-400 text-lg">50 agents</span>
-                        </label>
-                        <input id="agent-slider" type="range" min="5" max="300" value="50" class="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-indigo-500">
-                        <div class="flex justify-between text-xs text-white/30 mt-1">
-                            <span>5 agents</span>
-                            <span>150 agents</span>
-                            <span>300+ agents</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <span class="block text-sm font-medium text-white/70 mb-2">Formule recommandée :</span>
-                        <div id="recommended-badge" class="inline-block bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3.5 py-1.5 rounded-full text-sm font-semibold">
-                            Formule Pro
-                        </div>
-                    </div>
-                </div>
-
-                <div class="glass rounded-2xl p-6 border border-white/5 bg-white/5 text-center space-y-4">
-                    <p class="text-white/40 text-xs uppercase tracking-wider">Coût mensuel estimé</p>
-                    <p id="estimated-cost" class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">120 000 FCFA</p>
-                    <p class="text-white/30 text-xs">Abonnement sans engagement, résiliable à tout moment.</p>
-                    
-                    <button onclick="openDevisModal()" class="w-full btn-primary py-3 rounded-xl font-bold text-sm text-white transition-all">
-                        Obtenir un Devis Officiel
-                    </button>
-                </div>
+            <div class="rounded-[2.5rem] p-12 card-hover relative bg-slate-900 text-white shadow-2xl">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-slate-900 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-md">Recommandé</div>
+                <p class="text-slate-400 font-bold tracking-widest uppercase text-xs mb-4">Pro</p>
+                <p class="text-5xl font-extrabold mb-2 tracking-tight text-white">120k <span class="text-lg font-medium text-slate-400">FCFA/mo</span></p>
+                <p class="text-slate-400 text-sm mb-10 font-medium">Jusqu'à 150 agents gérés.</p>
+                <ul class="space-y-4 text-slate-300 font-medium mb-12">
+                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Tout Starter inclus</li>
+                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> Calcul de paie <span class="bg-slate-800 text-white px-2 py-0.5 rounded text-[10px] ml-2">DEV</span></li>
+                    <li class="flex items-center gap-3"><svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg> 4 coordonnateurs</li>
+                </ul>
+                <a href="/vitrine/contact-souscription.html?plan=Pro" class="block text-center bg-white text-slate-900 rounded-2xl py-4 font-bold hover:bg-slate-100 transition-colors shadow-lg">Choisir Pro</a>
             </div>
         </div>
     </section>
 
-    <!-- CTA -->
-    <section class="py-24 px-6 text-center">
-        <div class="glass rounded-3xl max-w-2xl mx-auto p-12" style="background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.1)); border: 1px solid rgba(99,102,241,0.2);">
-            <h2 class="text-3xl font-bold mb-4">Prêt à moderniser votre agence ?</h2>
-            <p class="text-white/40 mb-8" style="max-width:50ch;margin-left:auto;margin-right:auto">Rejoignez les agences qui ont déjà digitalisé leur gestion de main-d'œuvre avec SimpleTaff.</p>
-            <a href="/vitrine/login.html" class="btn-primary inline-block px-8 py-4 rounded-xl font-semibold">Démarrer maintenant — C'est gratuit →</a>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="border-t border-white/10 py-10 px-6 text-center text-white/30 text-sm">
-        <div class="flex items-center justify-center gap-2 mb-4">
-            <div class="w-6 h-6 rounded-md btn-primary flex items-center justify-center">
-                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            </div>
-            <span class="font-semibold text-white/60">SimpleTaff</span>
-        </div>
-        <p>© 2026 SimpleTaff. Tous droits réservés. — Conçu avec ❤️ pour les agences ivoiriennes.</p>
+    <footer class="border-t border-slate-200 mt-20 py-12 text-center text-slate-500 font-medium text-sm">
+        <p>&copy; 2026 SimpleTaff. L'art de la gestion RH.</p>
     </footer>
 
-    <!-- DEVIS MODAL -->
-    <div id="devis-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
-        <div class="glass rounded-3xl p-8 max-w-md w-full border border-white/15 mx-4 relative">
-            <button onclick="closeDevisModal()" class="absolute top-4 right-4 text-white/40 hover:text-white transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-            <div class="text-center mb-6">
-                <h3 class="text-2xl font-bold">Votre Devis Estimatif</h3>
-                <p class="text-white/50 text-sm mt-1">Remplissez les informations ci-dessous pour recevoir votre devis officiel PDF par e-mail.</p>
-            </div>
-            <form id="devis-form" onsubmit="submitDevis(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs text-white/60 mb-1">Nom de l'entreprise</label>
-                    <input type="text" required placeholder="Ex: Bolloré Côte d'Ivoire" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-white">
-                </div>
-                <div>
-                    <label class="block text-xs text-white/60 mb-1">Votre Nom complet</label>
-                    <input type="text" required placeholder="Ex: Jean Koffi" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-white">
-                </div>
-                <div>
-                    <label class="block text-xs text-white/60 mb-1">Adresse e-mail</label>
-                    <input type="email" required placeholder="Ex: contact@entreprise.ci" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-white">
-                </div>
-                <div>
-                    <label class="block text-xs text-white/60 mb-1">Téléphone</label>
-                    <input type="tel" required placeholder="Ex: +225 07 00 00 00 00" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 text-white">
-                </div>
-                <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-3 text-xs text-indigo-300">
-                    <span class="font-bold">Estimation sélectionnée :</span> <span id="modal-summary">Formule Pro (50 agents) - 120 000 FCFA/mois</span>
-                </div>
-                <button type="submit" class="w-full btn-primary py-3 rounded-xl font-bold text-sm text-white">
-                    Générer et envoyer le devis
-                </button>
-            </form>
-            <div id="devis-success" class="hidden text-center py-6 space-y-4">
-                <div class="w-16 h-16 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                </div>
-                <h4 class="text-xl font-bold">Devis envoyé avec succès !</h4>
-                <p class="text-white/50 text-sm">Un e-mail contenant le devis officiel PDF a été envoyé à l'adresse indiquée.</p>
-                <div class="bg-white/5 border border-white/10 rounded-xl p-4 text-left text-xs space-y-2">
-                    <div class="flex justify-between"><span class="text-white/40">Numéro de Devis :</span> <span class="font-mono text-indigo-300">DEVIS-2026-0042</span></div>
-                    <div class="flex justify-between"><span class="text-white/40">Destinataire :</span> <span id="success-email">contact@entreprise.ci</span></div>
-                    <div class="flex justify-between"><span class="text-white/40">Total Mensuel :</span> <span id="success-cost" class="font-bold">120 000 FCFA</span></div>
-                </div>
-                <div class="flex gap-3 mt-4">
-                    <a href="#" id="download-devis-btn" onclick="downloadMockDevisPdf(event)" class="flex-1 text-center btn-primary py-2.5 rounded-xl font-semibold text-xs text-white">
-                        Télécharger le PDF
-                    </a>
-                    <button onclick="closeDevisModal()" class="flex-1 glass py-2.5 rounded-xl font-semibold text-xs text-white/70 hover:text-white">
-                        Fermer
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Mobile Menu Toggle
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
-
-        if (mobileMenuToggle && mobileMenu) {
-            mobileMenuToggle.addEventListener('click', () => {
-                if (mobileMenu.classList.contains('hidden')) {
-                    mobileMenu.classList.remove('hidden');
-                    mobileMenu.classList.add('flex');
-                } else {
-                    mobileMenu.classList.add('hidden');
-                    mobileMenu.classList.remove('flex');
-                }
-            });
-
-            mobileLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.add('hidden');
-                    mobileMenu.classList.remove('flex');
-                });
-            });
-        }
-
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(a => {
-            a.addEventListener('click', e => {
-                e.preventDefault();
-                document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+        });
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const menu = document.getElementById('mobile-menu');
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
             });
         });
-        // Intersection observer for fade-up animations on scroll
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('fade-up'); });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.card-hover').forEach(el => observer.observe(el));
-
-        // Devis Simulator Logic
-        const agentSlider = document.getElementById('agent-slider');
-        const agentCountVal = document.getElementById('agent-count-val');
-        const recommendedBadge = document.getElementById('recommended-badge');
-        const estimatedCost = document.getElementById('estimated-cost');
-        const modalSummary = document.getElementById('modal-summary');
-
-        function updatePricing() {
-            const count = parseInt(agentSlider.value);
-            agentCountVal.textContent = `${count} agent${count > 1 ? 's' : ''}`;
-            
-            let formula = '';
-            let price = '';
-            if (count <= 30) {
-                formula = 'Formule Starter';
-                price = '49 000 FCFA';
-            } else if (count <= 150) {
-                formula = 'Formule Pro';
-                price = '120 000 FCFA';
-            } else {
-                formula = 'Formule Enterprise';
-                price = 'Sur devis';
-            }
-            
-            recommendedBadge.textContent = formula;
-            estimatedCost.textContent = price;
-            modalSummary.textContent = `${formula} (${count} agents) - ${price}/mois`;
-        }
-
-        if (agentSlider) {
-            agentSlider.addEventListener('input', updatePricing);
-            updatePricing();
-        }
-
-        // Modal Operations
-        const devisModal = document.getElementById('devis-modal');
-        function openDevisModal() {
-            devisModal.classList.remove('hidden');
-            setTimeout(() => {
-                devisModal.classList.remove('opacity-0');
-            }, 50);
-        }
-        function closeDevisModal() {
-            devisModal.classList.add('opacity-0');
-            setTimeout(() => {
-                devisModal.classList.add('hidden');
-                document.getElementById('devis-form').classList.remove('hidden');
-                document.getElementById('devis-success').classList.add('hidden');
-            }, 300);
-        }
-        function submitDevis(event) {
-            event.preventDefault();
-            const email = event.target.querySelector('input[type="email"]').value;
-            document.getElementById('success-email').textContent = email;
-            document.getElementById('success-cost').textContent = estimatedCost.textContent;
-            
-            document.getElementById('devis-form').classList.add('hidden');
-            document.getElementById('devis-success').classList.remove('hidden');
-        }
-        function downloadMockDevisPdf(e) {
-            e.preventDefault();
-            const companyName = document.querySelector('#devis-form input[type="text"]').value || "Votre Entreprise";
-            const agentCount = agentSlider.value;
-            const cost = estimatedCost.textContent;
-            const formula = recommendedBadge.textContent;
-            
-            let pdfText = `====================================================\n`;
-            pdfText += `               DEVIS OFFICIEL - SIMPLETTAFF          \n`;
-            pdfText += `====================================================\n`;
-            pdfText += `Numéro : DEVIS-2026-0042\n`;
-            pdfText += `Date   : ${new Date().toLocaleDateString('fr-FR')}\n`;
-            pdfText += `Validité : 30 jours\n\n`;
-            pdfText += `Destinataire :\n`;
-            pdfText += `  Entreprise : ${companyName}\n\n`;
-            pdfText += `Détails de l'offre :\n`;
-            pdfText += `  - Formule : ${formula}\n`;
-            pdfText += `  - Capacité : Jusqu'à ${agentCount} agents gérés\n`;
-            pdfText += `  - Hébergement & Support inclus\n`;
-            pdfText += `  - Configuration initiale : Offerte (Frais d'installation : 0 FCFA)\n\n`;
-            pdfText += `----------------------------------------------------\n`;
-            pdfText += `TOTAL MENSUEL : ${cost} / mois HT\n`;
-            pdfText += `----------------------------------------------------\n\n`;
-            pdfText += `Merci pour votre confiance.\n`;
-            pdfText += `SimpleTaff Platform - www.simpletaff.ci\n`;
-            pdfText += `====================================================\n`;
-
-            const blob = new Blob([pdfText], { type: 'text/plain;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `devis_simpletaff_${companyName.toLowerCase().replace(/\s+/g, '_')}.txt`;
-            link.click();
-        }
     </script>
 </body>
 </html>
