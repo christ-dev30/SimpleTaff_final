@@ -62,9 +62,11 @@ public class CoordonnateurController {
         
         List<com.siege.platform.pointage.CarteAgent> cartes = carteAgentRepository.findAll();
         Map<UUID, String> agentQrMap = new HashMap<>();
+        Map<UUID, String> agentNfcMap = new HashMap<>();
         for (com.siege.platform.pointage.CarteAgent c : cartes) {
             if ("ACTIVE".equals(c.getStatut())) {
                 agentQrMap.put(c.getAgent().getId(), c.getCodeQr());
+                agentNfcMap.put(c.getAgent().getId(), c.getIdentifiantNfc());
             }
         }
 
@@ -100,7 +102,7 @@ public class CoordonnateurController {
             map.put("contactUrgenceNom", a.getContactUrgenceNom());
             map.put("contactUrgenceTelephone", a.getContactUrgenceTelephone());
             map.put("contactUrgenceLien", a.getContactUrgenceLien());
-            map.put("identifiantNfc", a.getIdentifiantNfc());
+            map.put("identifiantNfc", agentNfcMap.get(a.getId()));
             
             result.add(map);
         }
