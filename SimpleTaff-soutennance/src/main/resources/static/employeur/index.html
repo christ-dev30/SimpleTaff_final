@@ -235,7 +235,7 @@
                         </div>
 
                         <!-- Camera section container -->
-                        <div class="relative overflow-hidden rounded-2xl bg-slate-50 border-2 border-dashed border-indigo-200 flex flex-col items-center justify-center p-4 transition-all hover:border-indigo-400 group">
+                        <div id="scannerContainer" class="relative overflow-hidden rounded-2xl bg-slate-50 border-2 border-dashed border-indigo-200 flex flex-col items-center justify-center p-4 transition-all hover:border-indigo-400 group">
                             <!-- Scanner view finder -->
                             <div id="reader" class="w-full rounded-xl overflow-hidden bg-slate-950 shadow-inner"></div>
                             
@@ -602,6 +602,17 @@
                     msg.textContent = `Code QR détecté : ${decodedText}`;
                     msg.className = 'text-xs p-3 rounded-lg bg-indigo-50 text-indigo-700';
                     msg.classList.remove('hidden');
+
+                    const scannerContainer = document.getElementById('scannerContainer');
+                    if (scannerContainer) {
+                        scannerContainer.classList.remove('border-indigo-200', 'border-dashed');
+                        scannerContainer.classList.add('border-emerald-500', 'border-solid', 'shadow-[0_0_15px_rgba(16,185,129,0.3)]');
+                        setTimeout(() => {
+                            scannerContainer.classList.add('border-indigo-200', 'border-dashed');
+                            scannerContainer.classList.remove('border-emerald-500', 'border-solid', 'shadow-[0_0_15px_rgba(16,185,129,0.3)]');
+                        }, 2000);
+                    }
+
                     if (pendingPointageType) {
                         const typeToSubmit = pendingPointageType;
                         pendingPointageType = null;
