@@ -508,7 +508,18 @@ public class RapportService {
                         agentSite = aff.getZoneOperationnelle();
                     }
                     if (aff.getEmployeurResponsable() != null && !aff.getEmployeurResponsable().trim().isEmpty()) {
-                        agentEmployeur = aff.getEmployeurResponsable();
+                        String empIdStr = aff.getEmployeurResponsable();
+                        try {
+                            java.util.UUID empId = java.util.UUID.fromString(empIdStr);
+                            com.siege.platform.utilisateur.Utilisateur u = utilisateurRepository.findById(empId).orElse(null);
+                            if (u != null) {
+                                agentEmployeur = (u.getNom() + " " + u.getPrenom()).trim();
+                            } else {
+                                agentEmployeur = empIdStr;
+                            }
+                        } catch (Exception e) {
+                            agentEmployeur = empIdStr;
+                        }
                     } else if (aff.getEntreprise() != null) {
                         agentEmployeur = aff.getEntreprise().getNom();
                     }
@@ -553,6 +564,17 @@ public class RapportService {
                                 site = p.getAffectation().getSiteTravail();
                             } else if (p.getAffectation().getZoneOperationnelle() != null && !p.getAffectation().getZoneOperationnelle().trim().isEmpty()) {
                                 site = p.getAffectation().getZoneOperationnelle();
+                            }
+                            if (p.getAffectation().getEmployeurResponsable() != null && !p.getAffectation().getEmployeurResponsable().trim().isEmpty()) {
+                                String empIdStr = p.getAffectation().getEmployeurResponsable();
+                                try {
+                                    java.util.UUID empId = java.util.UUID.fromString(empIdStr);
+                                    com.siege.platform.utilisateur.Utilisateur u = utilisateurRepository.findById(empId).orElse(null);
+                                    if (u != null) employeur = (u.getNom() + " " + u.getPrenom()).trim();
+                                    else employeur = empIdStr;
+                                } catch (Exception e) { employeur = empIdStr; }
+                            } else if (p.getAffectation().getEntreprise() != null) {
+                                employeur = p.getAffectation().getEntreprise().getNom();
                             }
                         }
                         if (p.getValideParEmployeur() != null) {

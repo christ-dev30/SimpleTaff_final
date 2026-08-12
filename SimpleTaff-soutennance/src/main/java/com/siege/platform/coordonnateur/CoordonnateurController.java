@@ -85,6 +85,23 @@ public class CoordonnateurController {
             map.put("matricule", a.getMatricule());
             map.put("photoUrl", a.getPhotoUrl());
             
+            // Informations détaillées pour le dossier agent
+            map.put("genre", a.getGenre());
+            map.put("dateNaissance", a.getDateNaissance());
+            map.put("lieuNaissance", a.getLieuNaissance());
+            map.put("nationalite", a.getNationalite());
+            map.put("situationMatrimoniale", a.getSituationMatrimoniale());
+            map.put("nombreEnfants", a.getNombreEnfants());
+            map.put("telephoneSecondaire", a.getTelephoneSecondaire());
+            map.put("email", a.getEmail());
+            map.put("commune", a.getCommune());
+            map.put("ville", a.getVille());
+            map.put("adresse", a.getAdresse());
+            map.put("contactUrgenceNom", a.getContactUrgenceNom());
+            map.put("contactUrgenceTelephone", a.getContactUrgenceTelephone());
+            map.put("contactUrgenceLien", a.getContactUrgenceLien());
+            map.put("identifiantNfc", a.getIdentifiantNfc());
+            
             result.add(map);
         }
         return ResponseEntity.ok(result);
