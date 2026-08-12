@@ -2940,7 +2940,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 const allMateriels = await apiFetch('/materiels');
                 const select = document.getElementById('newHardwareSelect');
                 if (select) {
-                    const disponibles = (allMateriels || []).filter(m => m.statut === 'DISPONIBLE');
+                    const disponibles = (allMateriels || []).filter(m => m.statut === 'DISPONIBLE' || m.statut === 'ASSIGNE');
                     if (disponibles.length === 0) {
                         select.innerHTML = '<option value="">Aucun matériel disponible dans l\'inventaire...</option>';
                     } else {

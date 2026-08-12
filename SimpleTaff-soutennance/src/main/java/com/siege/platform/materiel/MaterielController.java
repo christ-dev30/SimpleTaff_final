@@ -51,7 +51,17 @@ public class MaterielController {
 
     @GetMapping
     public List<Materiel> list(@RequestParam(value = "categorie", required = false) String categorie) {
-        return categorie == null ? materielRepository.findAll() : materielRepository.findByCategorieOrderByLibelle(categorie);
+        List<Materiel> all = categorie == null ? materielRepository.findAll() : materielRepository.findByCategorieOrderByLibelle(categorie);
+        String username = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        com.siege.platform.utilisateur.Utilisateur u = utilisateurRepository.findByEmail(username).orElse(null);
+        if (u instanceof com.siege.platform.utilisateur.Coordonnateur) {
+            com.siege.platform.utilisateur.Coordonnateur c = (com.siege.platform.utilisateur.Coordonnateur) u;
+            return all.stream()
+                .filter(m -> "DISPONIBLE".equals(m.getStatut()) || 
+                             ("ASSIGNE".equals(m.getStatut()) && m.getCoordonnateur() != null && m.getCoordonnateur().getId().equals(c.getId())))
+                .collect(java.util.stream.Collectors.toList());
+        }
+        return all;
     }
 
     @PostMapping
