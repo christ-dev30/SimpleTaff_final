@@ -2617,7 +2617,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
         window.openAgentFolder = async function(agentId) {
             window.currentFolderAgentId = agentId;
             
-            const a = window.allCoordAgents.find(x => x.id === agentId);
+            const a = window.allCoordAgents.find(x => String(x.id) === String(agentId));
             if (a) {
                 window.currentFolderAgentObj = a;
             }
@@ -2872,13 +2872,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                                 <span class="font-bold text-slate-700">${activeC.structureCliente || 'Placement interne'}</span>
                             </div>
                         </div>
-                        ${activeC.type === 'CDD' && activeC.statut === 'ACTIF' ? `
-                            <div class="mt-4 flex justify-end">
-                                <button onclick="document.getElementById('renewContractFormContainer').classList.remove('hidden')" class="bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 text-xs px-3 py-1.5 rounded-lg font-bold">
-                                    Renouveler le CDD
-                                </button>
-                            </div>
-                        ` : ''}
+
                     `;
                 }
 

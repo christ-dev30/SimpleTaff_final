@@ -43,6 +43,15 @@ public interface PointageRepository extends JpaRepository<Pointage, UUID> {
     List<Object[]> findPointageDatesWithCounts();
 
     @Query(value = """
+            SELECT CAST(date_heure_entree AS date) AS jour, COUNT(*) AS total
+            FROM pointage
+            WHERE entreprise_id = :entrepriseId
+            GROUP BY CAST(date_heure_entree AS date)
+            ORDER BY jour DESC
+            """, nativeQuery = true)
+    List<Object[]> findPointageDatesWithCountsByEntrepriseId(@Param("entrepriseId") UUID entrepriseId);
+
+    @Query(value = """
             SELECT CAST(p.date_heure_entree AS date) AS jour, COUNT(*) AS total
             FROM pointage p
             JOIN affectation a ON p.affectation_id = a.id

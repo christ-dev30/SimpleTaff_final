@@ -86,7 +86,11 @@ public class PointageController {
             pointages = pointageRepository.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(start, end);
         }
 
+        UUID tenantId = com.siege.platform.config.tenant.TenantContext.getTenantId();
         for (Pointage pointage : pointages) {
+            if (tenantId != null && (pointage.getEntreprise() == null || !pointage.getEntreprise().getId().equals(tenantId))) {
+                continue;
+            }
             response.add(toResponse(pointage));
         }
         return ResponseEntity.ok(response);
@@ -95,6 +99,10 @@ public class PointageController {
     @GetMapping("/dates")
     @PreAuthorize("hasAnyRole('COORDONNATEUR', 'EMPLOYEUR', 'ADMIN_ENTREPRISE')")
     public ResponseEntity<List<Map<String, Object>>> getPointageDates() {
+        UUID tenantId = com.siege.platform.config.tenant.TenantContext.getTenantId();
+        if (tenantId != null) {
+            return ResponseEntity.ok(toDateSummary(pointageRepository.findPointageDatesWithCountsByEntrepriseId(tenantId)));
+        }
         return ResponseEntity.ok(toDateSummary(pointageRepository.findPointageDatesWithCounts()));
     }
 
@@ -103,7 +111,11 @@ public class PointageController {
         LocalDateTime end = date.plusDays(1).atStartOfDay();
         List<Map<String, Object>> response = new ArrayList<>();
 
+        UUID tenantId = com.siege.platform.config.tenant.TenantContext.getTenantId();
         for (Pointage pointage : pointageRepository.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(start, end)) {
+            if (tenantId != null && (pointage.getEntreprise() == null || !pointage.getEntreprise().getId().equals(tenantId))) {
+                continue;
+            }
             response.add(toResponse(pointage));
         }
         return ResponseEntity.ok(response);

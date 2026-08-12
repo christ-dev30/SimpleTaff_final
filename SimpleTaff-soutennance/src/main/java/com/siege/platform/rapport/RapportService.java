@@ -45,17 +45,20 @@ public class RapportService {
     private final MaterielRepository materielRepository;
     private final SanctionRepository sanctionRepository;
     private final MissionRepository missionRepository;
+    private final com.siege.platform.utilisateur.UtilisateurRepository utilisateurRepository;
 
     public RapportService(PointageRepository pointageRepository,
                           DemandeCongeRepository demandeCongeRepository,
                           MaterielRepository materielRepository,
                           SanctionRepository sanctionRepository,
-                          MissionRepository missionRepository) {
+                          MissionRepository missionRepository,
+                          com.siege.platform.utilisateur.UtilisateurRepository utilisateurRepository) {
         this.pointageRepository = pointageRepository;
         this.demandeCongeRepository = demandeCongeRepository;
         this.materielRepository = materielRepository;
         this.sanctionRepository = sanctionRepository;
         this.missionRepository = missionRepository;
+        this.utilisateurRepository = utilisateurRepository;
     }
 
     public Map<String, Object> genererRapportGlobal(String mois) {
@@ -985,9 +988,19 @@ public class RapportService {
             } else if (p.getAffectation().getZoneOperationnelle() != null && !p.getAffectation().getZoneOperationnelle().trim().isEmpty()) {
                 siteTravail = p.getAffectation().getZoneOperationnelle();
             }
-            
             if (p.getAffectation().getEmployeurResponsable() != null && !p.getAffectation().getEmployeurResponsable().trim().isEmpty()) {
-                employeur = p.getAffectation().getEmployeurResponsable();
+                String empIdStr = p.getAffectation().getEmployeurResponsable();
+                try {
+                    java.util.UUID empId = java.util.UUID.fromString(empIdStr);
+                    com.siege.platform.utilisateur.Utilisateur u = utilisateurRepository.findById(empId).orElse(null);
+                    if (u != null) {
+                        employeur = (u.getNom() + " " + u.getPrenom()).trim();
+                    } else {
+                        employeur = empIdStr;
+                    }
+                } catch (IllegalArgumentException e) {
+                    employeur = empIdStr;
+                }
             } else if (p.getAffectation().getEntreprise() != null) {
                 employeur = p.getAffectation().getEntreprise().getNom();
             }

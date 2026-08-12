@@ -243,6 +243,9 @@ public class EntrepriseAdminController {
             if (payload.get("heureFin") != null) {
                 aff.setHeureFin(payload.get("heureFin"));
             }
+            if (payload.get("dateFin") != null && !payload.get("dateFin").isBlank()) {
+                aff.setDateFinOccupation(LocalDate.parse(payload.get("dateFin")));
+            }
             if (aff.getPoste() != null && aff.getPoste().getSite() != null) {
                 aff.setSiteTravail(aff.getPoste().getSite().getNom());
             }

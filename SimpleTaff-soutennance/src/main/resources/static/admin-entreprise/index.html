@@ -2515,6 +2515,12 @@
         // Load Overview
         async function loadOverview() {
             try {
+                const config = await apiFetch('/admin/entreprise/config');
+                if (config) {
+                    const enterpriseNameDisplay = document.getElementById('enterpriseNameDisplay');
+                    if (enterpriseNameDisplay) enterpriseNameDisplay.textContent = config.nom || '-';
+                }
+                
                 checkContractExpirations();
                 const stats = await apiFetch('/dashboard/admin') || {};
                 document.getElementById('statOverviewAgents').textContent = stats.totalAgents ?? '0';
