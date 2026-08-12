@@ -211,7 +211,7 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col overflow-hidden">
-        <header class="h-20 flex items-center justify-between px-8 border-b border-slate-200/60 bg-white/60 backdrop-blur-sm z-10">
+        <header class="desktop-header h-20 flex items-center justify-between px-8 border-b border-slate-200/60 bg-white/60 backdrop-blur-sm z-10">
             <div>
                 <h1 class="text-xl font-bold text-slate-900">Espace Super Admin</h1>
                 <p class="text-xs text-slate-400">Contrôle global de la plateforme SaaS SimpleTaff</p>
@@ -267,18 +267,20 @@
                     <h2 class="text-lg font-bold text-slate-900">Entreprises enregistrées</h2>
                     <button onclick="loadEntreprises()" class="text-xs text-indigo-600 font-bold hover:underline">↻ Actualiser</button>
                 </div>
-                <div class="glass rounded-2xl overflow-hidden">
-                    <table class="w-full text-left">
-                        <thead><tr class="bg-slate-50 text-xs font-bold text-slate-500 uppercase">
-                            <th class="px-6 py-3">Entreprise</th>
-                            <th class="px-6 py-3">Formule</th>
-                            <th class="px-6 py-3">Statut</th>
-                            <th class="px-6 py-3">Actions</th>
-                        </tr></thead>
-                        <tbody id="entreprisesTable" class="divide-y divide-slate-100 text-sm">
-                            <tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Chargementâ€¦</td></tr>
-                        </tbody>
-                    </table>
+                <div class="glass rounded-2xl overflow-hidden w-full">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left min-w-[700px]">
+                            <thead><tr class="bg-slate-50 text-xs font-bold text-slate-500 uppercase">
+                                <th class="px-6 py-3">Entreprise</th>
+                                <th class="px-6 py-3">Formule</th>
+                                <th class="px-6 py-3">Statut</th>
+                                <th class="px-6 py-3">Actions</th>
+                            </tr></thead>
+                            <tbody id="entreprisesTable" class="divide-y divide-slate-100 text-sm">
+                                <tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Chargementâ€¦</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
