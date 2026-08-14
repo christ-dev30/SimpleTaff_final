@@ -6,18 +6,7 @@
     <title>SimpleTaff — Plateforme SaaS de Gestion de Main-d'Œuvre Temporaire</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        h1, h2, h3, .font-display { font-family: 'Outfit', sans-serif; }
-        .glass-light { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.4); }
-        .hero-bg { background: radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 50%), radial-gradient(circle at 10% 80%, rgba(14, 165, 233, 0.08) 0%, transparent 50%), #f8fafc; }
-        .card-shadow { box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02); }
-        .card-hover { transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .card-hover:hover { transform: translateY(-6px); box-shadow: 0 25px 50px -12px rgba(99, 102, 241, 0.12); border-color: rgba(99, 102, 241, 0.2); }
-        .btn-gradient { background: linear-gradient(135deg, #4f46e5, #0284c7); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4); }
-        .tag-light { background: rgba(79, 70, 229, 0.06); border: 1px solid rgba(79, 70, 229, 0.15); color: #4338ca; }
-    </style>
+    <link href="/index.css" rel="stylesheet">
 </head>
 <body class="hero-bg text-slate-800 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
@@ -440,125 +429,7 @@
         </div>
     </div>
 
-    <script>
-        // Mobile Menu Toggle
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
-
-        if (mobileMenuToggle && mobileMenu) {
-            mobileMenuToggle.addEventListener('click', () => {
-                if (mobileMenu.classList.contains('hidden')) {
-                    mobileMenu.classList.remove('hidden');
-                    mobileMenu.classList.add('flex');
-                } else {
-                    mobileMenu.classList.add('hidden');
-                    mobileMenu.classList.remove('flex');
-                }
-            });
-
-            mobileLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.add('hidden');
-                    mobileMenu.classList.remove('flex');
-                });
-            });
-        }
-
-        // Devis Simulator Logic
-        const agentSlider = document.getElementById('agent-slider');
-        const agentCountVal = document.getElementById('agent-count-val');
-        const recommendedBadge = document.getElementById('recommended-badge');
-        const estimatedCost = document.getElementById('estimated-cost');
-        const modalSummary = document.getElementById('modal-summary');
-
-        function updatePricing() {
-            if (!agentSlider) return;
-            const count = parseInt(agentSlider.value);
-            agentCountVal.textContent = `${count} agent${count > 1 ? 's' : ''}`;
-            
-            let formula = '';
-            let price = '';
-            if (count <= 50) {
-                formula = 'Formule Starter';
-                price = '49 000 FCFA';
-            } else if (count <= 150) {
-                formula = 'Formule Pro';
-                price = '120 000 FCFA';
-            } else {
-                formula = 'Formule Enterprise';
-                price = 'Sur devis';
-            }
-            
-            recommendedBadge.textContent = formula;
-            estimatedCost.textContent = price;
-            modalSummary.textContent = `${formula} (${count} agents) - ${price}/mois`;
-        }
-
-        if (agentSlider) {
-            agentSlider.addEventListener('input', updatePricing);
-            updatePricing();
-        }
-
-        // Modal Operations
-        const devisModal = document.getElementById('devis-modal');
-        function openDevisModal() {
-            devisModal.classList.remove('hidden');
-            setTimeout(() => {
-                devisModal.classList.remove('opacity-0');
-            }, 50);
-        }
-        function closeDevisModal() {
-            devisModal.classList.add('opacity-0');
-            setTimeout(() => {
-                devisModal.classList.add('hidden');
-                document.getElementById('devis-form').classList.remove('hidden');
-                document.getElementById('devis-success').classList.add('hidden');
-            }, 300);
-        }
-        function submitDevis(event) {
-            event.preventDefault();
-            const email = event.target.querySelector('input[type="email"]').value;
-            document.getElementById('success-email').textContent = email;
-            document.getElementById('success-cost').textContent = estimatedCost.textContent;
-            
-            document.getElementById('devis-form').classList.add('hidden');
-            document.getElementById('devis-success').classList.remove('hidden');
-        }
-        function downloadMockDevisPdf(e) {
-            e.preventDefault();
-            const companyName = document.querySelector('#devis-form input[type="text"]').value || "Votre Entreprise";
-            const agentCount = agentSlider.value;
-            const cost = estimatedCost.textContent;
-            const formula = recommendedBadge.textContent;
-            
-            let pdfText = `====================================================\n`;
-            pdfText += `               DEVIS OFFICIEL - SIMPLETTAFF          \n`;
-            pdfText += `====================================================\n`;
-            pdfText += `Numéro : DEVIS-2026-0042\n`;
-            pdfText += `Date   : ${new Date().toLocaleDateString('fr-FR')}\n`;
-            pdfText += `Validité : 30 jours\n\n`;
-            pdfText += `Destinataire :\n`;
-            pdfText += `  Entreprise : ${companyName}\n\n`;
-            pdfText += `Détails de l'offre :\n`;
-            pdfText += `  - Formule : ${formula}\n`;
-            pdfText += `  - Capacité : Jusqu'à ${agentCount} agents gérés\n`;
-            pdfText += `  - Hébergement & Support inclus\n`;
-            pdfText += `  - Configuration initiale : Offerte (Frais d'installation : 0 FCFA)\n\n`;
-            pdfText += `----------------------------------------------------\n`;
-            pdfText += `TOTAL MENSUEL : ${cost} / mois HT\n`;
-            pdfText += `----------------------------------------------------\n\n`;
-            pdfText += `Merci pour votre confiance.\n`;
-            pdfText += `SimpleTaff Platform - www.simpletaff.ci\n`;
-            pdfText += `====================================================\n`;
-
-            const blob = new Blob([pdfText], { type: 'text/plain;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `devis_simpletaff_${companyName.toLowerCase().replace(/\s+/g, '_')}.txt`;
-            link.click();
-        }
-    </script>
+    <script src="/index.js"></script>
 
     <!-- CALL TO ACTION (CTA) -->
     <section class="py-24 px-6 text-center bg-slate-50 border-t border-slate-100">
