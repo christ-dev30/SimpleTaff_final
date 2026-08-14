@@ -67,7 +67,7 @@ public class WebSecurityConfig {
                 auth.requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/invitations/verifier", "/api/invitations/inscrire").permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                    .requestMatchers("/favicon.ico", "/favicon.svg", "/", "/error", "/vitrine", "/vitrine/", "/vitrine/**", "/shared/**", "/*.html",
+                    .requestMatchers("/favicon.ico", "/favicon.svg", "/", "/error", "/vitrine", "/vitrine/", "/vitrine/**", "/shared/**", "/*.html", "/*.css", "/*.js",
                                     "/super-admin", "/super-admin/", "/super-admin/**",
                                     "/admin-entreprise", "/admin-entreprise/", "/admin-entreprise/**",
                                     "/employeur", "/employeur/", "/employeur/**",
