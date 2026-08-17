@@ -160,3 +160,81 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 });
             });
         });
+
+        // Donezo Global Search
+        const searchInput = document.getElementById('globalSearchInput');
+        const searchDropdown = document.getElementById('globalSearchDropdown');
+        const searchContainer = document.getElementById('globalSearchContainer');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const q = e.target.value.toLowerCase().trim();
+                if (q.length < 2) {
+                    if (searchDropdown) searchDropdown.classList.add('hidden');
+                    return;
+                }
+                
+                let results = [];
+                
+                // Search Agents
+                if (window.agents) {
+                    window.agents.forEach(a => {
+                        const name = ((a.nom||'') + ' ' + (a.prenom||'')).toLowerCase();
+                        if (name.includes(q) || (a.telephone||'').includes(q)) {
+                            results.push({ type: 'Agent', icon: '👤', text: (a.nom||'') + ' ' + (a.prenom||''), tab: 'agents', action: () => { showTab('agents'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                        }
+                    });
+                }
+                
+                // Search Affectations
+                if (window.affectations) {
+                    window.affectations.forEach(a => {
+                        const name = (a.agentNom || '').toLowerCase();
+                        const site = (a.siteNom || '').toLowerCase();
+                        if (name.includes(q) || site.includes(q)) {
+                            results.push({ type: 'Affectation', icon: '🏢', text: (a.agentNom||'') + ' - ' + (a.siteNom||''), tab: 'affectations', action: () => { showTab('affectations'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                        }
+                    });
+                }
+
+                // Search Entreprises (Super Admin)
+                if (window.entreprises) {
+                    window.entreprises.forEach(ent => {
+                        if ((ent.nom||'').toLowerCase().includes(q)) {
+                            results.push({ type: 'Entreprise', icon: '🏢', text: ent.nom, tab: 'entreprises', action: () => { showTab('entreprises'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                        }
+                    });
+                }
+                
+                if (results.length > 0) {
+                    searchContainer.innerHTML = results.slice(0, 10).map(r => `
+                        <div onclick="(${r.action.toString().replace(/"/g, "'")})()" class="cursor-pointer flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl transition-colors">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm">${r.icon}</div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">${r.text}</p>
+                                <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wide">${r.type}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                    searchDropdown.classList.remove('hidden');
+                } else {
+                    searchContainer.innerHTML = '<div class="p-4 text-center text-slate-400 text-sm">Aucun résultat trouvé</div>';
+                    searchDropdown.classList.remove('hidden');
+                }
+            });
+
+            // Close on click outside
+            document.addEventListener('click', (e) => {
+                if (searchDropdown && !searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+                    searchDropdown.classList.add('hidden');
+                }
+            });
+            
+            // Cmd+K to focus
+            document.addEventListener('keydown', (e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+        }

@@ -58,7 +58,37 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     if (enterpriseNameDisplay) enterpriseNameDisplay.textContent = config.nom || '-';
                 }
                 
+                
                 checkContractExpirations();
+                
+                // Donezo Layout: Populate Chart
+                if (window.affectations || window.agents) {
+                    const dataSource = window.affectations || window.agents || [];
+                    const countByJob = {};
+                    dataSource.forEach(a => {
+                        const job = (a.poste || a.emploi || a.titre || 'Autre').substring(0, 3).toUpperCase();
+                        countByJob[job] = (countByJob[job] || 0) + 1;
+                    });
+                    
+                    const sortedJobs = Object.keys(countByJob).sort((a,b) => countByJob[b] - countByJob[a]).slice(0, 5);
+                    if (sortedJobs.length > 0) {
+                        const maxCount = countByJob[sortedJobs[0]];
+                        
+                        const barsContainer = document.getElementById('chartBarsContainer');
+                        const labelsContainer = document.getElementById('chartLabelsContainer');
+                        
+                        if (barsContainer && labelsContainer) {
+                            barsContainer.innerHTML = sortedJobs.map((job, idx) => {
+                                const heightPct = Math.max(10, Math.floor((countByJob[job] / maxCount) * 100));
+                                const colorClass = idx === 0 ? 'bg-[#12312E]' : (idx === 1 ? 'bg-[#A3D977]' : 'bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)]');
+                                return `<div class="w-full ${colorClass} rounded-full" style="height: ${heightPct}%" title="${countByJob[job]}"></div>`;
+                            }).join('');
+                            
+                            labelsContainer.innerHTML = sortedJobs.map(job => `<span>${job}</span>`).join('');
+                        }
+                    }
+                }
+
                 const stats = await apiFetch('/dashboard/admin') || {};
                 document.getElementById('statOverviewAgents').textContent = stats.totalAgents ?? '0';
                 document.getElementById('statOverviewPostes').textContent = stats.totalPostes ?? '0';
@@ -2443,7 +2473,37 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
 
         async function loadContrats() {
             try {
+                
                 checkContractExpirations();
+                
+                // Donezo Layout: Populate Chart
+                if (window.affectations || window.agents) {
+                    const dataSource = window.affectations || window.agents || [];
+                    const countByJob = {};
+                    dataSource.forEach(a => {
+                        const job = (a.poste || a.emploi || a.titre || 'Autre').substring(0, 3).toUpperCase();
+                        countByJob[job] = (countByJob[job] || 0) + 1;
+                    });
+                    
+                    const sortedJobs = Object.keys(countByJob).sort((a,b) => countByJob[b] - countByJob[a]).slice(0, 5);
+                    if (sortedJobs.length > 0) {
+                        const maxCount = countByJob[sortedJobs[0]];
+                        
+                        const barsContainer = document.getElementById('chartBarsContainer');
+                        const labelsContainer = document.getElementById('chartLabelsContainer');
+                        
+                        if (barsContainer && labelsContainer) {
+                            barsContainer.innerHTML = sortedJobs.map((job, idx) => {
+                                const heightPct = Math.max(10, Math.floor((countByJob[job] / maxCount) * 100));
+                                const colorClass = idx === 0 ? 'bg-[#12312E]' : (idx === 1 ? 'bg-[#A3D977]' : 'bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)]');
+                                return `<div class="w-full ${colorClass} rounded-full" style="height: ${heightPct}%" title="${countByJob[job]}"></div>`;
+                            }).join('');
+                            
+                            labelsContainer.innerHTML = sortedJobs.map(job => `<span>${job}</span>`).join('');
+                        }
+                    }
+                }
+
                 const contrats = await apiFetch('/contrats');
                 safeRenderTbody(document.getElementById('contratsTableBody'),
                     (contrats || []).map(c => {
@@ -2467,8 +2527,26 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
         window.checkContractExpirations = async function() {
             try {
                 // Fetch contracts expiring in the next 90 days
+                
                 const list = await apiFetch('/contrats/expirations?jours=90') || [];
                 
+                // Donezo Layout Integration
+                if (list.length > 0) {
+                    const c = list[0]; // Take the most urgent
+                    const agentNameDisplay = document.getElementById('reminderAgentName');
+                    const dateDisplay = document.getElementById('reminderDate');
+                    const btnDisplay = document.getElementById('reminderBtn');
+                    
+                    if (agentNameDisplay) agentNameDisplay.textContent = 'Renouvellement ' + (c.agentNom || 'Agent');
+                    if (dateDisplay) dateDisplay.textContent = 'Date Limite : ' + c.dateFin;
+                    if (btnDisplay) btnDisplay.onclick = function() { openAgentFolder(c.agentId || c.agent?.id); setTimeout(()=>switchFolderTab('contract'),400); };
+                } else {
+                    const agentNameDisplay = document.getElementById('reminderAgentName');
+                    const dateDisplay = document.getElementById('reminderDate');
+                    if (agentNameDisplay) agentNameDisplay.textContent = 'Aucun renouvellement';
+                    if (dateDisplay) dateDisplay.textContent = 'Tout est à jour !';
+                }
+
                 const renderAlerts = (containerId) => {
                     const container = document.getElementById(containerId);
                     if (!container) return;
@@ -4221,3 +4299,81 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
             }, duration);
         };
         // showTab est défini globalement dans le <head> pour éviter les ReferenceErrors.
+
+        // Donezo Global Search
+        const searchInput = document.getElementById('globalSearchInput');
+        const searchDropdown = document.getElementById('globalSearchDropdown');
+        const searchContainer = document.getElementById('globalSearchContainer');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const q = e.target.value.toLowerCase().trim();
+                if (q.length < 2) {
+                    if (searchDropdown) searchDropdown.classList.add('hidden');
+                    return;
+                }
+                
+                let results = [];
+                
+                // Search Agents
+                if (window.agents) {
+                    window.agents.forEach(a => {
+                        const name = ((a.nom||'') + ' ' + (a.prenom||'')).toLowerCase();
+                        if (name.includes(q) || (a.telephone||'').includes(q)) {
+                            results.push({ type: 'Agent', icon: '👤', text: (a.nom||'') + ' ' + (a.prenom||''), tab: 'agents', action: () => { showTab('agents'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                        }
+                    });
+                }
+                
+                // Search Affectations
+                if (window.affectations) {
+                    window.affectations.forEach(a => {
+                        const name = (a.agentNom || '').toLowerCase();
+                        const site = (a.siteNom || '').toLowerCase();
+                        if (name.includes(q) || site.includes(q)) {
+                            results.push({ type: 'Affectation', icon: '🏢', text: (a.agentNom||'') + ' - ' + (a.siteNom||''), tab: 'affectations', action: () => { showTab('affectations'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                        }
+                    });
+                }
+
+                // Search Entreprises (Super Admin)
+                if (window.entreprises) {
+                    window.entreprises.forEach(ent => {
+                        if ((ent.nom||'').toLowerCase().includes(q)) {
+                            results.push({ type: 'Entreprise', icon: '🏢', text: ent.nom, tab: 'entreprises', action: () => { showTab('entreprises'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                        }
+                    });
+                }
+                
+                if (results.length > 0) {
+                    searchContainer.innerHTML = results.slice(0, 10).map(r => `
+                        <div onclick="(${r.action.toString().replace(/"/g, "'")})()" class="cursor-pointer flex items-center gap-3 p-3 hover:bg-slate-50 rounded-xl transition-colors">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm">${r.icon}</div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">${r.text}</p>
+                                <p class="text-[10px] text-slate-400 font-medium uppercase tracking-wide">${r.type}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                    searchDropdown.classList.remove('hidden');
+                } else {
+                    searchContainer.innerHTML = '<div class="p-4 text-center text-slate-400 text-sm">Aucun résultat trouvé</div>';
+                    searchDropdown.classList.remove('hidden');
+                }
+            });
+
+            // Close on click outside
+            document.addEventListener('click', (e) => {
+                if (searchDropdown && !searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+                    searchDropdown.classList.add('hidden');
+                }
+            });
+            
+            // Cmd+K to focus
+            document.addEventListener('keydown', (e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+        }

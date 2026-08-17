@@ -51,7 +51,7 @@ h1, h2, h3, h4, .font-display {
 .sidebar-link.active { background: #A3D97720 !important; color: #12312E !important; box-shadow: none !important; border-left: 4px solid #A3D977 !important; border-radius: 0 0.75rem 0.75rem 0 !important; }
 
 /* Buttons */
-.bg-\[\#12312E\], button.bg-\[\#12312E\], .btn-brand, .btn-primary, .btn-indigo {
+button.bg-\[\#12312E\], .btn-brand, .btn-primary, .btn-indigo {
     background: #12312E !important;
     color: white !important;
     border-radius: 9999px !important;
@@ -61,12 +61,12 @@ h1, h2, h3, h4, .font-display {
     padding: 0.5rem 1rem !important;
     font-weight: 600 !important;
 }
-.bg-\[\#12312E\]:hover, button.bg-\[\#12312E\]:hover, .btn-brand:hover, .btn-primary:hover, .btn-indigo:hover {
+button.bg-\[\#12312E\]:hover, .btn-brand:hover, .btn-primary:hover, .btn-indigo:hover {
     background: #0d2421 !important;
     transform: translateY(-1px) !important; 
     box-shadow: 0 8px 20px -6px rgba(18, 49, 46, 0.4) !important;
 }
-.bg-\[\#12312E\]:active, button.bg-\[\#12312E\]:active, .btn-brand:active, .btn-primary:active, .btn-indigo:active {
+button.bg-\[\#12312E\]:active, .btn-brand:active, .btn-primary:active, .btn-indigo:active {
     transform: scale(0.97) !important;
 }
 
