@@ -37,7 +37,7 @@ export async function apiFetch(endpoint, options = {}) {
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Une erreur est survenue');
+            throw new Error(errorData.error || errorData.message || 'Une erreur est survenue');
         }
 
         // Si pas de contenu (ex: DELETE), renvoyer objet vide

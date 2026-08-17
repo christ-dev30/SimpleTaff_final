@@ -253,6 +253,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 // Backend (PointageController) supporte déjà mode/anomalie/selfieUrl/identifiantNfc/sourceBiometrie/GPS.
                 // Ici on mappe le mode actif vers ces champs et on envoie vers l'endpoint employeur.
                 const payload = {
+                    cardId: cardId,
                     type: typePointage,
                     mode: activePointageMode,
                     anomalie: null,
