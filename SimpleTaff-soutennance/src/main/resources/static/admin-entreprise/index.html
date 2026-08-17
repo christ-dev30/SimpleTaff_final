@@ -198,13 +198,17 @@
     <!-- Main Content -->
     <main class="app-main">
         <header class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4 w-full">
-    <div class="relative w-full max-w-xl">
+    <div class="relative w-full max-w-xl group">
         <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <svg class="w-5 h-5 group-focus-within:text-[#12312E] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </div>
-        <input type="text" class="w-full bg-white rounded-[1.5rem] pl-12 pr-12 py-3.5 text-sm font-medium border-0 shadow-sm focus:ring-2 focus:ring-[#A3D977] placeholder-slate-400 text-slate-900 transition-all outline-none" placeholder="Search task...">
+        <input type="text" id="globalSearchInput" class="w-full bg-white rounded-[1.5rem] pl-12 pr-12 py-3.5 text-sm font-medium border-0 shadow-sm focus:ring-2 focus:ring-[#12312E]/20 placeholder-slate-400 text-slate-900 transition-all outline-none" placeholder="Rechercher un agent, une affectation...">
         <div class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 font-medium text-xs">
             ⌘K
+        </div>
+        <!-- Dropdown Résultats de recherche -->
+        <div id="globalSearchDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-[1.5rem] shadow-xl border border-slate-100 max-h-96 overflow-y-auto z-50">
+            <div id="globalSearchContainer" class="p-2 space-y-1"></div>
         </div>
     </div>
     
@@ -253,11 +257,11 @@
             <p class="text-sm text-slate-500 mt-1">Planifiez, gérez et suivez vos activités en toute simplicité.</p>
         </div>
         <div class="flex items-center gap-3">
-            <button onclick="showTab('agents')" class="bg-[#12312E] hover:bg-[#0d2421] text-white px-5 py-2.5 rounded-[1rem] text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+            <button onclick="showTab('catalog'); setTimeout(openAddAgentModal, 100);" class="bg-[#12312E] hover:bg-[#0d2421] text-white px-5 py-2.5 rounded-[1rem] text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2">
                 + Nouvel Agent
             </button>
-            <button onclick="" class="bg-white border border-slate-300 hover:bg-slate-50 text-[#12312E] px-5 py-2.5 rounded-[1rem] text-sm font-bold shadow-sm transition-all flex items-center gap-2">
-                Exporter Données
+            <button onclick="showTab('rapports')" class="bg-white border border-slate-300 hover:bg-slate-50 text-[#12312E] px-5 py-2.5 rounded-[1rem] text-sm font-bold shadow-sm transition-all flex items-center gap-2">
+                Voir Rapport Global
             </button>
         </div>
     </div>
@@ -336,8 +340,8 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         <!-- Analytics (Col span 5) -->
         <div class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
-            <h3 class="font-bold text-slate-900 mb-6">Évolution de la Masse Salariale</h3>
-            <div class="flex-1 flex items-end justify-between gap-2 px-2 relative">
+            <h3 class="font-bold text-slate-900 mb-6">Postes les plus occupés</h3>
+            <div id="chartBarsContainer" class="flex-1 flex items-end justify-between gap-2 px-2 relative">
                 <!-- Bar chart mockup -->
                 <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"></div>
                 <div class="w-full bg-[#12312E] rounded-full h-3/4"></div>
@@ -346,11 +350,9 @@
                 </div>
                 <div class="w-full bg-[#12312E] rounded-full h-full"></div>
                 <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/3"></div>
-                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"></div>
-                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/5"></div>
             </div>
-            <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3">
-                <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+            <div id="chartLabelsContainer" class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3">
+                <span>-</span><span>-</span><span>-</span><span>-</span><span>-</span>
             </div>
         </div>
 
@@ -358,10 +360,10 @@
         <div class="lg:col-span-3 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
             <h3 class="font-bold text-slate-900 mb-4">Contrats à Renouveler</h3>
             <div class="flex-1 flex flex-col justify-center">
-                <h4 class="text-xl font-bold text-[#12312E] leading-tight">Renouvellement Mr Yao</h4>
-                <p class="text-xs text-slate-500 font-medium mt-2">Date Limite : 26 Nov 2024</p>
+                <h4 id="reminderAgentName" class="text-xl font-bold text-[#12312E] leading-tight">Aucun renouvellement imminent</h4>
+                <p id="reminderDate" class="text-xs text-slate-500 font-medium mt-2">Date Limite : ---</p>
             </div>
-            <button class="bg-[#12312E] hover:bg-[#0d2421] text-white w-full py-3 rounded-xl font-bold text-sm shadow-md transition-all flex justify-center items-center gap-2">
+            <button id="reminderBtn" class="bg-[#12312E] hover:bg-[#0d2421] text-white w-full py-3 rounded-xl font-bold text-sm shadow-md transition-all flex justify-center items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 Voir Dossier
             </button>
@@ -388,6 +390,7 @@
         <div class="lg:col-span-7 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-bold text-slate-900">Pointages Récents</h3>
+                <button onclick="showTab('pointage')" class="text-xs font-bold text-[#12312E] hover:underline">Voir tout →</button>
             </div>
             <div class="flex-1 overflow-y-auto pr-2 space-y-4">
                 <table class="w-full text-left">
@@ -774,6 +777,13 @@
                             </select>
                         </div>
                         <div class="md:col-span-2 flex gap-2">
+                            <div class="relative w-96 hidden md:block group">
+                    <input type="text" id="globalSearchInput" oninput="handleGlobalSearch(event)" placeholder="Rechercher un agent, un lieu..." class="w-full pl-11 pr-4 py-2.5 bg-slate-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-[#12312E]/20 transition-all placeholder:text-slate-400 group-hover:bg-slate-100">
+                    <svg class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#12312E] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <div id="globalSearchDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-xl border border-slate-100 max-h-96 overflow-y-auto z-50">
+                        <div id="globalSearchResults" class="p-2 space-y-1"></div>
+                    </div>
+                </div>
                             <button onclick="loadPointagesByDate()" class="btn-brand flex-1 py-2.5 text-xs">
                                 <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             </button>
@@ -1499,6 +1509,18 @@
                 </div>
             </div>
 
+            <!-- ═══════════════ TAB: Organisation ═══════════════ -->
+            <div id="tab-org" class="tab-content space-y-6">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-2xl font-display font-bold text-[#12312E]">Organisation</h2>
+                        <p class="text-sm text-slate-500">Gestion des zones et coordonnateurs.</p>
+                    </div>
+                </div>
+                <div class="bg-white rounded-[1.5rem] p-8 text-center border border-slate-100 shadow-sm">
+                    <p class="text-slate-500 text-sm">Contenu en cours de construction...</p>
+                </div>
+            </div>
 
         </div>
     </main>
