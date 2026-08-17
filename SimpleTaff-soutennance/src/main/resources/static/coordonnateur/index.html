@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="/shared/global.css">
     <link href="/coordonnateur/coordonnateur.css" rel="stylesheet">
 </head>
-<body class="bg-[#F8FAFC] text-slate-800 flex h-screen overflow-hidden p-4 md:p-6 gap-6">
+<body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden">
 
     <!-- Toast container -->
     <div id="toast-container"></div>
@@ -112,7 +112,7 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden">
+    <main class="flex-1 flex flex-col overflow-hidden">
         <header class="h-20 flex items-center justify-between px-8 border-b border-slate-200/60 bg-white/60 backdrop-blur-sm z-10">
             <div>
                 <h1 class="text-xl font-bold text-slate-900">Espace Coordonnateur</h1>
@@ -129,15 +129,15 @@
             <div id="tab-overview" class="tab-content active space-y-6">
                 <!-- Stat Cards Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] flex items-center justify-between hover:-translate-y-1 transition-all duration-300 shadow-sm border border-white/60">
+                    <div class="bg-[#12312E] p-8 rounded-[2rem] shadow-xl text-white relative overflow-hidden group hover:-translate-y-1 transition-all duration-300"p-5 rounded-[1.5rem] flex items-center justify-between hover:-translate-y-1 transition-all duration-300 shadow-sm border border-white/60">
                         <div>
-                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Agents en service</p>
-                            <div class="text-2xl font-extrabold text-slate-900 mt-1" id="statAgentsCoord">—</div>
-                            <span class="inline-flex items-center gap-1 text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-md mt-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Périmètre actif
+                            <p class="text-[11px] font-bold text-white/70 uppercase tracking-wider">Agents en service</p>
+                            <div class="text-2xl font-extrabold text-white mt-1" id="statAgentsCoord">—</div>
+                            <span class="inline-flex items-center gap-1 text-[10px] text-white font-bold bg-[#19403B] px-2 py-0.5 rounded-md mt-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#19403B]0 animate-pulse"></span> Périmètre actif
                             </span>
                         </div>
-                        <div class="w-12 h-12 rounded-xl bg-violet-100/80 text-violet-600 flex items-center justify-center text-xl shadow-xs">
+                        <div class="w-12 h-12 rounded-xl bg-violet-100/80 text-[#A3D977] flex items-center justify-center text-xl shadow-xs">
                             <i class="fa-solid fa-users"></i>
                         </div>
                     </div>
