@@ -1,9 +1,9 @@
-body { font-family: 'Plus Jakarta Sans', sans-serif; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; color: #1e293b; margin: 0; padding: 0; height: 100%; }
         h1, h2, h3 { font-family: 'Outfit', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 8px 32px -8px rgba(0,0,0,0.06); }
+        .glass { background: #ffffff; border-radius: 1.5rem; border: 1px solid #f1f5f9; box-shadow: 0 4px 20px -6px rgba(0,0,0,0.04); }
         .sidebar-link { display: flex; align-items: center; padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 14px; transition: all 200ms ease; color: #64748b; cursor: pointer; }
         .sidebar-link:hover { background: #f1f5f9; color: #1e293b; }
-        .sidebar-link.active { background: #e0f2fe; color: #0284c7; }
+        .sidebar-link.active { background: #A3D97720; color: #12312E; border-left: 4px solid #A3D977; border-radius: 0 0.75rem 0.75rem 0; font-weight: 700; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }

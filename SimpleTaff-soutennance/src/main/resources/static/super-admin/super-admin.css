@@ -1,16 +1,16 @@
-body { font-family: 'Plus Jakarta Sans', sans-serif; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F8FAFC; color: #1e293b; margin: 0; padding: 0; height: 100%; }
         h1, h2, h3 { font-family: 'Outfit', sans-serif; }
-        .glass { background: rgba(255,255,255,0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.45); box-shadow: 0 8px 32px -8px rgba(0,0,0,0.06); }
+        .glass { background: #ffffff; border-radius: 1.5rem; border: 1px solid #f1f5f9; box-shadow: 0 4px 20px -6px rgba(0,0,0,0.04); }
         .sidebar-link { display: flex; align-items: center; padding: 10px 16px; border-radius: 12px; font-weight: 600; font-size: 14px; transition: all 200ms ease; color: #64748b; cursor: pointer; }
         .sidebar-link:hover { background: #f1f5f9; color: #1e293b; }
-        .sidebar-link.active { background: #eef2ff; color: #4338ca; }
+        .sidebar-link.active { background: #A3D97720; color: #12312E; border-left: 4px solid #A3D977; border-radius: 0 0.75rem 0.75rem 0; font-weight: 700; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
         .input-field { width: 100%; border-radius: 10px; border: 1.5px solid #e2e8f0; background: rgba(255,255,255,0.8); padding: 10px 14px; transition: all 150ms; outline: none; font-size: 14px; }
-        .input-field:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); background: #fff; }
-        .btn-indigo { background: linear-gradient(135deg, #4f46e5, #0284c7); color: white; font-weight: 700; border-radius: 12px; padding: 10px 20px; font-size: 14px; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-        .btn-indigo:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(79,70,229,0.4); }
+        .input-field:focus { border-color: #A3D977; box-shadow: 0 0 0 3px rgba(163,217,119,0.2); background: #fff; }
+        .btn-indigo { display: inline-flex; align-items: center; justify-content: center; padding: 10px 20px; border-radius: 12px; background: #12312E; color: #fff; font-weight: 700; font-size: 13px; font-family: inherit; border: none; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 4px 12px -4px rgba(18,49,46,0.3); }
+        .btn-indigo:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -6px rgba(18,49,46,0.4); background: #0d2421; }
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 50; display: flex; align-items: center; justify-content: center; }
         .modal-overlay.hidden { display: none; }
 
