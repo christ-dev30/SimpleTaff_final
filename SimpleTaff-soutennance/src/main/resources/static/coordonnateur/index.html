@@ -50,7 +50,7 @@
     </div>
 
     <!-- Sidebar -->
-    <aside class="main-sidebar w-64 glass border-r border-slate-200/60 flex flex-col justify-between hidden md:flex h-full z-10">
+    <aside class="main-sidebar w-64 bg-white border border-slate-100 shadow-sm border-r border-slate-200/60 flex flex-col justify-between hidden md:flex h-full z-10">
         <div>
             <div class="h-20 flex items-center px-6 border-b border-slate-100">
                 <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 shadow-md flex items-center justify-center mr-3">
@@ -129,7 +129,7 @@
             <div id="tab-overview" class="tab-content active space-y-6">
                 <!-- Stat Cards Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div class="glass p-5 rounded-2xl flex items-center justify-between hover:-translate-y-1 transition-all duration-300 shadow-sm border border-white/60">
+                    <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] flex items-center justify-between hover:-translate-y-1 transition-all duration-300 shadow-sm border border-white/60">
                         <div>
                             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Agents en service</p>
                             <div class="text-2xl font-extrabold text-slate-900 mt-1" id="statAgentsCoord">—</div>
@@ -142,7 +142,7 @@
                         </div>
                     </div>
 
-                    <div class="glass p-5 rounded-2xl flex items-center justify-between hover:-translate-y-1 transition-all duration-300 shadow-sm border border-white/60">
+                    <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] flex items-center justify-between hover:-translate-y-1 transition-all duration-300 shadow-sm border border-white/60">
                         <div>
                             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Affectations actives</p>
                             <div class="text-2xl font-extrabold text-violet-600 mt-1" id="statAffectations">—</div>
@@ -155,7 +155,7 @@
                         </div>
                     </div>
 
-                    <div class="glass p-5 rounded-2xl flex items-center justify-between hover:-translate-y-1 transition-all duration-300 shadow-sm border border-white/60">
+                    <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] flex items-center justify-between hover:-translate-y-1 transition-all duration-300 shadow-sm border border-white/60">
                         <div>
                             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pointages du Jour</p>
                             <div class="text-2xl font-extrabold text-sky-600 mt-1" id="statPointages">—</div>
@@ -168,7 +168,7 @@
                         </div>
                     </div>
 
-                    <div class="glass p-5 rounded-2xl flex items-center justify-between hover:-translate-y-1 transition-all duration-300 shadow-sm border border-white/60">
+                    <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] flex items-center justify-between hover:-translate-y-1 transition-all duration-300 shadow-sm border border-white/60">
                         <div>
                             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Demandes Matériel</p>
                             <div class="text-2xl font-extrabold text-amber-600 mt-1" id="statDemandesMateriel">—</div>
@@ -185,7 +185,7 @@
                 <!-- Dashboard Lists Grid (2 columns) -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- List 1: Affectations récentes -->
-                    <div class="lg:col-span-7 glass rounded-2xl overflow-hidden shadow-xs border border-white/60 flex flex-col">
+                    <div class="lg:col-span-7 bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden shadow-xs border border-white/60 flex flex-col">
                         <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center text-xs font-bold">
@@ -217,7 +217,7 @@
                     </div>
 
                     <!-- List 2: Derniers Pointages du Jour -->
-                    <div class="lg:col-span-5 glass rounded-2xl overflow-hidden shadow-xs border border-white/60 flex flex-col">
+                    <div class="lg:col-span-5 bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden shadow-xs border border-white/60 flex flex-col">
                         <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                             <div class="flex items-center gap-2">
                                 <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">
@@ -265,7 +265,7 @@
                     </div>
                 </div>
 
-                <div class="glass p-5 rounded-2xl space-y-4">
+                <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] space-y-4">
                     <!-- Sub-tabs for Agents list -->
                     <div class="flex gap-4 border-b border-slate-100 pb-2 text-sm font-semibold mb-4">
                         <button type="button" id="subTabBtn-agents-actifs" onclick="switchPersonnelSubTab('actifs')" class="pb-2 border-b-2 border-sky-600 text-sky-600">Agents Actifs</button>
@@ -333,9 +333,9 @@
                     <h2 class="text-lg font-bold text-slate-900">Affectations</h2>
                     <button onclick="loadAffectations()" class="text-xs text-violet-600 font-bold hover:underline">↻ Actualiser</button>
                 </div>
-                <div class="glass rounded-2xl overflow-hidden">
+                <div class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden">
                     <table class="w-full text-left">
-                        <thead><tr class="bg-slate-50 text-xs font-bold text-slate-500 uppercase">
+                        <thead><tr class="bg-slate-50/80 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
                             <th class="px-6 py-3">Agent</th>
                             <th class="px-6 py-3">Client & Site</th>
                             <th class="px-6 py-3">Poste & Zone</th>
@@ -361,12 +361,12 @@
                         <button onclick="loadPointages()" class="text-xs text-violet-600 font-bold hover:underline">Actualiser</button>
                     </div>
                 </div>
-                <div id="coordPointageDates" class="glass rounded-2xl p-4 flex flex-wrap gap-2 text-sm">
+                <div id="coordPointageDates" class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-4 flex flex-wrap gap-2 text-sm">
                     <span class="text-slate-400">Chargement des jours enregistrés...</span>
                 </div>
-                <div class="glass rounded-2xl overflow-hidden">
+                <div class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden">
                     <table class="w-full text-left">
-                        <thead><tr class="bg-slate-50 text-xs font-bold text-slate-500 uppercase">
+                        <thead><tr class="bg-slate-50/80 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
                             <th class="px-6 py-3">Agent</th>
                             <th class="px-6 py-3">Structure</th>
                             <th class="px-6 py-3">Type</th>
@@ -383,7 +383,7 @@
             <!-- ═══════════════ TAB: Zones & Sites ═══════════════ -->
             <div id="tab-zones" class="tab-content space-y-4">
                 <h2 class="text-lg font-bold text-slate-900">Zones géographiques & Sites</h2>
-                <div id="zonesContainer" class="glass rounded-2xl p-6 text-slate-400 text-sm text-center">
+                <div id="zonesContainer" class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-6 text-slate-400 text-sm text-center">
                     Chargement des zones…
                 </div>
             </div>
@@ -399,7 +399,7 @@
                 </div>
 
                 <!-- Card 1: Demandes de matériel -->
-                <div class="glass p-5 rounded-2xl grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- Formulaire de demande de matériel (col-span-5) -->
                     <div class="lg:col-span-5 space-y-4 border-b lg:border-b-0 lg:border-r border-slate-100 pb-4 lg:pb-0 lg:pr-6">
                         <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
@@ -412,7 +412,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 mb-1">Catégorie *</label>
-                                <select id="reqMaterielCategorie" required class="input-field">
+                                <select id="reqMaterielCategorie" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                                     <option value="PROTECTION">Protection (EPI)</option>
                                     <option value="COMMUNICATION">Communication</option>
                                     <option value="OUTILLAGE">Outillage</option>
@@ -461,7 +461,7 @@
                 </div>
 
                 <!-- Card 2A: Historique des demandes acceptées -->
-                <div class="glass p-5 rounded-2xl space-y-4">
+                <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] space-y-4">
                     <div>
                         <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
                             <i class="fa-solid fa-circle-check text-green-500"></i> Historique des Matériels Demandés et Acceptés
@@ -489,7 +489,7 @@
                 </div>
 
                 <!-- Card 2B: Inventaire Global & Provenance (Admin / Coordonnateur) -->
-                <div class="glass p-5 rounded-2xl space-y-4">
+                <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] space-y-4">
                     <div class="flex justify-between items-center">
                         <div>
                             <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
@@ -520,7 +520,7 @@
                 </div>
 
                 <!-- Section: Historique des affectations de matériel -->
-                <div class="glass p-5 rounded-2xl space-y-4">
+                <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] space-y-4">
                     <h3 class="font-bold text-sm text-slate-800 flex items-center gap-2">
                         <span>📜 Historique des affectations de matériel</span>
                     </h3>
@@ -552,20 +552,20 @@
                     <h2 class="text-lg font-bold text-slate-900">Demandes de congés & absences agents</h2>
                     <button onclick="loadCoordConges()" class="text-xs text-violet-600 font-bold hover:underline">↻ Actualiser</button>
                 </div>
-                <div class="glass p-5 rounded-2xl grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- Formulaire d'ajout (col-span-4) -->
                     <div class="lg:col-span-4 space-y-4 border-r border-slate-100 pr-0 lg:pr-6">
                         <h3 class="font-bold text-sm text-slate-800">Enregistrer une demande de congé</h3>
                         <form id="addCongeRequestForm" class="space-y-3">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 mb-1">Agent concerné *</label>
-                                <select id="reqCongeAgentSelect" required class="input-field">
+                                <select id="reqCongeAgentSelect" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                                     <option value="">Sélectionner l'agent...</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 mb-1">Type de congé *</label>
-                                <select id="reqCongeType" required class="input-field">
+                                <select id="reqCongeType" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                                     <option value="ANNUEL">Congé Annuel</option>
                                     <option value="MALADIE">Congé Maladie</option>
                                     <option value="MATERNITE">Maternité / Paternité</option>
@@ -576,11 +576,11 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-500 mb-1">Date Début *</label>
-                                    <input type="date" id="reqCongeDateDebut" required class="input-field">
+                                    <input type="date" id="reqCongeDateDebut" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-500 mb-1">Date Fin *</label>
-                                    <input type="date" id="reqCongeDateFin" required class="input-field">
+                                    <input type="date" id="reqCongeDateFin" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                                 </div>
                             </div>
                             <div>
@@ -623,7 +623,7 @@
                     </div>
                     <button onclick="loadCoordEvaluations()" class="text-xs text-violet-600 font-bold hover:underline">↻ Actualiser</button>
                 </div>
-                <div class="glass p-6 rounded-2xl space-y-4">
+                <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] space-y-4">
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-slate-800 text-sm">Registre des évaluations</h3>
                         <input type="text" id="searchEvaluationsCoord" oninput="filterEvaluationsCoord()" placeholder="Rechercher par nom..." class="input-field w-48 text-xs py-1.5 px-3">
@@ -657,7 +657,7 @@
                     </div>
                     <button onclick="loadCoordDisciplinaire()" class="text-xs text-violet-600 font-bold hover:underline">↻ Actualiser</button>
                 </div>
-                <div class="glass p-6 rounded-2xl space-y-4">
+                <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] space-y-4">
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-slate-800 text-sm">Registre des sanctions</h3>
                         <input type="text" id="searchSanctionsCoord" oninput="filterSanctionsCoord()" placeholder="Rechercher par nom..." class="input-field w-48 text-xs py-1.5 px-3">
@@ -695,7 +695,7 @@
                 <div class="max-w-4xl mx-auto space-y-6">
                     <!-- Column: Emplois Configuration -->
                     <div class="space-y-6">
-                        <div class="glass p-6 rounded-2xl space-y-4">
+                        <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] space-y-4">
                             <h3 class="font-bold text-base text-slate-800 flex items-center gap-2">
                                 <i class="fa-solid fa-briefcase text-violet-600"></i> Ajouter un Emploi au Catalogue
                             </h3>
@@ -768,8 +768,8 @@
             </div>
 
             <!-- Tabs Navigation inside Modal -->
-            <div class="flex p-1.5 bg-slate-100/80 backdrop-blur-md rounded-2xl space-x-1 mb-6 border border-slate-200/60 shadow-inner overflow-x-auto">
-                <button id="tabBtn-identite" type="button" onclick="switchAddAgentTab('identite')" class="flex-1 min-w-max py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-300 shadow-sm bg-white text-indigo-700 ring-1 ring-slate-200">1. État Civil & Photo</button>
+            <div class="flex p-1.5 bg-slate-100/80 backdrop-blur-md rounded-[1.5rem] space-x-1 mb-6 border border-slate-200/60 shadow-inner overflow-x-auto">
+                <button id="tabBtn-identite" type="button" onclick="switchAddAgentTab('identite')" class="flex-1 min-w-max py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-300 shadow-sm bg-white text-[#12312E] ring-1 ring-slate-200">1. État Civil & Photo</button>
                 <button id="tabBtn-coordonnees" type="button" onclick="switchAddAgentTab('coordonnees')" class="flex-1 min-w-max py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-300 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50">2. Coordonnées & Urgence</button>
                 <button id="tabBtn-pieces" type="button" onclick="switchAddAgentTab('pieces')" class="flex-1 min-w-max py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-300 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50">3. Pièces Administratives</button>
                 <button id="tabBtn-contrat" type="button" onclick="switchAddAgentTab('contrat')" class="flex-1 min-w-max py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-300 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50">4. Contrat & Aperçu</button>
@@ -781,18 +781,18 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Nom *</label>
-                            <input type="text" id="mAgentNom" required class="input-field" placeholder="Ex: KOFFI">
+                            <input type="text" id="mAgentNom" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: KOFFI">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Prénoms *</label>
-                            <input type="text" id="mAgentPrenom" required class="input-field" placeholder="Ex: Jean Marc">
+                            <input type="text" id="mAgentPrenom" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: Jean Marc">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Genre (Sexe) *</label>
-                            <select id="mAgentGenre" required class="input-field">
+                            <select id="mAgentGenre" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                                 <option value="">Choisir...</option>
                                 <option value="M">Masculin</option>
                                 <option value="F">Féminin</option>
@@ -800,22 +800,22 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Date de naissance *</label>
-                            <input type="date" id="mAgentDateNaissance" required class="input-field">
+                            <input type="date" id="mAgentDateNaissance" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Lieu de naissance *</label>
-                            <input type="text" id="mAgentLieuNaissance" required class="input-field" placeholder="Ex: Abidjan" list="villes-ci-list">
+                            <input type="text" id="mAgentLieuNaissance" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: Abidjan" list="villes-ci-list">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Nationalité *</label>
-                            <input type="text" id="mAgentNationalite" required class="input-field" placeholder="Ex: Ivoirienne">
+                            <input type="text" id="mAgentNationalite" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: Ivoirienne">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Situation Matrimoniale *</label>
-                            <select id="mAgentSituationMatrimoniale" required class="input-field">
+                            <select id="mAgentSituationMatrimoniale" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                                 <option value="">Choisir...</option>
                                 <option value="CELIBATAIRE">Célibataire</option>
                                 <option value="MARIE">Marié(e)</option>
@@ -825,7 +825,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Nombre d'enfants *</label>
-                            <input type="number" id="mAgentNombreEnfants" required min="0" value="0" class="input-field">
+                            <input type="number" id="mAgentNombreEnfants" required min="0" value="0" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                         </div>
                     </div>
 
@@ -850,30 +850,30 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Téléphone Principal *</label>
-                            <input type="text" id="mAgentContact" required class="input-field" placeholder="Ex: +225 0708091011">
+                            <input type="text" id="mAgentContact" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: +225 0708091011">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Téléphone Secondaire</label>
-                            <input type="text" id="mAgentTelephoneSecondaire" class="input-field" placeholder="Ex: +225 0102030405">
+                            <input type="text" id="mAgentTelephoneSecondaire" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: +225 0102030405">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Email</label>
-                            <input type="email" id="mAgentEmail" class="input-field" placeholder="Ex: agent@domain.com">
+                            <input type="email" id="mAgentEmail" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: agent@domain.com">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Ville *</label>
-                            <input type="text" id="mAgentVille" required class="input-field" placeholder="Ex: Abidjan" list="villes-ci-list">
+                            <input type="text" id="mAgentVille" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: Abidjan" list="villes-ci-list">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Commune *</label>
-                            <input type="text" id="mAgentCommune" required class="input-field" placeholder="Ex: Cocody" list="communes-abidjan-list">
+                            <input type="text" id="mAgentCommune" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: Cocody" list="communes-abidjan-list">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Adresse complète *</label>
-                            <input type="text" id="mAgentAdresse" required class="input-field" placeholder="Ex: Angré 8ème tranche, Lot 123">
+                            <input type="text" id="mAgentAdresse" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: Angré 8ème tranche, Lot 123">
                         </div>
                     </div>
 
@@ -882,22 +882,22 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 mb-1">Nom complet *</label>
-                                <input type="text" id="mAgentUrgenceNom" required class="input-field" placeholder="Ex: KOFFI Koffi Albert">
+                                <input type="text" id="mAgentUrgenceNom" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: KOFFI Koffi Albert">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 mb-1">Téléphone d'urgence *</label>
-                                <input type="text" id="mAgentUrgenceTelephone" required class="input-field" placeholder="Ex: +225 0506070809">
+                                <input type="text" id="mAgentUrgenceTelephone" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: +225 0506070809">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 mb-1">Relation / Lien *</label>
-                                <input type="text" id="mAgentUrgenceLien" required class="input-field" placeholder="Ex: Père, Épouse, Frère...">
+                                <input type="text" id="mAgentUrgenceLien" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: Père, Épouse, Frère...">
                             </div>
                         </div>
                     </div>
 
                     <div class="border-t pt-4">
                         <label class="block text-xs font-bold text-slate-500 mb-1">Zone géographique d'affectation initiale *</label>
-                        <select id="mAgentZoneSelect" required class="input-field">
+                        <select id="mAgentZoneSelect" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                             <option value="">Sélectionner la zone...</option>
                         </select>
                     </div>
@@ -982,13 +982,13 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Poste (Emploi) proposé *</label>
-                            <select id="mAgentEmploiSelect" class="input-field" onchange="updateContractPreview()">
+                            <select id="mAgentEmploiSelect" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" onchange="updateContractPreview()">
                                 <option value="">Chargement des emplois...</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Type de Contrat *</label>
-                            <select id="mAgentContratType" class="input-field" onchange="updateContractPreview()">
+                            <select id="mAgentContratType" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" onchange="updateContractPreview()">
                                 <option value="CDD">Contrat à Durée Déterminée (CDD)</option>
                                 <option value="CDI">Contrat à Durée Indéterminée (CDI)</option>
                                 <option value="STAGE">Stage</option>
@@ -997,7 +997,7 @@
                     </div>
 
                     <!-- Contract Document Preview Card -->
-                    <div id="mAgentContratBulle" class="hidden border border-slate-200 bg-white shadow-md p-6 rounded-2xl max-h-[300px] overflow-y-auto font-serif text-slate-800 text-xs leading-relaxed space-y-4">
+                    <div id="mAgentContratBulle" class="hidden border border-slate-200 bg-white shadow-md p-6 rounded-[1.5rem] max-h-[300px] overflow-y-auto font-serif text-slate-800 text-xs leading-relaxed space-y-4">
                         <div class="text-center font-bold text-sm uppercase tracking-wider border-b pb-2">Contrat de Placement & Travail</div>
                         <div id="mAgentContratText" class="whitespace-pre-line text-justify">
                             <!-- Populated dynamically -->
@@ -1031,16 +1031,16 @@
                 <input type="hidden" id="feAgentId">
                 <div>
                     <label class="block text-xs font-bold text-slate-500 mb-1">Date d'effet (Début opérationnel) *</label>
-                    <input type="date" id="feDateDebut" required class="input-field">
+                    <input type="date" id="feDateDebut" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">Heure Arrivée Site *</label>
-                        <input type="text" id="feHeureArrivee" required class="input-field" placeholder="Ex: 08:00">
+                        <input type="text" id="feHeureArrivee" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: 08:00">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">Heure Départ Site *</label>
-                        <input type="text" id="feHeureDepart" required class="input-field" placeholder="Ex: 18:00">
+                        <input type="text" id="feHeureDepart" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: 18:00">
                     </div>
                 </div>
                 <div>
@@ -1075,7 +1075,7 @@
                 </button>
             </div>
             
-            <div class="border border-slate-200 bg-slate-50 p-6 rounded-2xl max-h-[400px] overflow-y-auto font-serif text-slate-800 text-xs leading-relaxed space-y-4 text-justify whitespace-pre-line" id="contractTemplateText">
+            <div class="border border-slate-200 bg-slate-50 p-6 rounded-[1.5rem] max-h-[400px] overflow-y-auto font-serif text-slate-800 text-xs leading-relaxed space-y-4 text-justify whitespace-pre-line" id="contractTemplateText">
                 <!-- Modèle de contrat généré -->
             </div>
 
@@ -1102,8 +1102,8 @@
             </div>
 
             <!-- Tabs Navigation -->
-            <div class="flex p-1.5 bg-slate-100/80 backdrop-blur-md rounded-2xl space-x-1 mb-6 border border-slate-200/60 shadow-inner overflow-x-auto">
-                <button id="folderTabBtn-bio" type="button" onclick="switchFolderTab('bio')" class="flex-1 min-w-max py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-300 shadow-sm bg-white text-indigo-700 ring-1 ring-slate-200">État Civil & Contacts</button>
+            <div class="flex p-1.5 bg-slate-100/80 backdrop-blur-md rounded-[1.5rem] space-x-1 mb-6 border border-slate-200/60 shadow-inner overflow-x-auto">
+                <button id="folderTabBtn-bio" type="button" onclick="switchFolderTab('bio')" class="flex-1 min-w-max py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-300 shadow-sm bg-white text-[#12312E] ring-1 ring-slate-200">État Civil & Contacts</button>
                 <button id="folderTabBtn-docs" type="button" onclick="switchFolderTab('docs')" class="flex-1 min-w-max py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-300 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50">Pièces Administratives</button>
                 <button id="folderTabBtn-contract" type="button" onclick="switchFolderTab('contract')" class="flex-1 min-w-max py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-300 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50">Contrat & Rémunération</button>
                 <button id="folderTabBtn-hardware" type="button" onclick="switchFolderTab('hardware')" class="flex-1 min-w-max py-2.5 px-4 rounded-xl text-sm font-medium transition-all duration-300 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50">Matériels & Équipements</button>
@@ -1111,7 +1111,7 @@
 
             <!-- Tab 1: État Civil -->
             <div id="folderTab-bio" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50/50 p-5 rounded-2xl border border-slate-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50/50 p-5 rounded-[1.5rem] border border-slate-100">
                     <div class="space-y-2">
                         <div class="text-xs font-bold text-slate-400 uppercase">Informations Personnelles</div>
                         <div class="text-xs text-slate-700"><strong class="text-slate-900">Genre :</strong> <span id="fAgentGenre">—</span></div>
@@ -1131,7 +1131,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-red-50/30 p-5 rounded-2xl border border-red-100 space-y-2">
+                    <div class="bg-red-50/30 p-5 rounded-[1.5rem] border border-red-100 space-y-2">
                         <div class="text-xs font-bold text-red-700 uppercase flex items-center gap-1">
                             🚨 Personne à contacter en cas d'urgence
                         </div>
@@ -1140,9 +1140,9 @@
                         <div class="text-xs text-slate-700"><strong class="text-slate-900">Relation / Lien :</strong> <span id="fUrgenceLien">—</span></div>
                     </div>
 
-                    <div class="bg-[#EAF4E3]/30 p-5 rounded-2xl border border-[#A3D977]/30 space-y-2 flex flex-col justify-between">
+                    <div class="bg-[#EAF4E3]/30 p-5 rounded-[1.5rem] border border-[#A3D977]/30 space-y-2 flex flex-col justify-between">
                         <div>
-                            <div class="text-xs font-bold text-indigo-700 uppercase">Carte NFC / Biométrie</div>
+                            <div class="text-xs font-bold text-[#12312E] uppercase">Carte NFC / Biométrie</div>
                             <p class="text-xs text-slate-500 mt-1">Configurez les identifiants d'accès physique de l'agent pour le scan.</p>
                         </div>
                         <div class="flex gap-2">
@@ -1166,7 +1166,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Type de document</label>
-                            <select id="newDocType" class="input-field">
+                            <select id="newDocType" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                                 <option value="CNI_Passeport">CNI / Passeport</option>
                                 <option value="Extrait_Naissance">Extrait de naissance</option>
                                 <option value="Casier_Judiciaire">Casier judiciaire</option>
@@ -1191,7 +1191,7 @@
 
             <!-- Tab 3: Contrat -->
             <div id="folderTab-contract" class="space-y-6 hidden">
-                <div class="glass p-5 rounded-2xl border border-slate-100 space-y-3" id="activeContractDetails">
+                <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] border border-slate-100 space-y-3" id="activeContractDetails">
                     <!-- Dynamic active contract details -->
                 </div>
 
@@ -1201,7 +1201,7 @@
                     <form id="folderCreateContractForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Type de Contrat</label>
-                            <select id="fcType" required class="input-field" onchange="window.updateFolderContractPreview()">
+                            <select id="fcType" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" onchange="window.updateFolderContractPreview()">
                                 <option value="CDI">CDI</option>
                                 <option value="CDD">CDD</option>
                                 <option value="Stage">Stage</option>
@@ -1212,33 +1212,33 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Date Début</label>
-                            <input type="date" id="fcDateDebut" required class="input-field" onchange="window.updateFolderContractPreview()">
+                            <input type="date" id="fcDateDebut" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" onchange="window.updateFolderContractPreview()">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Date Fin (Optionnel pour CDI)</label>
-                            <input type="date" id="fcDateFin" class="input-field" onchange="window.updateFolderContractPreview()">
+                            <input type="date" id="fcDateFin" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" onchange="window.updateFolderContractPreview()">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Salaire de Base (FCFA)</label>
-                            <input type="number" id="fcSalaireBase" required class="input-field" placeholder="Ex: 150000" oninput="window.updateFolderContractPreview()">
+                            <input type="number" id="fcSalaireBase" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: 150000" oninput="window.updateFolderContractPreview()">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Fonction / Rôle</label>
-                            <select id="fcFonctionSelect" required class="input-field" onchange="window.handleContractJobChange(this.value); window.updateFolderContractPreview();">
+                            <select id="fcFonctionSelect" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" onchange="window.handleContractJobChange(this.value); window.updateFolderContractPreview();">
                                 <option value="">Choisir la fonction...</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Département</label>
-                            <input type="text" id="fcDepartement" required class="input-field" placeholder="Ex: Sécurité" oninput="window.updateFolderContractPreview()">
+                            <input type="text" id="fcDepartement" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: Sécurité" oninput="window.updateFolderContractPreview()">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Direction</label>
-                            <input type="text" id="fcDirection" required class="input-field" placeholder="Ex: Opérations" oninput="window.updateFolderContractPreview()">
+                            <input type="text" id="fcDirection" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: Opérations" oninput="window.updateFolderContractPreview()">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Structure Cliente (Employeur final)</label>
-                            <select id="fcStructureCliente" class="input-field" onchange="window.updateFolderContractPreview()">
+                            <select id="fcStructureCliente" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" onchange="window.updateFolderContractPreview()">
                                 <option value="">Choisir la structure...</option>
                             </select>
                         </div>
@@ -1249,7 +1249,7 @@
                         </div>
 
                         <!-- Contract Document Preview Card -->
-                        <div id="fcContractBulle" class="hidden border border-slate-200 bg-white shadow-md p-6 rounded-2xl max-h-[300px] overflow-y-auto font-serif text-slate-800 text-xs leading-relaxed space-y-4 col-span-1 md:col-span-3">
+                        <div id="fcContractBulle" class="hidden border border-slate-200 bg-white shadow-md p-6 rounded-[1.5rem] max-h-[300px] overflow-y-auto font-serif text-slate-800 text-xs leading-relaxed space-y-4 col-span-1 md:col-span-3">
                             <div class="text-center font-bold text-sm uppercase tracking-wider border-b pb-2">Contrat de Placement & Travail</div>
                             <div id="fcContractText" class="whitespace-pre-line text-justify">
                                 <!-- Populated dynamically -->
@@ -1273,11 +1273,11 @@
                     <form id="folderRenewContractForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Nouvelle Date de Fin</label>
-                            <input type="date" id="frNouvelleDateFin" required class="input-field">
+                            <input type="date" id="frNouvelleDateFin" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Motif de renouvellement</label>
-                            <input type="text" id="frMotif" required class="input-field" placeholder="Ex: Prolongation mission">
+                            <input type="text" id="frMotif" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: Prolongation mission">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">Fichier de renouvellement (PDF)</label>
@@ -1362,7 +1362,7 @@
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
             </div>
-            <div class="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+            <div class="p-5 bg-slate-50 rounded-[1.5rem] border border-slate-100">
                 <canvas id="adminModalQrCanvas"></canvas>
             </div>
             <p class="text-xs text-slate-400 mt-3 text-center">Scannez ce code pour valider le pointage</p>

@@ -80,7 +80,7 @@
                     <p class="text-sm font-bold text-slate-900" id="profilNom">Chargement...</p>
                     <p class="text-xs text-slate-500" id="profilEmail">...</p>
                 </div>
-                <span class="badge bg-emerald-100 text-emerald-700">EMPLOYEUR</span>
+                <span class="badge bg-[#A3D977]/30 text-[#12312E]">EMPLOYEUR</span>
             </div>
         </header>
 
@@ -90,7 +90,7 @@
             <div id="tab-overview" class="tab-content active space-y-6">
                 <!-- 4 Stat Cards with Glassmorphism & Micro-Hover -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                    <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Agents Assignés</span>
                             <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold">
@@ -102,19 +102,19 @@
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-700">Personnel sur site</span>
                         </div>
                     </div>
-                    <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                    <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pointages du Jour</span>
-                            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                            <div class="w-10 h-10 rounded-xl bg-[#A3D977]/20 text-[#12312E] flex items-center justify-center font-bold">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
                             </div>
                         </div>
                         <div class="text-3xl font-extrabold text-emerald-600 mt-3" id="statOverviewPointagesDay">—</div>
                         <div class="flex items-center gap-1.5 mt-2">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">Validations aujourd'hui</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#A3D977]/30 text-[#12312E]">Validations aujourd'hui</span>
                         </div>
                     </div>
-                    <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                    <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Note Évaluations</span>
                             <div class="w-10 h-10 rounded-xl bg-[#EAF4E3] text-[#12312E] flex items-center justify-center font-bold">
@@ -123,10 +123,10 @@
                         </div>
                         <div class="text-3xl font-extrabold text-[#12312E] mt-3" id="statOverviewEvals">—</div>
                         <div class="flex items-center gap-1.5 mt-2">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700">Moyenne équipe</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#12312E]/10 text-[#12312E]">Moyenne équipe</span>
                         </div>
                     </div>
-                    <div class="glass p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                    <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Dernier Pointage</span>
                             <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
@@ -143,7 +143,7 @@
                 <!-- Dual List Overview Cards -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- Left: Personnel Assigné -->
-                    <div class="lg:col-span-7 glass rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm flex flex-col">
+                    <div class="lg:col-span-7 bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden border border-slate-200/60 shadow-sm flex flex-col">
                         <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <div class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
@@ -167,7 +167,7 @@
                     </div>
 
                     <!-- Right: Flux de pointage direct -->
-                    <div class="lg:col-span-5 glass rounded-2xl overflow-hidden border border-slate-200/60 shadow-sm flex flex-col">
+                    <div class="lg:col-span-5 bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden border border-slate-200/60 shadow-sm flex flex-col">
                         <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <div class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -196,7 +196,7 @@
             <div id="tab-pointage" class="tab-content space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <!-- Scanner camera & input -->
-                    <div class="lg:col-span-6 glass rounded-3xl p-8 space-y-6 border border-slate-200/50 shadow-sm relative overflow-hidden">
+                    <div class="lg:col-span-6 bg-white border border-slate-100 shadow-sm rounded-3xl p-8 space-y-6 border border-slate-200/50 shadow-sm relative overflow-hidden">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-[#EAF4E3] rounded-full blur-3xl -mr-10 -mt-10 opacity-60"></div>
                         
                         <div class="relative">
@@ -205,7 +205,7 @@
                         </div>
 
                         <!-- Camera section container -->
-                        <div id="scannerContainer" class="relative overflow-hidden rounded-2xl bg-slate-50 border-2 border-dashed border-indigo-200 flex flex-col items-center justify-center p-4 transition-all hover:border-indigo-400 group">
+                        <div id="scannerContainer" class="relative overflow-hidden rounded-[1.5rem] bg-slate-50 border-2 border-dashed border-indigo-200 flex flex-col items-center justify-center p-4 transition-all hover:border-indigo-400 group">
                             <!-- Scanner view finder -->
                             <div id="reader" class="w-full rounded-xl overflow-hidden bg-slate-950 shadow-inner"></div>
                             
@@ -229,7 +229,7 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Mode de saisie</label>
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                    <button type="button" onclick="setPointageMode('QR_CODE')" id="modeBtnQR" class="input-minimal text-center font-bold text-xs border-2 border-indigo-600 bg-[#EAF4E3] text-indigo-700 hover:bg-[#EAF4E3] transition-colors">
+                                    <button type="button" onclick="setPointageMode('QR_CODE')" id="modeBtnQR" class="input-minimal text-center font-bold text-xs border-2 border-indigo-600 bg-[#EAF4E3] text-[#12312E] hover:bg-[#EAF4E3] transition-colors">
                                         QR Code
                                     </button>
                                     <button type="button" disabled id="modeBtnNFC" class="input-minimal text-center font-bold text-xs border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed" title="Non disponible">
@@ -244,18 +244,18 @@
                                 </div>
                             </div>
 
-                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <div class="bg-slate-50 p-4 rounded-[1.5rem] border border-slate-100">
                                 <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider" id="labelAgentCard">Identifiant de l'agent</label>
                                 <input type="text" id="agentCardId" class="input-minimal text-base py-3" placeholder="Saisissez ou scannez l'ID de la carte...">
                             </div>
 
-                            <div id="photoGpsSection" class="hidden space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <div id="photoGpsSection" class="hidden space-y-3 bg-slate-50 p-4 rounded-[1.5rem] border border-slate-100">
                                 <div class="text-xs text-slate-600 font-medium">Capture Photo (optionnelle) et géolocalisation pour authentification forte.</div>
-                                <input type="file" id="selfieFileInput" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-[#EAF4E3] file:text-indigo-700 hover:file:bg-indigo-100 transition-colors" />
+                                <input type="file" id="selfieFileInput" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-[#EAF4E3] file:text-[#12312E] hover:file:bg-indigo-100 transition-colors" />
                             </div>
 
                             <div class="flex gap-3 pt-2">
-                                <button type="button" onclick="enregistrerPointage('ENTREE')" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm shadow-md shadow-emerald-200 transition-all flex justify-center items-center gap-2">
+                                <button type="button" onclick="enregistrerPointage('ENTREE')" class="flex-1 bg-emerald-500 hover:bg-[#12312E] text-white font-bold py-3.5 rounded-xl text-sm shadow-md shadow-emerald-200 transition-all flex justify-center items-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
                                     Pointer l'Arrivée
                                 </button>
@@ -268,7 +268,7 @@
                     </div>
 
                     <!-- Scan Logs -->
-                    <div class="lg:col-span-6 glass rounded-2xl overflow-hidden flex flex-col h-fit">
+                    <div class="lg:col-span-6 bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden flex flex-col h-fit">
                         <div class="px-6 py-4 border-b border-slate-100 bg-white/50 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
                             <h2 class="text-sm font-bold text-slate-900">Historique des pointages par date</h2>
                             <div class="flex items-center gap-2">
@@ -301,7 +301,7 @@
             <!-- ═══════════════ TAB: Factures ═══════════════ -->
             <div id="tab-factures" class="tab-content space-y-4">
                 <h2 class="text-lg font-bold text-slate-900">Factures reçues</h2>
-                <div class="glass p-8 text-center text-slate-400 text-sm rounded-2xl">
+                <div class="bg-white border border-slate-100 shadow-sm p-8 text-center text-slate-400 text-sm rounded-[1.5rem]">
                     Aucune facture disponible pour le moment.
                 </div>
             </div>
@@ -316,7 +316,7 @@
                     <button onclick="loadPersonnelQr()" class="text-xs font-bold text-[#12312E] hover:text-indigo-800 border border-indigo-200 bg-[#EAF4E3] px-3 py-1.5 rounded-lg transition-colors">↻ Actualiser</button>
                 </div>
                 <div id="personnelQrGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    <div class="glass p-8 rounded-2xl text-center text-slate-400 text-sm col-span-full">Chargement des agents…</div>
+                    <div class="bg-white border border-slate-100 shadow-sm p-8 rounded-[1.5rem] text-center text-slate-400 text-sm col-span-full">Chargement des agents…</div>
                 </div>
             </div>
 
@@ -332,7 +332,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <!-- Form to Log Evaluation -->
                     <div class="lg:col-span-5 space-y-4">
-                        <div class="glass p-6 rounded-2xl space-y-4">
+                        <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] space-y-4">
                             <h3 class="font-bold text-slate-800 text-sm">Nouvelle évaluation de performance</h3>
                             <form id="addEvaluationForm" class="space-y-3">
                                 <div class="grid grid-cols-2 gap-3">
@@ -396,7 +396,7 @@
 
                     <!-- Evaluations History -->
                     <div class="lg:col-span-7 space-y-4">
-                        <div class="glass p-6 rounded-2xl space-y-4">
+                        <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] space-y-4">
                             <div class="flex justify-between items-center">
                                 <h3 class="font-bold text-slate-800 text-sm">Registre des évaluations</h3>
                                 <input type="text" id="searchEvaluations" oninput="filterEvaluationsTable()" placeholder="Rechercher par nom..." class="input-minimal w-48 text-xs py-1.5 px-3">
@@ -435,7 +435,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     <!-- Sanctions History List -->
                     <div class="lg:col-span-12 space-y-4">
-                        <div class="glass p-6 rounded-2xl space-y-4">
+                        <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] space-y-4">
                             <div class="flex justify-between items-center">
                                 <h3 class="font-bold text-slate-800 text-sm">Registre des incidents & sanctions</h3>
                                 <input type="text" id="searchSanctions" oninput="filterSanctionsTable()" placeholder="Rechercher par nom..." class="input-minimal w-48 text-xs py-1.5 px-3">
