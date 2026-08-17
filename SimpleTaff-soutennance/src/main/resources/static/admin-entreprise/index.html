@@ -210,9 +210,7 @@
     
     <div class="flex items-center gap-4 md:gap-6 shrink-0 w-full md:w-auto justify-between md:justify-end">
         <div class="flex items-center gap-4">
-            <button class="text-slate-400 hover:text-slate-600 transition-colors bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            </button>
+            
             <div class="relative">
                 <button onclick="toggleNotificationsDropdown()" class="text-slate-400 hover:text-slate-600 transition-colors bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
@@ -244,10 +242,10 @@
             <p class="text-sm text-slate-500 mt-1">Planifiez, gérez et suivez vos activités en toute simplicité.</p>
         </div>
         <div class="flex items-center gap-3">
-            <button class="bg-[#12312E] hover:bg-[#0d2421] text-white px-5 py-2.5 rounded-[1rem] text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+            <button onclick="showTab('agents')" class="bg-[#12312E] hover:bg-[#0d2421] text-white px-5 py-2.5 rounded-[1rem] text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2">
                 + Nouvel Agent
             </button>
-            <button class="bg-white border border-slate-300 hover:bg-slate-50 text-[#12312E] px-5 py-2.5 rounded-[1rem] text-sm font-bold shadow-sm transition-all flex items-center gap-2">
+            <button onclick="" class="bg-white border border-slate-300 hover:bg-slate-50 text-[#12312E] px-5 py-2.5 rounded-[1rem] text-sm font-bold shadow-sm transition-all flex items-center gap-2">
                 Exporter Données
             </button>
         </div>
@@ -264,7 +262,7 @@
                 </div>
             </div>
             <div>
-                <div class="text-4xl font-extrabold text-white">245</div>
+                <div id="statOverviewAgents" class="text-4xl font-extrabold text-white">245</div>
                 <div class="flex items-center gap-2 mt-2">
                     <span class="bg-[#A3D977] text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">↑</span>
                     <span class="text-xs text-[#A3D977] font-medium">En hausse depuis le mois dernier</span>
@@ -281,7 +279,7 @@
                 </div>
             </div>
             <div>
-                <div class="text-4xl font-extrabold text-[#12312E]">10</div>
+                <div id="statOverviewPostes" class="text-4xl font-extrabold text-[#12312E]">10</div>
                 <div class="flex items-center gap-2 mt-2">
                     <span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">→</span>
                     <span class="text-xs text-slate-500 font-medium">Stable par rapport au mois dernier</span>
@@ -298,7 +296,7 @@
                 </div>
             </div>
             <div>
-                <div class="text-4xl font-extrabold text-[#12312E]">124</div>
+                <div id="statOverviewAffectations" class="text-4xl font-extrabold text-[#12312E]">124</div>
                 <div class="flex items-center gap-2 mt-2">
                     <span class="bg-[#A3D977]/20 text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">↑</span>
                     <span class="text-xs text-slate-500 font-medium">En hausse depuis le mois dernier</span>
@@ -315,7 +313,7 @@
                 </div>
             </div>
             <div>
-                <div class="text-4xl font-extrabold text-[#12312E]">218</div>
+                <div id="statOverviewPointages" class="text-4xl font-extrabold text-[#12312E]">218</div>
                 <div class="flex items-center gap-2 mt-2 text-xs text-slate-500 font-medium">
                     2 Anomalies
                 </div>
@@ -329,7 +327,7 @@
         <div class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
             <h3 class="font-bold text-slate-900 mb-6">Évolution de la Masse Salariale</h3>
             <div class="flex-1 flex items-end justify-between gap-2 px-2 relative">
-                <!-- Bar chart mockup matching Donezo exactly -->
+                <!-- Bar chart mockup -->
                 <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"></div>
                 <div class="w-full bg-[#12312E] rounded-full h-3/4"></div>
                 <div class="w-full bg-[#A3D977] rounded-full h-4/5 relative group">
@@ -341,13 +339,13 @@
                 <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/5"></div>
             </div>
             <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3">
-                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
             </div>
         </div>
 
         <!-- Reminders (Col span 3) -->
         <div class="lg:col-span-3 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
-            <h3 class="font-bold text-slate-900 mb-4">Rappels</h3>
+            <h3 class="font-bold text-slate-900 mb-4">Contrats à Renouveler</h3>
             <div class="flex-1 flex flex-col justify-center">
                 <h4 class="text-xl font-bold text-[#12312E] leading-tight">Renouvellement Mr Yao</h4>
                 <p class="text-xs text-slate-500 font-medium mt-2">Date Limite : 26 Nov 2024</p>
@@ -362,142 +360,53 @@
         <div class="lg:col-span-4 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-bold text-slate-900">Dernières Affectations</h3>
-                <button class="text-xs border border-slate-200 text-slate-600 px-3 py-1 rounded-full font-bold hover:bg-slate-50">+ New</button>
             </div>
             <div class="flex-1 overflow-y-auto pr-2 space-y-4">
-                <!-- List Item 1 -->
-                <div class="flex gap-4 items-center">
-                    <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 shrink-0"><i class="fa-solid fa-code"></i></div>
-                    <div>
-                        <div class="text-sm font-bold text-[#12312E]">Développement API</div>
-                        <div class="text-[10px] text-slate-400 font-medium">Échéance: 26 Nov 2024</div>
-                    </div>
-                </div>
-                <!-- List Item 2 -->
-                <div class="flex gap-4 items-center">
-                    <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 shrink-0"><i class="fa-solid fa-leaf"></i></div>
-                    <div>
-                        <div class="text-sm font-bold text-[#12312E]">Intégration Design</div>
-                        <div class="text-[10px] text-slate-400 font-medium">Échéance: 28 Nov 2024</div>
-                    </div>
-                </div>
-                <!-- List Item 3 -->
-                <div class="flex gap-4 items-center">
-                    <div class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 shrink-0"><i class="fa-solid fa-bolt"></i></div>
-                    <div>
-                        <div class="text-sm font-bold text-[#12312E]">Optimisation Perf</div>
-                        <div class="text-[10px] text-slate-400 font-medium">Échéance: 30 Nov 2024</div>
-                    </div>
-                </div>
-                <!-- List Item 4 -->
-                <div class="flex gap-4 items-center">
-                    <div class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 shrink-0"><i class="fa-solid fa-bug"></i></div>
-                    <div>
-                        <div class="text-sm font-bold text-[#12312E]">Tests Unitaires</div>
-                        <div class="text-[10px] text-slate-400 font-medium">Échéance: 05 Dec 2024</div>
-                    </div>
-                </div>
+                <table class="w-full text-left">
+                    <tbody id="overviewAffectationsTable" class="divide-y divide-slate-100 text-xs">
+                        <tr><td class="py-2 text-slate-500 text-center">En attente de données...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <!-- ROW 3 : BOTTOM -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Team Collaboration (Col span 5) -->
-        <div class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
+        <!-- Team Collaboration (Col span 7 - Expanded!) -->
+        <div class="lg:col-span-7 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-bold text-slate-900">Équipe Récente</h3>
-                <button class="text-xs border border-slate-200 text-slate-600 px-3 py-1 rounded-full font-bold hover:bg-slate-50">+ Add Member</button>
             </div>
             <div class="flex-1 overflow-y-auto pr-2 space-y-4">
-                <!-- Member 1 -->
-                <div class="flex gap-4 items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <img src="https://i.pravatar.cc/100?img=1" class="w-8 h-8 rounded-full bg-slate-200">
-                        <div>
-                            <div class="text-sm font-bold text-[#12312E]">Alexandra Deff</div>
-                            <div class="text-[10px] text-slate-400 font-medium">Responsable RH</div>
-                        </div>
-                    </div>
-                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#A3D977]/20 text-[#12312E]">Completed</span>
-                </div>
-                <!-- Member 2 -->
-                <div class="flex gap-4 items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <img src="https://i.pravatar.cc/100?img=3" class="w-8 h-8 rounded-full bg-slate-200">
-                        <div>
-                            <div class="text-sm font-bold text-[#12312E]">Edwin Adenike</div>
-                            <div class="text-[10px] text-slate-400 font-medium">Coordonnateur Zone</div>
-                        </div>
-                    </div>
-                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600">In Progress</span>
-                </div>
-                <!-- Member 3 -->
-                <div class="flex gap-4 items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <img src="https://i.pravatar.cc/100?img=5" class="w-8 h-8 rounded-full bg-slate-200">
-                        <div>
-                            <div class="text-sm font-bold text-[#12312E]">Isaac Oluwa</div>
-                            <div class="text-[10px] text-slate-400 font-medium">Agent de Sécurité</div>
-                        </div>
-                    </div>
-                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600">Pending</span>
-                </div>
-                <!-- Member 4 -->
-                <div class="flex gap-4 items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <img src="https://i.pravatar.cc/100?img=8" class="w-8 h-8 rounded-full bg-slate-200">
-                        <div>
-                            <div class="text-sm font-bold text-[#12312E]">David Oshodi</div>
-                            <div class="text-[10px] text-slate-400 font-medium">Agent de Nettoyage</div>
-                        </div>
-                    </div>
-                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600">In Progress</span>
-                </div>
+                <table class="w-full text-left">
+                    <tbody id="overviewPointagesTable" class="divide-y divide-slate-100 text-xs">
+                        <tr><td class="py-2 text-slate-500 text-center">En attente de données...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Project Progress (Col span 4) -->
-        <div class="lg:col-span-4 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72 justify-between">
+        <!-- Project Progress (Col span 5 - Expanded!) -->
+        <div class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72 justify-between">
             <h3 class="font-bold text-slate-900 mb-2">Taux de Présence Global</h3>
             
             <div class="relative flex-1 flex items-center justify-center">
-                <!-- Placeholder Donut SVG matching the image -->
                 <svg viewBox="0 0 100 100" class="w-40 h-40 transform -rotate-90">
                     <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="15" fill="none"></circle>
                     <circle cx="50" cy="50" r="40" stroke="#12312E" stroke-width="15" fill="none" stroke-dasharray="100 150" stroke-linecap="round"></circle>
                     <circle cx="50" cy="50" r="40" stroke="#A3D977" stroke-width="15" fill="none" stroke-dasharray="60 190" stroke-dashoffset="-100" stroke-linecap="round"></circle>
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <span class="text-3xl font-extrabold text-[#12312E]">41%</span>
+                    <span class="text-3xl font-extrabold text-[#12312E]">82%</span>
                     <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Objectif</span>
                 </div>
             </div>
 
             <div class="flex items-center justify-between text-xs font-bold text-slate-600 mt-4 px-4">
-                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#12312E]"></span> Completed</div>
-                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#A3D977]"></span> In Progress</div>
-                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span> Pending</div>
-            </div>
-        </div>
-
-        <!-- Time Tracker (Col span 3) -->
-        <div class="lg:col-span-3 bg-[#12312E] rounded-[1.5rem] p-6 shadow-xl flex flex-col justify-between h-72 relative overflow-hidden group">
-            <!-- Decorative concentric lines background mimicking Donezo card -->
-            <div class="absolute -right-10 -top-10 w-48 h-48 border-[10px] border-white/5 rounded-full"></div>
-            <div class="absolute -right-5 -top-5 w-48 h-48 border-[10px] border-white/5 rounded-full"></div>
-            
-            <h3 class="font-bold text-white relative z-10">Action Rapide</h3>
-            <div class="relative z-10 text-center">
-                <div class="text-4xl font-extrabold text-white mb-6 tracking-tight">Validation Paie</div>
-                <div class="flex justify-center gap-4">
-                    <button class="w-12 h-12 rounded-full bg-white text-[#12312E] flex items-center justify-center shadow-md hover:scale-105 transition-transform">
-                        <i class="fa-solid fa-pause"></i>
-                    </button>
-                    <button class="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-md hover:scale-105 transition-transform">
-                        <i class="fa-solid fa-stop"></i>
-                    </button>
-                </div>
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#12312E]"></span> Validé</div>
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#A3D977]"></span> Partiel</div>
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span> À risque</div>
             </div>
         </div>
     </div>
