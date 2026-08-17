@@ -196,36 +196,101 @@
 
     <!-- Main Content -->
     <main class="app-main">
-        <header class="desktop-header">
-            <div>
-                <h1 class="text-xl font-bold text-slate-900">Espace Administration Entreprise</h1>
-                <p class="text-xs text-slate-400">SimpleTaff SaaS Platform</p>
+        <header class="h-24 flex items-center justify-between px-8 bg-transparent z-10 w-full mt-2">
+            <!-- Search -->
+            <div class="relative w-96 hidden md:block">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <input type="text" class="bg-white border-none text-slate-900 text-sm rounded-full block w-full pl-11 py-3.5 shadow-sm placeholder-slate-400 focus:ring-2 focus:ring-[#A3D977] transition-shadow" placeholder="Search task...">
+                <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                    <kbd class="px-2 py-1 text-[10px] font-semibold text-slate-500 bg-slate-50 border border-slate-200 rounded-md shadow-sm">⌘F</kbd>
+                </div>
             </div>
-            <div class="flex items-center gap-4">
-                <!-- Notifications Bell -->
-                <div class="relative">
-                    <button onclick="toggleNotificationsDropdown()" class="relative p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl focus:outline-none transition-all">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                        </svg>
-                        <span id="notificationBadge" class="hidden absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full ring-2 ring-white bg-rose-500 text-[9px] font-bold text-white items-center justify-center">0</span>
-                    </button>
-                    <!-- Dropdown Panel -->
-                    <div id="notificationsDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200/60 py-2 z-50">
-                        <div class="px-4 py-2 border-b border-slate-100 flex justify-between items-center">
-                            <span class="font-bold text-xs text-slate-800">Notifications</span>
-                            <button onclick="clearAllNotifications()" class="text-[10px] text-rose-600 hover:underline">Tout effacer</button>
-                        </div>
-                        <div id="notificationsContainer" class="max-h-64 overflow-y-auto divide-y divide-slate-100 text-xs">
-                            <div class="p-4 text-center text-slate-400">Aucune notification.</div>
-                        </div>
+            
+            <!-- Profile Area -->
+            <div class="flex items-center gap-4 ml-auto">
+                <button class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-[#12312E] transition-colors border border-slate-100 hover:border-slate-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                </button>
+                <button class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-slate-400 hover:text-[#12312E] transition-colors relative border border-slate-100 hover:border-slate-200">
+                    <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                </button>
+                <div class="flex items-center gap-3 bg-white p-1.5 pr-4 rounded-full shadow-sm ml-2 cursor-pointer hover:shadow-md transition-shadow border border-slate-100">
+                    <img src="https://ui-avatars.com/api/?name=User&background=A3D977&color=12312E" alt="Avatar" class="w-8 h-8 rounded-full">
+                    <div class="hidden md:block text-left">
+                        <div class="text-xs font-bold text-slate-900 leading-tight">Admin User</div>
+                        <div class="text-[10px] text-slate-500 leading-tight">user@simpletaff.ci</div>
                     </div>
                 </div>
-                <span class="badge bg-sky-100 text-sky-700">ADMIN_ENTREPRISE</span>
             </div>
         </header>
 
-        <div class="content-area">
+        <div class="flex-1 overflow-y-auto p-8 pt-2 space-y-8">
+            <!-- Page Title Area -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h1 class="font-display text-4xl font-extrabold text-slate-900 mb-2">Admin Entreprise</h1>
+                    <p class="text-sm text-slate-500">Gérez vos équipes et vos affectations avec aisance.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="bg-[#12312E] text-white hover:bg-[#0d2421] px-6 py-2.5 rounded-full font-bold text-sm shadow-md transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        Add Project
+                    </button>
+                    <button class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-6 py-2.5 rounded-full font-bold text-sm transition-all shadow-sm">
+                        Import Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- CARD 1: DARK GREEN -->
+                <div class="bg-[#12312E] p-6 rounded-[1.5rem] shadow-lg relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-white opacity-5 rounded-full blur-2xl"></div>
+                    <div class="flex items-center justify-between mb-4 relative z-10">
+                        <span class="text-sm font-semibold text-white/90">Total Agents</span>
+                        <div class="w-8 h-8 rounded-full bg-white/10 text-white flex items-center justify-center backdrop-blur-sm group-hover:bg-white/20 transition-colors cursor-pointer border border-white/5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-4xl font-display font-extrabold text-white mb-3 relative z-10" id="statTotalAgents">—</div>
+                    <div class="flex items-center gap-2 text-[10px] font-medium text-[#A3D977] relative z-10 bg-[#A3D977]/10 w-max px-2 py-1 rounded-md border border-[#A3D977]/20">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        Effectif global
+                    </div>
+                </div>
+                <!-- CARD N: WHITE -->
+                <div class="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-semibold text-slate-800">Postes Actifs</span>
+                        <div class="w-8 h-8 rounded-full bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center group-hover:border-slate-300 transition-colors cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-4xl font-display font-extrabold text-slate-900 mb-3" id="statPostesActifs">—</div>
+                    <div class="flex items-center gap-2 text-[10px] font-medium text-slate-500 bg-slate-50 border border-slate-100 w-max px-2 py-1 rounded-md">
+                        <svg class="w-3 h-3 text-[#A3D977]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        Sites en cours
+                    </div>
+                </div>
+                <!-- CARD N: WHITE -->
+                <div class="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-semibold text-slate-800">Abonnement</span>
+                        <div class="w-8 h-8 rounded-full bg-slate-50 text-slate-400 border border-slate-100 flex items-center justify-center group-hover:border-slate-300 transition-colors cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </div>
+                    </div>
+                    <div class="text-4xl font-display font-extrabold text-slate-900 mb-3" id="statAbonnement">Pro</div>
+                    <div class="flex items-center gap-2 text-[10px] font-medium text-slate-500 bg-slate-50 border border-slate-100 w-max px-2 py-1 rounded-md">
+                        <svg class="w-3 h-3 text-[#A3D977]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        Formule actuelle
+                    </div>
+                </div>
+            </div>
 
             <!-- ================= TAB: Vue d'ensemble ================= -->
             <div id="tab-overview" class="tab-content active space-y-6">
