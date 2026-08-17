@@ -236,187 +236,272 @@
 
             <!-- ================= TAB: Vue d'ensemble ================= -->
             <div id="tab-overview" class="tab-content active space-y-6">
-                <div id="contractExpirationsContainerOverview" class="hidden space-y-3"></div>
-                <!-- 4 Stat Cards with Glassmorphism & Hover -->
-                <div class="stat-grid-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-[#12312E] p-8 rounded-[2rem] shadow-xl text-white relative overflow-hidden group hover:-translate-y-1 transition-all duration-300"p-6 rounded-[1.5rem] border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-white/70 uppercase tracking-wider">Agents Entreprise</span>
-                            <div class="w-10 h-10 rounded-xl bg-[#19403B] text-white flex items-center justify-center font-bold">
-                                <i class="fa-solid fa-users text-lg"></i>
-                            </div>
-                        </div>
-                        <div class="text-3xl font-extrabold text-white mt-3" id="statOverviewAgents">—</div>
-                        <div class="flex items-center gap-1.5 mt-2">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-700">Effectif total</span>
-                        </div>
-                    </div>
-                    <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Postes / Sites</span>
-                            <div class="w-10 h-10 rounded-xl bg-[#EAF4E3] text-[#12312E] flex items-center justify-center font-bold">
-                                <i class="fa-solid fa-building-user text-lg"></i>
-                            </div>
-                        </div>
-                        <div class="text-3xl font-extrabold text-[#12312E] mt-3" id="statOverviewPostes">—</div>
-                        <div class="flex items-center gap-1.5 mt-2">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#12312E]/10 text-[#12312E]">Structures déployées</span>
-                        </div>
-                    </div>
-                    <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Affectations Actives</span>
-                            <div class="w-10 h-10 rounded-xl bg-[#A3D977]/20 text-[#12312E] flex items-center justify-center font-bold">
-                                <i class="fa-solid fa-user-shield text-lg"></i>
-                            </div>
-                        </div>
-                        <div class="text-3xl font-extrabold text-emerald-600 mt-3" id="statOverviewAffectations">—</div>
-                        <div class="flex items-center gap-1.5 mt-2">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#A3D977]/30 text-[#12312E]">Missions terrain</span>
-                        </div>
-                    </div>
-                    <div class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] border border-slate-200/60 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pointages Aujourd'hui</span>
-                            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
-                                <i class="fa-solid fa-qrcode text-lg"></i>
-                            </div>
-                        </div>
-                        <div class="text-3xl font-extrabold text-amber-600 mt-3" id="statOverviewPointages">—</div>
-                        <div class="flex items-center gap-1.5 mt-2">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700">Flux scanner QR</span>
-                        </div>
+
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div>
+            <h1 class="text-3xl font-display font-bold text-[#12312E] tracking-tight">Tableau de Bord</h1>
+            <p class="text-sm text-slate-500 mt-1">Planifiez, gérez et suivez vos activités en toute simplicité.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button class="bg-[#12312E] hover:bg-[#0d2421] text-white px-5 py-2.5 rounded-[1rem] text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2">
+                + Nouvel Agent
+            </button>
+            <button class="bg-white border border-slate-300 hover:bg-slate-50 text-[#12312E] px-5 py-2.5 rounded-[1rem] text-sm font-bold shadow-sm transition-all flex items-center gap-2">
+                Exporter Données
+            </button>
+        </div>
+    </div>
+
+    <!-- ROW 1 : 4 CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <!-- Card 1 (Dark) -->
+        <div class="bg-[#12312E] p-6 rounded-[1.5rem] shadow-xl text-white relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-40">
+            <div class="flex justify-between items-start">
+                <span class="font-bold text-white/90">Total Agents</span>
+                <div class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/80">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                </div>
+            </div>
+            <div>
+                <div class="text-4xl font-extrabold text-white">245</div>
+                <div class="flex items-center gap-2 mt-2">
+                    <span class="bg-[#A3D977] text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">↑</span>
+                    <span class="text-xs text-[#A3D977] font-medium">En hausse depuis le mois dernier</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2 (White) -->
+        <div class="bg-white border border-slate-100 p-6 rounded-[1.5rem] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-40">
+            <div class="flex justify-between items-start">
+                <span class="font-bold text-slate-800">Postes Actifs</span>
+                <div class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                </div>
+            </div>
+            <div>
+                <div class="text-4xl font-extrabold text-[#12312E]">10</div>
+                <div class="flex items-center gap-2 mt-2">
+                    <span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">→</span>
+                    <span class="text-xs text-slate-500 font-medium">Stable par rapport au mois dernier</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3 (White) -->
+        <div class="bg-white border border-slate-100 p-6 rounded-[1.5rem] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-40">
+            <div class="flex justify-between items-start">
+                <span class="font-bold text-slate-800">Affectations</span>
+                <div class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                </div>
+            </div>
+            <div>
+                <div class="text-4xl font-extrabold text-[#12312E]">124</div>
+                <div class="flex items-center gap-2 mt-2">
+                    <span class="bg-[#A3D977]/20 text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">↑</span>
+                    <span class="text-xs text-slate-500 font-medium">En hausse depuis le mois dernier</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4 (White) -->
+        <div class="bg-white border border-slate-100 p-6 rounded-[1.5rem] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-40">
+            <div class="flex justify-between items-start">
+                <span class="font-bold text-slate-800">Pointages (Jour)</span>
+                <div class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 14l7 7m0 0l7-7m-7 7V3"/></svg>
+                </div>
+            </div>
+            <div>
+                <div class="text-4xl font-extrabold text-[#12312E]">218</div>
+                <div class="flex items-center gap-2 mt-2 text-xs text-slate-500 font-medium">
+                    2 Anomalies
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROW 2 : MIDDLE -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+        <!-- Analytics (Col span 5) -->
+        <div class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
+            <h3 class="font-bold text-slate-900 mb-6">Évolution de la Masse Salariale</h3>
+            <div class="flex-1 flex items-end justify-between gap-2 px-2 relative">
+                <!-- Bar chart mockup matching Donezo exactly -->
+                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"></div>
+                <div class="w-full bg-[#12312E] rounded-full h-3/4"></div>
+                <div class="w-full bg-[#A3D977] rounded-full h-4/5 relative group">
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">74%</div>
+                </div>
+                <div class="w-full bg-[#12312E] rounded-full h-full"></div>
+                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/3"></div>
+                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"></div>
+                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/5"></div>
+            </div>
+            <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3">
+                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+            </div>
+        </div>
+
+        <!-- Reminders (Col span 3) -->
+        <div class="lg:col-span-3 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
+            <h3 class="font-bold text-slate-900 mb-4">Rappels</h3>
+            <div class="flex-1 flex flex-col justify-center">
+                <h4 class="text-xl font-bold text-[#12312E] leading-tight">Renouvellement Mr Yao</h4>
+                <p class="text-xs text-slate-500 font-medium mt-2">Date Limite : 26 Nov 2024</p>
+            </div>
+            <button class="bg-[#12312E] hover:bg-[#0d2421] text-white w-full py-3 rounded-xl font-bold text-sm shadow-md transition-all flex justify-center items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Voir Dossier
+            </button>
+        </div>
+
+        <!-- Project List (Col span 4) -->
+        <div class="lg:col-span-4 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-900">Dernières Affectations</h3>
+                <button class="text-xs border border-slate-200 text-slate-600 px-3 py-1 rounded-full font-bold hover:bg-slate-50">+ New</button>
+            </div>
+            <div class="flex-1 overflow-y-auto pr-2 space-y-4">
+                <!-- List Item 1 -->
+                <div class="flex gap-4 items-center">
+                    <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 shrink-0"><i class="fa-solid fa-code"></i></div>
+                    <div>
+                        <div class="text-sm font-bold text-[#12312E]">Développement API</div>
+                        <div class="text-[10px] text-slate-400 font-medium">Échéance: 26 Nov 2024</div>
                     </div>
                 </div>
-
-                <!-- Dual List Overview Cards -->
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                    <!-- Left: Affectations Récentes -->
-                    <div class="lg:col-span-7 bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden border border-slate-200/60 shadow-sm flex flex-col">
-                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
-                                <h2 class="font-bold text-slate-900 text-sm">📋 Affectations & Missions Récentes</h2>
-                            </div>
-                            <button onclick="showTab('postes')" class="text-xs text-sky-600 font-bold hover:underline">Voir tout →</button>
-                        </div>
-                        <div class="overflow-x-auto flex-1">
-                            <table class="w-full text-left">
-                                <thead><tr class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
-                                    <th class="px-5 py-3">Agent</th>
-                                    <th class="px-5 py-3">Poste / Mission</th>
-                                    <th class="px-5 py-3">Site</th>
-                                    <th class="px-5 py-3">Début</th>
-                                    <th class="px-5 py-3">Statut</th>
-                                </tr></thead>
-                                <tbody id="overviewAffectationsTable" class="divide-y divide-slate-100 text-xs">
-                                    <tr><td colspan="5" class="px-6 py-6 text-center text-slate-400">Chargement…</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <!-- List Item 2 -->
+                <div class="flex gap-4 items-center">
+                    <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 shrink-0"><i class="fa-solid fa-leaf"></i></div>
+                    <div>
+                        <div class="text-sm font-bold text-[#12312E]">Intégration Design</div>
+                        <div class="text-[10px] text-slate-400 font-medium">Échéance: 28 Nov 2024</div>
                     </div>
-
-                    <!-- Right: Derniers Pointages En Direct -->
-                    <div class="lg:col-span-5 bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden border border-slate-200/60 shadow-sm flex flex-col">
-                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <h2 class="font-bold text-slate-900 text-sm">⏱️ Derniers Pointages (Aujourd'hui)</h2>
-                            </div>
-                            <button onclick="showTab('pointages')" class="text-xs text-sky-600 font-bold hover:underline">Historique →</button>
-                        </div>
-                        <div class="overflow-x-auto flex-1">
-                            <table class="w-full text-left">
-                                <thead><tr class="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
-                                    <th class="px-5 py-3">Agent</th>
-                                    <th class="px-5 py-3">Pointage</th>
-                                    <th class="px-5 py-3">Heure</th>
-                                    <th class="px-5 py-3">Site</th>
-                                </tr></thead>
-                                <tbody id="overviewPointagesTable" class="divide-y divide-slate-100 text-xs">
-                                    <tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Chargement…</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                </div>
+                <!-- List Item 3 -->
+                <div class="flex gap-4 items-center">
+                    <div class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 shrink-0"><i class="fa-solid fa-bolt"></i></div>
+                    <div>
+                        <div class="text-sm font-bold text-[#12312E]">Optimisation Perf</div>
+                        <div class="text-[10px] text-slate-400 font-medium">Échéance: 30 Nov 2024</div>
+                    </div>
+                </div>
+                <!-- List Item 4 -->
+                <div class="flex gap-4 items-center">
+                    <div class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 shrink-0"><i class="fa-solid fa-bug"></i></div>
+                    <div>
+                        <div class="text-sm font-bold text-[#12312E]">Tests Unitaires</div>
+                        <div class="text-[10px] text-slate-400 font-medium">Échéance: 05 Dec 2024</div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div id="tab-org" class="tab-content space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Zones Section -->
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h2 class="text-lg font-bold text-slate-900">Zones géographiques</h2>
-                        </div>
-                        <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] space-y-4">
-                            <form id="addZoneForm" class="grid grid-cols-1 gap-3">
-                                <input type="text" id="zoneNom" required="required" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Nom de la zone (ex: Zone Sud)">
-                                <input type="text" id="zoneDescription" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Description courte">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-500 mb-1">Villes constitutives (Recherche & Sélection 1 par 1) *</label>
-                                    <div class="flex gap-2">
-                                        <input type="text" id="zoneVilleInput" list="villes-ci-list" class="input-field text-xs flex-1" placeholder="Tapez les premières lettres de la ville (ex: Abid...)" autocomplete="off">
-                                        <button type="button" onclick="addSelectedCityFromInput()" class="px-3 py-2 bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs rounded-xl transition-colors shrink-0 flex items-center gap-1">
-                                            <i class="fa-solid fa-plus"></i> Ajouter
-                                        </button>
-                                    </div>
-                                    <p class="text-[10px] text-slate-400 mt-1">Saisissez le nom d'une ville puis cliquez sur "Ajouter" ou appuyez sur Entrée.</p>
-                                    
-                                    <!-- Dynamic Tag Container for selected="selected" Cities -->
-                                    <div id="selectedCitiesContainer" class="flex flex-wrap gap-1.5 mt-2.5 p-2 bg-slate-50 border border-slate-200/80 rounded-xl min-h-[42px] items-center">
-                                        <span class="text-xs text-slate-400 w-full text-center py-1" id="noCitiesPlaceholder">Aucune ville ajoutée</span>
-                                    </div>
-                                </div>
-                                <input type="text" id="zonePerimetre" class="input-field text-xs" placeholder="Périmètre / Précisions complémentaires">
-                                <button type="submit" class="btn-brand py-2 text-xs">Créer la zone</button>
-                            </form>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full text-left text-xs whitespace-nowrap">
-                                    <thead><tr class="bg-slate-100 font-bold">
-                                        <th class="p-2">Nom</th>
-                                        <th class="p-2">Villes / Périmètre</th>
-                                        <th class="p-2">Description</th>
-                                        <th class="p-2">Actions</th>
-                                    </tr></thead>
-                                    <tbody id="zonesTableBody" class="divide-y divide-slate-100">
-                                        <!-- Dynamic zones -->
-                                    </tbody>
-                                </table>
-                            </div>
+    <!-- ROW 3 : BOTTOM -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Team Collaboration (Col span 5) -->
+        <div class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-900">Équipe Récente</h3>
+                <button class="text-xs border border-slate-200 text-slate-600 px-3 py-1 rounded-full font-bold hover:bg-slate-50">+ Add Member</button>
+            </div>
+            <div class="flex-1 overflow-y-auto pr-2 space-y-4">
+                <!-- Member 1 -->
+                <div class="flex gap-4 items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/100?img=1" class="w-8 h-8 rounded-full bg-slate-200">
+                        <div>
+                            <div class="text-sm font-bold text-[#12312E]">Alexandra Deff</div>
+                            <div class="text-[10px] text-slate-400 font-medium">Responsable RH</div>
                         </div>
                     </div>
-
-                    <!-- Coordonnateurs Section -->
-                    <div class="space-y-4">
-                        <h2 class="text-lg font-bold text-slate-900">Coordonnateurs de Zone</h2>
-                        <div class="bg-white border border-slate-100 shadow-sm p-5 rounded-[1.5rem] space-y-4">
-                            <form id="addCoordForm" class="grid grid-cols-1 gap-3">
-                                <input type="text" id="coordNom" required="required" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Nom">
-                                <input type="text" id="coordPrenom" required="required" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Prénom">
-                                <input type="email" id="coordEmail" required="required" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Email">
-                                <input type="password" id="coordPassword" required="required" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Mot de passe">
-                                <select id="coordZoneSelect" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
-                                    <option value="">Associer à une zone (Optionnel)</option>
-                                </select>
-                                <button type="submit" class="btn-brand py-2 text-xs">Ajouter le coordonnateur</button>
-                            </form>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full text-left text-xs whitespace-nowrap">
-                                    <thead><tr class="bg-slate-100 font-bold">
-                                        <th class="p-2">Nom & Prénom</th>
-                                        <th class="p-2">Email</th>
-                                        <th class="p-2">Zone</th>
-                                        <th class="p-2">Actions</th>
-                                    </tr></thead>
-                                    <tbody id="coordsTableBody" class="divide-y divide-slate-100">
-                                        <!-- Dynamic coords -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#A3D977]/20 text-[#12312E]">Completed</span>
                 </div>
+                <!-- Member 2 -->
+                <div class="flex gap-4 items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/100?img=3" class="w-8 h-8 rounded-full bg-slate-200">
+                        <div>
+                            <div class="text-sm font-bold text-[#12312E]">Edwin Adenike</div>
+                            <div class="text-[10px] text-slate-400 font-medium">Coordonnateur Zone</div>
+                        </div>
+                    </div>
+                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600">In Progress</span>
+                </div>
+                <!-- Member 3 -->
+                <div class="flex gap-4 items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/100?img=5" class="w-8 h-8 rounded-full bg-slate-200">
+                        <div>
+                            <div class="text-sm font-bold text-[#12312E]">Isaac Oluwa</div>
+                            <div class="text-[10px] text-slate-400 font-medium">Agent de Sécurité</div>
+                        </div>
+                    </div>
+                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-600">Pending</span>
+                </div>
+                <!-- Member 4 -->
+                <div class="flex gap-4 items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/100?img=8" class="w-8 h-8 rounded-full bg-slate-200">
+                        <div>
+                            <div class="text-sm font-bold text-[#12312E]">David Oshodi</div>
+                            <div class="text-[10px] text-slate-400 font-medium">Agent de Nettoyage</div>
+                        </div>
+                    </div>
+                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600">In Progress</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Progress (Col span 4) -->
+        <div class="lg:col-span-4 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72 justify-between">
+            <h3 class="font-bold text-slate-900 mb-2">Taux de Présence Global</h3>
+            
+            <div class="relative flex-1 flex items-center justify-center">
+                <!-- Placeholder Donut SVG matching the image -->
+                <svg viewBox="0 0 100 100" class="w-40 h-40 transform -rotate-90">
+                    <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="15" fill="none"></circle>
+                    <circle cx="50" cy="50" r="40" stroke="#12312E" stroke-width="15" fill="none" stroke-dasharray="100 150" stroke-linecap="round"></circle>
+                    <circle cx="50" cy="50" r="40" stroke="#A3D977" stroke-width="15" fill="none" stroke-dasharray="60 190" stroke-dashoffset="-100" stroke-linecap="round"></circle>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span class="text-3xl font-extrabold text-[#12312E]">41%</span>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Objectif</span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between text-xs font-bold text-slate-600 mt-4 px-4">
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#12312E]"></span> Completed</div>
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#A3D977]"></span> In Progress</div>
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span> Pending</div>
+            </div>
+        </div>
+
+        <!-- Time Tracker (Col span 3) -->
+        <div class="lg:col-span-3 bg-[#12312E] rounded-[1.5rem] p-6 shadow-xl flex flex-col justify-between h-72 relative overflow-hidden group">
+            <!-- Decorative concentric lines background mimicking Donezo card -->
+            <div class="absolute -right-10 -top-10 w-48 h-48 border-[10px] border-white/5 rounded-full"></div>
+            <div class="absolute -right-5 -top-5 w-48 h-48 border-[10px] border-white/5 rounded-full"></div>
+            
+            <h3 class="font-bold text-white relative z-10">Action Rapide</h3>
+            <div class="relative z-10 text-center">
+                <div class="text-4xl font-extrabold text-white mb-6 tracking-tight">Validation Paie</div>
+                <div class="flex justify-center gap-4">
+                    <button class="w-12 h-12 rounded-full bg-white text-[#12312E] flex items-center justify-center shadow-md hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-pause"></i>
+                    </button>
+                    <button class="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-md hover:scale-105 transition-transform">
+                        <i class="fa-solid fa-stop"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
             </div>
 
             <!-- ================= TAB: Catalogue & Agents ================= -->
