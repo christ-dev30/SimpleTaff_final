@@ -1152,69 +1152,6 @@
                         <h2 class="text-xl font-bold text-slate-900">Cong&eacute;s &amp; Absences</h2>
                         <p class="text-xs text-slate-400 mt-0.5">G&eacute;rez les demandes selon le Code du Travail ivoirien.</p>
                     </div>
-                    <button onclick="document.getElementById('congeFormPanel').classList.toggle('hidden')" class="btn-brand text-xs px-4 py-2 flex items-center gap-2">
-                        <i class="fa-solid fa-plus"></i> Nouvelle demande
-                    </button>
-                </div>
-
-                <div id="congeFormPanel" class="hidden bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-6 space-y-4">
-                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                        <i class="fa-solid fa-file-circle-plus text-sky-500"></i> Nouvelle demande de cong&eacute; / absence
-                    </h3>
-                    <form id="addCongeForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Agent concern&eacute; *</label>
-                            <select id="congeAgentSelect" required="required" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"><option value="">Chargement...</option></select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Type de cong&eacute; / absence *</label>
-                            <select id="congeType" required="required" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
-                                <optgroup label="Cong&eacute;s l&eacute;gaux (Code du Travail CI)">
-                                    <option value="Cong&eacute; annuel">Cong&eacute; annuel (2,5 j/mois travaill&eacute;)</option>
-                                    <option value="Cong&eacute; de maternit&eacute;">Cong&eacute; de maternit&eacute; (14 semaines)</option>
-                                    <option value="Cong&eacute; de paternit&eacute;">Cong&eacute; de paternit&eacute; (10 jours)</option>
-                                    <option value="Cong&eacute; de maladie">Cong&eacute; maladie (certificat m&eacute;dical)</option>
-                                    <option value="Cong&eacute; mariage">Mariage de l&#39;agent (5 jours)</option>
-                                    <option value="Cong&eacute; d&eacute;c&egrave;s">D&eacute;c&egrave;s d&#39;un proche (3 jours)</option>
-                                    <option value="Cong&eacute; naissance">Naissance d&#39;un enfant (3 jours)</option>
-                                    <option value="Cong&eacute; sans solde">Cong&eacute; sans solde</option>
-                                    <option value="Cong&eacute; de formation">Cong&eacute; de formation</option>
-                                </optgroup>
-                                <optgroup label="Absences">
-                                    <option value="Absence autoris&eacute;e">Absence autoris&eacute;e (justifi&eacute;e)</option>
-                                    <option value="Absence non autoris&eacute;e">Absence non autoris&eacute;e (injustifi&eacute;e)</option>
-                                    <option value="Absence longue maladie">Absence longue maladie</option>
-                                    <option value="Absence convocation officielle">Convocation officielle / garde &agrave; vue</option>
-                                </optgroup>
-                                <optgroup label="Missions">
-                                    <option value="Mission professionnelle">Mission professionnelle</option>
-                                    <option value="D&eacute;placement intersite">D&eacute;placement inter-site</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Date de d&eacute;but *</label>
-                            <input type="date" id="congeDateDebut" required="required" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Date de fin *</label>
-                            <input type="date" id="congeDateFin" required="required" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Pi&egrave;ce justificative (PDF / Image)</label>
-                            <input type="file" id="congeJustifFile" accept=".pdf,.jpg,.jpeg,.png" class="input-field text-xs">
-                            <input type="hidden" id="congeJustifUrl">
-                            <span id="congeJustifStatus" class="text-[10px] text-slate-400 mt-1 block"></span>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Commentaire</label>
-                            <input type="text" id="congeCommentaire" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white" placeholder="Ex: Mariage du fr&egrave;re, certificat joint...">
-                        </div>
-                        <div class="md:col-span-2 flex gap-3 justify-end pt-2 border-t border-slate-100">
-                            <button type="button" onclick="document.getElementById('congeFormPanel').classList.add('hidden')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2 rounded-xl transition-colors">Annuler</button>
-                            <button type="submit" class="btn-brand text-xs px-6 py-2">Enregistrer la demande</button>
-                        </div>
-                    </form>
                 </div>
 
                 <div class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-5 space-y-3">
@@ -2305,7 +2242,7 @@
         </div>
     </div>
 
-    <script type="module" src="/admin-entreprise/admin-entreprise.js?v=6"></script>
+    <script type="module" src="/admin-entreprise/admin-entreprise.js?v=7"></script>
 
     <!-- Modal QR Code Admin -->
     <div id="adminQrModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
