@@ -62,14 +62,14 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 checkContractExpirations();
                 
                 // Donezo Layout: Populate Chart
-                if (typeof allAffectations === 'undefined' || !allAffectations.length) {
+                if (typeof window.allAffectations === 'undefined' || !window.allAffectations.length) {
                     try { window.allAffectations = await apiFetch('/affectations') || []; } catch(e) { window.allAffectations = []; }
                 }
-                if (typeof allAgents === 'undefined' || !allAgents.length) {
-                    try { window.allAgents = await apiFetch('/agents') || []; } catch(e) { window.allAgents = []; }
+                if (!allAgents || !allAgents.length) {
+                    try { allAgents = await apiFetch('/agents') || []; } catch(e) { allAgents = []; }
                 }
-                if (typeof allAffectations !== 'undefined' || typeof allAgents !== 'undefined') {
-                    const dataSource = (typeof allAffectations !== 'undefined' && allAffectations.length) ? allAffectations : ((typeof allAgents !== 'undefined') ? allAgents : []);
+                if (window.allAffectations || allAgents) {
+                    const dataSource = (window.allAffectations && window.allAffectations.length) ? window.allAffectations : (allAgents || []);
                     const countByJob = {};
                     dataSource.forEach(a => {
                         let job = (a.poste || a.emploi || a.titre || 'Autre').trim();
@@ -2490,14 +2490,14 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 checkContractExpirations();
                 
                 // Donezo Layout: Populate Chart
-                if (typeof allAffectations === 'undefined' || !allAffectations.length) {
+                if (typeof window.allAffectations === 'undefined' || !window.allAffectations.length) {
                     try { window.allAffectations = await apiFetch('/affectations') || []; } catch(e) { window.allAffectations = []; }
                 }
-                if (typeof allAgents === 'undefined' || !allAgents.length) {
-                    try { window.allAgents = await apiFetch('/agents') || []; } catch(e) { window.allAgents = []; }
+                if (!allAgents || !allAgents.length) {
+                    try { allAgents = await apiFetch('/agents') || []; } catch(e) { allAgents = []; }
                 }
-                if (typeof allAffectations !== 'undefined' || typeof allAgents !== 'undefined') {
-                    const dataSource = (typeof allAffectations !== 'undefined' && allAffectations.length) ? allAffectations : ((typeof allAgents !== 'undefined') ? allAgents : []);
+                if (window.allAffectations || allAgents) {
+                    const dataSource = (window.allAffectations && window.allAffectations.length) ? window.allAffectations : (allAgents || []);
                     const countByJob = {};
                     dataSource.forEach(a => {
                         let job = (a.poste || a.emploi || a.titre || 'Autre').trim();
