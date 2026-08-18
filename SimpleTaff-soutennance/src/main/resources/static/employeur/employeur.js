@@ -934,9 +934,13 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     }
                 });
 
-                // Search Entreprises (Super Admin)
-                    });
-                }
+                                // Search Entreprises
+                const entreprisesData = typeof window.entreprises !== 'undefined' ? window.entreprises : [];
+                entreprisesData.forEach(ent => {
+                    if ((ent.nom||'').toLowerCase().includes(q)) {
+                        results.push({ type: 'Entreprise', icon: '🏢', text: ent.nom, tab: 'entreprises', action: () => { if(typeof showTab==='function') showTab('entreprises'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                    }
+                });
                 
                 if (results.length > 0) {
                     searchContainer.innerHTML = results.slice(0, 10).map(r => `
