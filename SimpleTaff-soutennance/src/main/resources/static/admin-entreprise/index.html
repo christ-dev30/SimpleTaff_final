@@ -2305,7 +2305,7 @@
         </div>
     </div>
 
-    <script type="module" src="/admin-entreprise/admin-entreprise.js?v=4"></script>
+    <script type="module" src="/admin-entreprise/admin-entreprise.js?v=5"></script>
 
     <!-- Modal QR Code Admin -->
     <div id="adminQrModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
@@ -2334,6 +2334,72 @@
                 </button>
             </div>
             <button onclick="closeAdminQrModal()" class="mt-2 w-full btn-brand py-2.5 text-xs">Fermer</button>
+        </div>
+    </div>
+
+    <!-- Modal Détails Congé -->
+    <div id="congeDetailsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 flex flex-col">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
+                <div>
+                    <h3 class="font-extrabold text-xl text-slate-800">Détails de la demande</h3>
+                    <p class="text-xs text-slate-400 mt-1" id="congeModalAgentName">Agent : ...</p>
+                </div>
+                <button onclick="closeCongeDetailsModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Type</p>
+                        <p class="font-bold text-slate-700 text-sm" id="congeModalType">...</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">Statut</p>
+                        <div id="congeModalStatut" class="mt-1"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                        <p class="text-[10px] text-indigo-400 font-bold uppercase mb-1">Date de début</p>
+                        <p class="font-bold text-indigo-700 text-sm" id="congeModalDebut">...</p>
+                    </div>
+                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
+                        <p class="text-[10px] text-indigo-400 font-bold uppercase mb-1">Date de fin</p>
+                        <p class="font-bold text-indigo-700 text-sm" id="congeModalFin">...</p>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-xs text-slate-500 font-bold mb-2">Motif / Commentaire</p>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm text-slate-700 whitespace-pre-wrap" id="congeModalMotif">...</div>
+                </div>
+
+                <div id="congeModalDocSection" class="hidden">
+                    <p class="text-xs text-slate-500 font-bold mb-2">Pièce justificative</p>
+                    <a id="congeModalDocLink" href="#" target="_blank" class="flex items-center gap-3 p-3 bg-sky-50 border border-sky-100 rounded-xl hover:bg-sky-100 transition-colors group">
+                        <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center text-sky-600 shadow-sm group-hover:scale-105 transition-transform">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-sky-900">Voir le document joint</p>
+                            <p class="text-[10px] text-sky-600">Ouvrir dans un nouvel onglet</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 mt-6 pt-4 border-t border-slate-100" id="congeModalActions">
+                <button id="btnRefuserConge" class="flex-1 bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 font-bold py-3 rounded-xl transition-colors">
+                    Refuser
+                </button>
+                <button id="btnApprouverConge" class="flex-1 bg-[#12312E] hover:bg-[#12312E]/90 text-white font-bold py-3 rounded-xl transition-colors">
+                    Approuver
+                </button>
+            </div>
         </div>
     </div>
 

@@ -3328,33 +3328,14 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                         }).join('');
                 }
                 const conges = await apiFetch('/conges');
+                window.congesList = conges || [];
                 safeRenderTbody(document.getElementById('congesTableBody'),
-                    (conges || []).map(c => {
-                        let actionButtons = '';
-                        if (c.statut === 'EN_ATTENTE_RH') {
-                            actionButtons = `
-                                <div class="flex gap-2">
-                                    <button onclick="validerConge('${c.id}', 'RH')" class="bg-sky-500 hover:bg-sky-600 text-white font-bold py-1 px-2.5 rounded-lg text-xs transition-colors">Valider RH</button>
-                                    <button onclick="validerConge('${c.id}', 'REFUSER')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2.5 rounded-lg text-xs transition-colors">Refuser</button>
-                                </div>
-                            `;
-                        } else if (c.statut === 'EN_ATTENTE_SUPERVISEUR') {
-                            actionButtons = `
-                                <div class="flex gap-2">
-                                    <button onclick="validerConge('${c.id}', 'SUPERVISEUR')" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-1 px-2.5 rounded-lg text-xs transition-colors">Valider Superviseur</button>
-                                    <button onclick="validerConge('${c.id}', 'REFUSER')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2.5 rounded-lg text-xs transition-colors">Refuser</button>
-                                </div>
-                            `;
-                        } else if (c.statut === 'EN_ATTENTE_DIRECTION') {
-                            actionButtons = `
-                                <div class="flex gap-2">
-                                    <button onclick="validerConge('${c.id}', 'DIRECTION')" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-1 px-2.5 rounded-lg text-xs transition-colors">Approuver</button>
-                                    <button onclick="validerConge('${c.id}', 'REFUSER')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2.5 rounded-lg text-xs transition-colors">Refuser</button>
-                                </div>
-                            `;
-                        } else {
-                            actionButtons = `<span class="text-xs text-slate-400">—</span>`;
-                        }
+                    window.congesList.map(c => {
+                        const actionButtons = `
+                            <button onclick="viewCongeDetails('${c.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-1 px-3 rounded-lg text-xs transition-colors flex items-center gap-1">
+                                <i class="fa-solid fa-eye"></i> Voir détails
+                            </button>
+                        `;
 
                         const today = new Date(); today.setHours(0,0,0,0);
                         const isExpired = c.dateFin && new Date(c.dateFin) <= today;
@@ -3400,11 +3381,60 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 await apiFetch(`/conges/${id}/valider?etape=${etape}`, {
                     method: 'POST'
                 });
+                closeCongeDetailsModal();
                 loadConges();
             } catch (e) {
                 console.error(e);
                 alert('Erreur lors de la validation du congé: ' + e.message);
             }
+        };
+
+        window.viewCongeDetails = function(id) {
+            const c = (window.congesList || []).find(x => x.id === id);
+            if (!c) return;
+
+            document.getElementById('congeModalAgentName').textContent = 'Agent : ' + (c.agent ? `${c.agent.nom} ${c.agent.prenom}` : '—');
+            document.getElementById('congeModalType').textContent = c.type || '—';
+            document.getElementById('congeModalDebut').textContent = c.dateDebut || '—';
+            document.getElementById('congeModalFin').textContent = c.dateFin || '—';
+            document.getElementById('congeModalMotif').textContent = c.motif || 'Aucun motif renseigné.';
+
+            const today = new Date(); today.setHours(0,0,0,0);
+            const isExpired = c.dateFin && new Date(c.dateFin) <= today;
+            let badge = '';
+            if (isExpired || c.statut === 'VALIDEE') badge = '<span class="px-2 py-1 bg-slate-100 text-slate-600 font-bold rounded text-[10px]">✔ Terminé</span>';
+            else if (c.statut === 'REFUSEE') badge = '<span class="px-2 py-1 bg-red-100 text-red-700 font-bold rounded text-[10px]">Refusée</span>';
+            else badge = `<span class="px-2 py-1 bg-amber-100 text-amber-700 font-bold rounded text-[10px]">${c.statut.replace('EN_ATTENTE_', 'Attente ')}</span>`;
+            document.getElementById('congeModalStatut').innerHTML = badge;
+
+            const docSection = document.getElementById('congeModalDocSection');
+            if (c.justifUrl) {
+                docSection.classList.remove('hidden');
+                document.getElementById('congeModalDocLink').href = c.justifUrl;
+            } else {
+                docSection.classList.add('hidden');
+            }
+
+            const actionsDiv = document.getElementById('congeModalActions');
+            if (c.statut === 'EN_ATTENTE_DIRECTION' || c.statut === 'EN_ATTENTE_RH' || c.statut === 'EN_ATTENTE_SUPERVISEUR') {
+                actionsDiv.classList.remove('hidden');
+                actionsDiv.innerHTML = `
+                    <button onclick="validerConge('${c.id}', 'REFUSER')" class="flex-1 bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 font-bold py-3 rounded-xl transition-colors">
+                        Refuser
+                    </button>
+                    <button onclick="validerConge('${c.id}', 'DIRECTION')" class="flex-1 bg-[#12312E] hover:bg-[#12312E]/90 text-white font-bold py-3 rounded-xl transition-colors">
+                        Approuver
+                    </button>
+                `;
+            } else {
+                actionsDiv.classList.add('hidden');
+            }
+
+            document.getElementById('congeDetailsModal').classList.remove('hidden');
+        };
+
+        window.closeCongeDetailsModal = function() {
+            document.getElementById('congeDetailsModal').classList.add('hidden');
         };
 
 
