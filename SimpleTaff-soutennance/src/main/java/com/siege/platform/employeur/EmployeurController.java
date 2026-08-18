@@ -285,12 +285,11 @@ public class EmployeurController {
         
         double indiceSatisfaction = 0.0;
         if (moyenneEvals > 0) {
-            // Suppose score_total is out of 40 (8 items * 5 max each).
-            indiceSatisfaction = Math.min(100, (moyenneEvals / 40.0) * 100);
+            indiceSatisfaction = Math.min(100, (moyenneEvals / 80.0) * 100);
         }
         
         // Moyenne out of 5 for display
-        double moyenneSur5 = moyenneEvals > 0 ? (moyenneEvals / 40.0) * 5.0 : 0.0;
+        double moyenneSur5 = moyenneEvals > 0 ? (moyenneEvals / 80.0) * 5.0 : 0.0;
         moyenneSur5 = Math.round(moyenneSur5 * 10.0) / 10.0;
 
         result.put("totalAgents", totalAgents);
