@@ -288,14 +288,13 @@ public class EmployeurController {
             indiceSatisfaction = Math.min(100, (moyenneEvals / 80.0) * 100);
         }
         
-        // Moyenne out of 5 for display
-        double moyenneSur5 = moyenneEvals > 0 ? (moyenneEvals / 80.0) * 5.0 : 0.0;
-        moyenneSur5 = Math.round(moyenneSur5 * 10.0) / 10.0;
+        // Moyenne out of 80 for display
+        double moyenneBrute = Math.round(moyenneEvals * 10.0) / 10.0;
 
         result.put("totalAgents", totalAgents);
         result.put("pointagesAujourdhui", pointagesAujourdhui);
         result.put("postesActifs", postesActifs);
-        result.put("moyenneEvaluations", moyenneSur5);
+        result.put("moyenneEvaluations", moyenneBrute);
         result.put("indiceSatisfaction", Math.round(indiceSatisfaction));
         result.put("heuresPrestees", heuresPresteesH);
         result.put("heuresSupp", heuresSuppH);
