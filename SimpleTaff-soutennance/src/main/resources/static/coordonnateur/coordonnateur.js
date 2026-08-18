@@ -706,12 +706,17 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     } else {
                         statBadge = `<span class="badge ${badgeMap[d.statut] || 'bg-slate-100 text-slate-500'}">${d.statut}</span>`;
                     }
+                    const justifCell = d.justificatifUrl 
+                        ? `<a href="${d.justificatifUrl}" target="_blank" class="text-sky-600 hover:underline font-bold text-[10px] flex items-center gap-1"><i class="fa-solid fa-file text-sky-400"></i> Voir doc</a>`
+                        : `<span class="text-slate-300 text-xs">—</span>`;
+
                     return `
                     <tr class="hover:bg-slate-50/50 transition-colors">
                         <td class="p-3 font-bold text-slate-800">${d.agent ? (d.agent.nom + ' ' + d.agent.prenom) : '—'}</td>
                         <td class="p-3 text-slate-500">${d.type}</td>
                         <td class="p-3 text-slate-500">Du ${d.dateDebut} au ${d.dateFin}</td>
                         <td class="p-3">${statBadge}</td>
+                        <td class="p-3">${justifCell}</td>
                     </tr>`;
                 }).join('');
             } catch (e) {
