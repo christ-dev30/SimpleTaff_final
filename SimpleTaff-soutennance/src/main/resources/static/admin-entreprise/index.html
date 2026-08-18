@@ -1517,8 +1517,84 @@
                         <p class="text-sm text-slate-500">Gestion des zones et coordonnateurs.</p>
                     </div>
                 </div>
-                <div class="bg-white rounded-[1.5rem] p-8 text-center border border-slate-100 shadow-sm">
-                    <p class="text-slate-500 text-sm">Contenu en cours de construction...</p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Zones Section -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-display font-bold text-[#12312E]">Zones géographiques</h3>
+                        <div class="bg-white rounded-[1.5rem] p-8 border border-slate-100 shadow-sm space-y-6">
+                            <form id="addZoneForm" class="grid grid-cols-1 gap-4">
+                                <input type="text" id="zoneNom" required="required" class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium border-0 focus:ring-2 focus:ring-[#12312E]/20 transition-all outline-none" placeholder="Nom de la zone (ex: Zone Sud)">
+                                <input type="text" id="zoneDescription" class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium border-0 focus:ring-2 focus:ring-[#12312E]/20 transition-all outline-none" placeholder="Description courte">
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold text-slate-500">Villes constitutives (Recherche & Sélection 1 par 1) *</label>
+                                    <div class="flex gap-2">
+                                        <input type="text" id="zoneVilleInput" list="villes-ci-list" class="flex-1 bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium border-0 focus:ring-2 focus:ring-[#12312E]/20 transition-all outline-none" placeholder="Tapez les premières lettres de la ville..." autocomplete="off">
+                                        <button type="button" onclick="addSelectedCityFromInput()" class="px-4 py-3 bg-[#12312E] hover:bg-[#12312E]/90 text-white font-bold text-sm rounded-xl transition-colors shrink-0 flex items-center gap-2">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg> Ajouter
+                                        </button>
+                                    </div>
+                                    <p class="text-[10px] text-slate-400">Saisissez le nom d'une ville puis cliquez sur "Ajouter" ou appuyez sur Entrée.</p>
+                                    
+                                    <!-- Dynamic Tag Container for selected="selected" Cities -->
+                                    <div id="selectedCitiesContainer" class="flex flex-wrap gap-1.5 p-3 bg-slate-50 rounded-xl min-h-[50px] items-center">
+                                        <span class="text-xs text-slate-400 w-full text-center" id="noCitiesPlaceholder">Aucune ville ajoutée</span>
+                                    </div>
+                                </div>
+                                <input type="text" id="zonePerimetre" class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium border-0 focus:ring-2 focus:ring-[#12312E]/20 transition-all outline-none" placeholder="Périmètre / Précisions complémentaires">
+                                <button type="submit" class="btn-brand py-3 w-full text-sm font-bold mt-2">Créer la zone</button>
+                            </form>
+                            
+                            <div class="overflow-x-auto mt-6">
+                                <table class="min-w-full text-left text-sm whitespace-nowrap">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-500 font-medium">
+                                            <th class="p-3 rounded-l-xl">Nom</th>
+                                            <th class="p-3">Villes / Périmètre</th>
+                                            <th class="p-3">Description</th>
+                                            <th class="p-3 rounded-r-xl">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="zonesTableBody" class="divide-y divide-slate-100">
+                                        <!-- Dynamic zones -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coordonnateurs Section -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-display font-bold text-[#12312E]">Coordonnateurs de Zone</h3>
+                        <div class="bg-white rounded-[1.5rem] p-8 border border-slate-100 shadow-sm space-y-6">
+                            <form id="addCoordForm" class="grid grid-cols-1 gap-4">
+                                <input type="text" id="coordNom" required="required" class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium border-0 focus:ring-2 focus:ring-[#12312E]/20 transition-all outline-none" placeholder="Nom">
+                                <input type="text" id="coordPrenom" required="required" class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium border-0 focus:ring-2 focus:ring-[#12312E]/20 transition-all outline-none" placeholder="Prénom">
+                                <input type="email" id="coordEmail" required="required" class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium border-0 focus:ring-2 focus:ring-[#12312E]/20 transition-all outline-none" placeholder="Email">
+                                <input type="password" id="coordPassword" required="required" class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium border-0 focus:ring-2 focus:ring-[#12312E]/20 transition-all outline-none" placeholder="Mot de passe">
+                                <select id="coordZoneSelect" class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm font-medium border-0 focus:ring-2 focus:ring-[#12312E]/20 transition-all outline-none">
+                                    <option value="">Associer à une zone (Optionnel)</option>
+                                </select>
+                                <button type="submit" class="btn-brand py-3 w-full text-sm font-bold mt-2">Ajouter le coordonnateur</button>
+                            </form>
+                            
+                            <div class="overflow-x-auto mt-6">
+                                <table class="min-w-full text-left text-sm whitespace-nowrap">
+                                    <thead>
+                                        <tr class="bg-slate-50 text-slate-500 font-medium">
+                                            <th class="p-3 rounded-l-xl">Nom & Prénom</th>
+                                            <th class="p-3">Email</th>
+                                            <th class="p-3">Zone</th>
+                                            <th class="p-3 rounded-r-xl">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="coordsTableBody" class="divide-y divide-slate-100">
+                                        <!-- Dynamic coords -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
