@@ -4227,19 +4227,21 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 const unread = validNotifications.filter(n => n.statut !== 'LU');
                 
                 // Trigger toast if new notifications arrived since last check
-                const lastUnreadCount = parseInt(badge.dataset.lastCount || '0');
+                const lastUnreadCount = parseInt(badge?.dataset?.lastCount || '0');
                 if (unread.length > lastUnreadCount) {
                     if (window.showToast) window.showToast("Vous avez de nouvelles notifications", "info");
                 }
-                badge.dataset.lastCount = unread.length;
+                if (badge) badge.dataset.lastCount = unread.length;
 
-                if (unread.length > 0) {
-                    badge.textContent = unread.length;
-                    badge.classList.remove('hidden');
-                    badge.style.display = 'inline-flex';
-                } else {
-                    badge.classList.add('hidden');
-                    badge.style.display = '';
+                if (badge) {
+                    if (unread.length > 0) {
+                        badge.textContent = unread.length;
+                        badge.classList.remove('hidden');
+                        badge.style.display = 'inline-flex';
+                    } else {
+                        badge.classList.add('hidden');
+                        badge.style.display = '';
+                    }
                 }
 
                 container.innerHTML = validNotifications.map(n => {
