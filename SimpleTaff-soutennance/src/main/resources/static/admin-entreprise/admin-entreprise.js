@@ -63,7 +63,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 
                 // Donezo Layout: Populate Chart
                 if (typeof window.allAffectations === 'undefined' || !window.allAffectations.length) {
-                    try { window.allAffectations = await apiFetch('/affectations') || []; } catch(e) { window.allAffectations = []; }
+                    try { window.allAffectations = await apiFetch('/admin/affectations') || []; } catch(e) { window.allAffectations = []; }
                 }
                 if (!allAgents || !allAgents.length) {
                     try { allAgents = await apiFetch('/agents') || []; } catch(e) { allAgents = []; }
@@ -72,7 +72,8 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     const dataSource = (window.allAffectations && window.allAffectations.length) ? window.allAffectations : (allAgents || []);
                     const countByJob = {};
                     dataSource.forEach(a => {
-                        let job = (a.poste || a.emploi || a.titre || 'Autre').trim();
+                        let job = (a.posteLibelle || a.poste || a.emploi || a.titre || 'Autre').trim();
+                        if (job === '—') job = 'Autre';
                         job = job.charAt(0).toUpperCase() + job.slice(1).toLowerCase();
                         countByJob[job] = (countByJob[job] || 0) + 1;
                     });
@@ -2491,7 +2492,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 
                 // Donezo Layout: Populate Chart
                 if (typeof window.allAffectations === 'undefined' || !window.allAffectations.length) {
-                    try { window.allAffectations = await apiFetch('/affectations') || []; } catch(e) { window.allAffectations = []; }
+                    try { window.allAffectations = await apiFetch('/admin/affectations') || []; } catch(e) { window.allAffectations = []; }
                 }
                 if (!allAgents || !allAgents.length) {
                     try { allAgents = await apiFetch('/agents') || []; } catch(e) { allAgents = []; }
