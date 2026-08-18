@@ -62,6 +62,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 checkContractExpirations();
                 
                 // Donezo Layout: Populate Chart
+                if (typeof allAffectations !== 'undefined' || typeof allAgents !== 'undefined') {
                     const dataSource = (typeof allAffectations !== 'undefined' && allAffectations.length) ? allAffectations : ((typeof allAgents !== 'undefined') ? allAgents : []);
                     const countByJob = {};
                     dataSource.forEach(a => {
@@ -2482,6 +2483,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 checkContractExpirations();
                 
                 // Donezo Layout: Populate Chart
+                if (typeof allAffectations !== 'undefined' || typeof allAgents !== 'undefined') {
                     const dataSource = (typeof allAffectations !== 'undefined' && allAffectations.length) ? allAffectations : ((typeof allAgents !== 'undefined') ? allAgents : []);
                     const countByJob = {};
                     dataSource.forEach(a => {
