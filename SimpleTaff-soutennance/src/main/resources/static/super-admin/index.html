@@ -30,6 +30,32 @@
         }
     </script>
     
+    <script>
+        window.toggleNotificationsDropdown = function() {
+            const dropdown = document.getElementById('notificationsDropdown');
+            if (!dropdown) return;
+            const isHidden = dropdown.classList.toggle('hidden');
+            if (!isHidden && typeof window.loadNotifications === 'function') window.loadNotifications();
+        };
+
+        window.clearAllNotifications = function() {
+            const container = document.getElementById('notificationsContainer');
+            if (container) container.innerHTML = '<div class="p-4 text-center text-slate-400">Aucune notification.</div>';
+            const badge = document.getElementById('notificationBadge');
+            if (badge) {
+                badge.classList.add('hidden');
+                badge.style.display = 'none';
+            }
+        };
+        
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('notificationsDropdown');
+            const btn = e.target.closest('[onclick*="toggleNotificationsDropdown"]');
+            if (dropdown && !btn && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
     <link href="/shared/fillianta-dashboard.css" rel="stylesheet">
 </head>
 <body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden relative">
@@ -97,7 +123,7 @@
                 <button onclick="toggleNotificationsDropdown()" class="text-slate-400 hover:text-slate-600 transition-colors bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
                 </button>
-                <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-rose-500 border-2 border-[#F8FAFC] rounded-full"></span>
+                <span id="notificationBadge" class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-rose-500 border-2 border-[#F8FAFC] rounded-full"></span>
                 <!-- Notifications Dropdown -->
                 <div id="notificationsDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-[1.5rem] shadow-xl border border-slate-100 z-50 overflow-hidden">
                     <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
