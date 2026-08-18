@@ -12,6 +12,7 @@ import com.siege.platform.utilisateur.UtilisateurRepository;
 import com.siege.platform.config.tenant.TenantContext;
 import com.siege.platform.structuredemandeuse.Site;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -38,17 +39,21 @@ public class EmployeurController {
     private final PointageRepository pointageRepository;
     private final CarteAgentRepository carteAgentRepository;
     private final PointageService pointageService;
+    private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public EmployeurController(UtilisateurRepository utilisateurRepository,
                                AffectationRepository affectationRepository,
                                PointageRepository pointageRepository,
                                CarteAgentRepository carteAgentRepository,
-                               PointageService pointageService) {
+                               PointageService pointageService,
+                               JdbcTemplate jdbcTemplate) {
         this.utilisateurRepository = utilisateurRepository;
         this.affectationRepository = affectationRepository;
         this.pointageRepository = pointageRepository;
         this.carteAgentRepository = carteAgentRepository;
         this.pointageService = pointageService;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     // ── Profil ────────────────────────────────────────────────────────────────
@@ -218,30 +223,83 @@ public class EmployeurController {
         }
         List<UUID> siteIds = sites.stream().map(Site::getId).collect(Collectors.toList());
 
-        long totalAgents = affectationRepository.findAllByStatut("ACTIVE").stream()
+        // 1. Postes actifs & agents déployés
+        List<Affectation> affectationsActives = affectationRepository.findAllByStatut("ACTIVE").stream()
                 .filter(a -> a.getPoste() != null && a.getPoste().getSite() != null && siteIds.contains(a.getPoste().getSite().getId()))
-                .count();
+                .collect(Collectors.toList());
 
+        long totalAgents = affectationsActives.size();
+        long postesActifs = affectationsActives.stream().map(a -> a.getPoste().getId()).distinct().count();
+        
+        // 2. Pointages, heures prestées, heures supp
+        long heuresPrestees = 0;
+        long heuresSupp = 0;
         LocalDateTime start = LocalDate.now().atStartOfDay();
         LocalDateTime end = LocalDate.now().plusDays(1).atStartOfDay();
-        long pointagesAujourdhui = pointageRepository.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(start, end).stream()
-                .filter(p -> p.getAffectation() != null
-                        && p.getAffectation().getPoste() != null
-                        && p.getAffectation().getPoste().getSite() != null
-                        && siteIds.contains(p.getAffectation().getPoste().getSite().getId()))
-                .count();
+        long pointagesAujourdhui = 0;
+        
+        List<Pointage> allPointages = pointageRepository.findAll().stream()
+                .filter(p -> p.getAffectation() != null && p.getAffectation().getPoste() != null && p.getAffectation().getPoste().getSite() != null && siteIds.contains(p.getAffectation().getPoste().getSite().getId()))
+                .collect(Collectors.toList());
                 
-        long postesActifs = affectationRepository.findAllByStatut("ACTIVE").stream()
-                .filter(a -> a.getPoste() != null && a.getPoste().getSite() != null && siteIds.contains(a.getPoste().getSite().getId()))
-                .map(a -> a.getPoste().getId())
-                .distinct()
-                .count();
+        for (Pointage p : allPointages) {
+            if (p.getDateHeureEntree() != null && p.getDateHeureEntree().isAfter(start) && p.getDateHeureEntree().isBefore(end)) {
+                pointagesAujourdhui++;
+            }
+            if (p.getDateHeureEntree() != null && p.getDateHeureSortie() != null && "VALIDE".equals(p.getStatut())) {
+                long minutes = java.time.Duration.between(p.getDateHeureEntree(), p.getDateHeureSortie()).toMinutes();
+                if (minutes > 0) heuresPrestees += minutes;
+                
+                if (p.getAffectation().getPoste().getHeureFin() != null) {
+                    java.time.LocalTime expectedEnd = p.getAffectation().getPoste().getHeureFin();
+                    java.time.LocalTime actualEnd = p.getDateHeureSortie().toLocalTime();
+                    if (actualEnd.isAfter(expectedEnd)) {
+                        long diff = java.time.Duration.between(expectedEnd, actualEnd).toMinutes();
+                        heuresSupp += diff;
+                    }
+                }
+            }
+        }
+        
+        long heuresPresteesH = heuresPrestees / 60;
+        long heuresSuppH = heuresSupp / 60;
+        
+        // 3. Dernier affecté
+        String dernierAffecte = "Aucun";
+        if (!affectationsActives.isEmpty()) {
+            Affectation last = affectationsActives.stream().max(java.util.Comparator.comparing(Affectation::getDateCreation, java.util.Comparator.nullsFirst(java.util.Comparator.naturalOrder()))).orElse(null);
+            if (last != null && last.getAgent() != null) {
+                dernierAffecte = (last.getAgent().getNom() != null ? last.getAgent().getNom() : "") + " " + (last.getAgent().getPrenom() != null ? last.getAgent().getPrenom() : "");
+            }
+        }
+
+        // 4. Evaluations (Indice de satisfaction)
+        // Score total sur evaluation_agent est la somme de 8 critères (8 * 5 = 40 max ?) ou sur 100
+        // We calculate average score_total where employeur_evaluateur = emp.getEmail()
+        Double moyenneEvals = 0.0;
+        try {
+            moyenneEvals = jdbcTemplate.queryForObject("SELECT AVG(score_total) FROM evaluation_agent WHERE employeur_evaluateur = ?", Double.class, emp.getEmail());
+            if (moyenneEvals == null) moyenneEvals = 0.0;
+        } catch (Exception e) {}
+        
+        double indiceSatisfaction = 0.0;
+        if (moyenneEvals > 0) {
+            // Suppose score_total is out of 40 (8 items * 5 max each).
+            indiceSatisfaction = Math.min(100, (moyenneEvals / 40.0) * 100);
+        }
+        
+        // Moyenne out of 5 for display
+        double moyenneSur5 = moyenneEvals > 0 ? (moyenneEvals / 40.0) * 5.0 : 0.0;
+        moyenneSur5 = Math.round(moyenneSur5 * 10.0) / 10.0;
 
         result.put("totalAgents", totalAgents);
         result.put("pointagesAujourdhui", pointagesAujourdhui);
         result.put("postesActifs", postesActifs);
-        result.put("facturesImpayees", 0); // Simulated for now
-        result.put("heuresSupp", 0); // Simulated for now
+        result.put("moyenneEvaluations", moyenneSur5);
+        result.put("indiceSatisfaction", Math.round(indiceSatisfaction));
+        result.put("heuresPrestees", heuresPresteesH);
+        result.put("heuresSupp", heuresSuppH);
+        result.put("dernierAffecte", dernierAffecte);
         return ResponseEntity.ok(result);
     }
 

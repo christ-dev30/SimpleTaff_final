@@ -338,8 +338,17 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     if (statsRes) {
                         document.getElementById('statOverviewTotal').textContent = statsRes.totalAgents || 0;
                         document.getElementById('statOverviewPointagesDay').textContent = statsRes.postesActifs || 0;
-                        document.getElementById('statOverviewEvals').textContent = statsRes.facturesImpayees || 0;
-                        document.getElementById('statOverviewDernier').textContent = statsRes.heuresSupp || 0;
+                        document.getElementById('statOverviewEvals').textContent = statsRes.moyenneEvaluations || 0;
+                        document.getElementById('statOverviewDernier').textContent = (statsRes.heuresSupp || 0) + 'h';
+                        
+                        const hPrestees = document.getElementById('statHeuresPresteesGlobal');
+                        if (hPrestees) hPrestees.textContent = (statsRes.heuresPrestees || 0) + 'h';
+                        
+                        const dAffecte = document.getElementById('statDernierAffecte');
+                        if (dAffecte) dAffecte.textContent = statsRes.dernierAffecte || 'Aucun';
+                        
+                        const iSatisfaction = document.getElementById('statIndiceSatisfaction');
+                        if (iSatisfaction) iSatisfaction.textContent = (statsRes.indiceSatisfaction || 0) + '%';
                     }
                 } catch (eStats) {
                     console.warn("Could not load stats", eStats);
