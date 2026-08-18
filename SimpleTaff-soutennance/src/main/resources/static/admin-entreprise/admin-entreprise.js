@@ -3421,6 +3421,9 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
             document.getElementById('congeModalDebut').textContent = c.dateDebut || '—';
             document.getElementById('congeModalFin').textContent = c.dateFin || '—';
             document.getElementById('congeModalMotif').textContent = c.motif || 'Aucun motif renseigné.';
+            document.getElementById('congeModalStructure').textContent = c.structureCliente || '—';
+            document.getElementById('congeModalSite').textContent = c.siteNom || '—';
+            document.getElementById('congeModalPoste').textContent = c.posteOccupe || '—';
 
             const today = new Date(); today.setHours(0,0,0,0);
             const isExpired = c.dateFin && new Date(c.dateFin) <= today;

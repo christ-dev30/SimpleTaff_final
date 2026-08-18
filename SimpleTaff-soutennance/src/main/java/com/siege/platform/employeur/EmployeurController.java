@@ -289,7 +289,7 @@ public class EmployeurController {
         }
         
         // Moyenne out of 80 for display
-        double moyenneBrute = Math.round(moyenneEvals * 10.0) / 10.0;
+        double moyenneBrute = Math.round(moyenneEvals * 10.0) / 80.0;
 
         result.put("totalAgents", totalAgents);
         result.put("pointagesAujourdhui", pointagesAujourdhui);
