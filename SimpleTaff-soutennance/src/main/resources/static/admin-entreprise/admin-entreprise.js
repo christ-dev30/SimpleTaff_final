@@ -62,11 +62,18 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 checkContractExpirations();
                 
                 // Donezo Layout: Populate Chart
+                if (typeof allAffectations === 'undefined' || !allAffectations.length) {
+                    try { window.allAffectations = await apiFetch('/affectations') || []; } catch(e) { window.allAffectations = []; }
+                }
+                if (typeof allAgents === 'undefined' || !allAgents.length) {
+                    try { window.allAgents = await apiFetch('/agents') || []; } catch(e) { window.allAgents = []; }
+                }
                 if (typeof allAffectations !== 'undefined' || typeof allAgents !== 'undefined') {
                     const dataSource = (typeof allAffectations !== 'undefined' && allAffectations.length) ? allAffectations : ((typeof allAgents !== 'undefined') ? allAgents : []);
                     const countByJob = {};
                     dataSource.forEach(a => {
-                        const job = (a.poste || a.emploi || a.titre || 'Autre').substring(0, 3).toUpperCase();
+                        let job = (a.poste || a.emploi || a.titre || 'Autre').trim();
+                        job = job.charAt(0).toUpperCase() + job.slice(1).toLowerCase();
                         countByJob[job] = (countByJob[job] || 0) + 1;
                     });
                     
@@ -90,7 +97,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                                 </div>`;
                             }).join('');
                             
-                            labelsContainer.innerHTML = sortedJobs.map(job => `<span>${job}</span>`).join('');
+                            labelsContainer.innerHTML = sortedJobs.map(job => `<span class="truncate max-w-[60px]" title="${job}">${job}</span>`).join('');
                         }
                     }
                 }
@@ -2483,6 +2490,12 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 checkContractExpirations();
                 
                 // Donezo Layout: Populate Chart
+                if (typeof allAffectations === 'undefined' || !allAffectations.length) {
+                    try { window.allAffectations = await apiFetch('/affectations') || []; } catch(e) { window.allAffectations = []; }
+                }
+                if (typeof allAgents === 'undefined' || !allAgents.length) {
+                    try { window.allAgents = await apiFetch('/agents') || []; } catch(e) { window.allAgents = []; }
+                }
                 if (typeof allAffectations !== 'undefined' || typeof allAgents !== 'undefined') {
                     const dataSource = (typeof allAffectations !== 'undefined' && allAffectations.length) ? allAffectations : ((typeof allAgents !== 'undefined') ? allAgents : []);
                     const countByJob = {};
