@@ -706,8 +706,8 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     } else {
                         statBadge = `<span class="badge ${badgeMap[d.statut] || 'bg-slate-100 text-slate-500'}">${d.statut}</span>`;
                     }
-                    const justifCell = d.justificatifUrl 
-                        ? `<a href="${d.justificatifUrl}" target="_blank" class="text-sky-600 hover:underline font-bold text-[10px] flex items-center gap-1"><i class="fa-solid fa-file text-sky-400"></i> Voir doc</a>`
+                    const justifCell = d.justifUrl 
+                        ? `<a href="${d.justifUrl}" target="_blank" class="text-sky-600 hover:underline font-bold text-[10px] flex items-center gap-1"><i class="fa-solid fa-file text-sky-400"></i> Voir doc</a>`
                         : `<span class="text-slate-300 text-xs">—</span>`;
 
                     return `
@@ -888,7 +888,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                         if (justifFile) {
                             const fd = new FormData();
                             fd.append('file', justifFile);
-                            const up = await fetch('/api/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwtToken') }, body: fd });
+                            const up = await fetch('/api/agents/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwtToken') }, body: fd });
                             const upData = await up.json();
                             justificatifUrl = upData.url || upData.fileUrl || null;
                             const status = document.getElementById('reqCongeJustifStatus');
