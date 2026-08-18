@@ -171,6 +171,21 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                             }).join('');
                         }
                     }
+
+                    // Chart Taux de Présence Global
+                    const totalExpected = stats.totalAffectationsActives > 0 ? stats.totalAffectationsActives : 1;
+                    const agentsPresentsCount = new Set(pointages.map(p => p.agentId || p.agentNom || p.id)).size;
+                    const tauxPresence = Math.min(100, Math.round((agentsPresentsCount / totalExpected) * 100));
+                    const circumference = 251.327;
+                    const filled = (tauxPresence / 100) * circumference;
+                    const empty = circumference - filled;
+                    
+                    const chartValide = document.getElementById('presenceChartValide');
+                    if (chartValide) chartValide.setAttribute('stroke-dasharray', `${filled} ${empty}`);
+                    
+                    const chartText = document.getElementById('presenceChartText');
+                    if (chartText) chartText.textContent = `${tauxPresence}%`;
+
                 } catch(e) { console.error('Error overview pointages:', e); }
 
             } catch(e) {
