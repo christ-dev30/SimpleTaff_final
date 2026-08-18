@@ -324,6 +324,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
             const tbody = document.getElementById('affectationsTable');
             try {
                 const data = await apiFetch('/coordonnateur/affectations');
+                window.allCoordAffectations = data || [];
                 if (!data || data.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Aucune affectation enregistrée.</td></tr>';
                     return;
@@ -2391,6 +2392,17 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
             });
         });
 
+        // ── Notifications loader ──────────────────────────────────
+        window.loadNotifications = async function() {
+            try {
+                const data = await apiFetch('/notifications');
+                const container = document.getElementById('notification-bell-dropdown');
+                if (container) {
+                    container.innerHTML = data.length > 0 ? data.map(n => `<div class="p-2 border-b text-sm">${n.message}</div>`).join('') : '<div class="p-4 text-center text-slate-400">Aucune notification</div>';
+                }
+            } catch (e) { console.error('Notifications load failed', e); }
+        };
+
         // ── Toast helper ─────────────────────────────────────────
         window.showToast = function(message, type = 'info', duration = 3500) {
             const container = document.getElementById('toast-container');
@@ -2424,34 +2436,31 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 let results = [];
                 
                 // Search Agents
-                if (window.agents) {
-                    window.agents.forEach(a => {
-                        const name = ((a.nom||'') + ' ' + (a.prenom||'')).toLowerCase();
-                        if (name.includes(q) || (a.telephone||'').includes(q)) {
-                            results.push({ type: 'Agent', icon: '👤', text: (a.nom||'') + ' ' + (a.prenom||''), tab: 'agents', action: () => { showTab('agents'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
-                        }
-                    });
-                }
+                const agentsData = typeof window.allCoordAgents !== 'undefined' ? window.allCoordAgents : [];
+                agentsData.forEach(a => {
+                    const name = ((a.nom||a.agentNom||'') + ' ' + (a.prenom||'')).toLowerCase();
+                    if (name.includes(q) || (a.telephone||'').includes(q)) {
+                        results.push({ type: 'Agent', icon: '👤', text: (a.nom||a.agentNom||'') + ' ' + (a.prenom||''), tab: 'agents', action: () => { if(typeof showTab==='function') showTab('agents'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                    }
+                });
                 
-                // Search Affectations
-                if (window.affectations) {
-                    window.affectations.forEach(a => {
-                        const name = (a.agentNom || '').toLowerCase();
-                        const site = (a.siteNom || '').toLowerCase();
-                        if (name.includes(q) || site.includes(q)) {
-                            results.push({ type: 'Affectation', icon: '🏢', text: (a.agentNom||'') + ' - ' + (a.siteNom||''), tab: 'affectations', action: () => { showTab('affectations'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
-                        }
-                    });
-                }
+                                // Search Affectations
+                const affectationsData = typeof window.allCoordAffectations !== 'undefined' ? window.allCoordAffectations : [];
+                affectationsData.forEach(a => {
+                    const name = (a.agentNom || '').toLowerCase();
+                    const site = (a.siteNom || '').toLowerCase();
+                    if (name.includes(q) || site.includes(q)) {
+                        results.push({ type: 'Affectation', icon: '🏢', text: (a.agentNom||'') + ' - ' + (a.siteNom||''), tab: 'affectations', action: () => { if(typeof showTab==='function') showTab('affectations'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                    }
+                });
 
-                // Search Entreprises (Super Admin)
-                if (window.entreprises) {
-                    window.entreprises.forEach(ent => {
-                        if ((ent.nom||'').toLowerCase().includes(q)) {
-                            results.push({ type: 'Entreprise', icon: '🏢', text: ent.nom, tab: 'entreprises', action: () => { showTab('entreprises'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
-                        }
-                    });
-                }
+                // Search Entreprises
+                const entreprisesData = typeof window.entreprises !== 'undefined' ? window.entreprises : [];
+                entreprisesData.forEach(ent => {
+                    if ((ent.nom||'').toLowerCase().includes(q)) {
+                        results.push({ type: 'Entreprise', icon: '🏢', text: ent.nom, tab: 'entreprises', action: () => { if(typeof showTab==='function') showTab('entreprises'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                    }
+                });
                 
                 if (results.length > 0) {
                     searchContainer.innerHTML = results.slice(0, 10).map(r => `

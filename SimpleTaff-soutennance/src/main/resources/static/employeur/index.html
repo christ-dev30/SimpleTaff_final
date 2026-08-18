@@ -101,6 +101,17 @@
                 <h1 class="text-2xl font-extrabold tracking-tight text-slate-900" id="clientNom">Chargement...</h1>
                 <p class="text-sm font-medium text-slate-500 mt-1">Espace Client — Gestion des présences et validations</p>
             </div>
+            
+            <div class="relative w-full max-w-md hidden md:block">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <input type="text" id="globalSearchInput" class="w-full bg-slate-100/50 hover:bg-slate-100 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium border-0 focus:ring-2 focus:ring-[#12312E]/20 transition-all outline-none" placeholder="Recherche rapide (Cmd+K)...">
+                <div id="globalSearchDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-[1.5rem] shadow-xl border border-slate-100 max-h-96 overflow-y-auto z-50">
+                    <div id="globalSearchContainer" class="p-2 space-y-1"></div>
+                </div>
+            </div>
+
             <div class="flex items-center gap-4">
                 <div class="relative">
                     <button onclick="toggleNotificationsDropdown()" class="text-slate-400 hover:text-[#12312E] transition-colors bg-white/80 w-10 h-10 rounded-full flex items-center justify-center shadow-sm border border-slate-200/50">

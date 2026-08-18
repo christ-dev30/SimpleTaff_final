@@ -331,6 +331,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 // Fetch agents
                 const response = await apiFetch('/employeur/personnel');
                 const agents = Array.isArray(response) ? response : [];
+                window.allAgents = agents;
                 document.getElementById('statOverviewTotal').textContent = agents.length;
 
                 // Render Personnel Table
@@ -689,6 +690,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 // Load select list
                 const response = await apiFetch('/employeur/personnel');
                 const agents = Array.isArray(response) ? response : [];
+                window.allAgents = agents;
                 const evalAgentSelect = document.getElementById('evalAgentSelect');
                 if (evalAgentSelect) {
                     evalAgentSelect.innerHTML = agents.map(a => `<option value="${a.agentId}">${a.agentNom || 'N/A'}</option>`).join('');
@@ -851,6 +853,53 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
             });
         });
 
+        window.loadNotifications = async function() {
+            try {
+                const notifications = await apiFetch('/notifications').catch(() => []);
+                const container = document.getElementById('notificationsContainer');
+                const badge = document.getElementById('notificationBadge');
+
+                const validNotifications = Array.isArray(notifications) ? notifications : [];
+                const unread = validNotifications.filter(n => n.statut !== 'LU');
+                
+                const lastUnreadCount = parseInt(badge?.dataset?.lastCount || '0');
+                if (unread.length > lastUnreadCount) {
+                    if (window.showToast) window.showToast("Vous avez de nouvelles notifications", "info");
+                }
+                if(badge) badge.dataset.lastCount = unread.length;
+
+                if (badge) {
+                    if (unread.length > 0) {
+                        badge.textContent = unread.length;
+                        badge.classList.remove('hidden');
+                        badge.style.display = 'inline-flex';
+                    } else {
+                        badge.classList.add('hidden');
+                        badge.style.display = 'none';
+                    }
+                }
+
+                if (container) {
+                    if (validNotifications.length === 0) {
+                        container.innerHTML = '<div class="text-center text-slate-400 text-sm py-4">Aucune notification</div>';
+                    } else {
+                        container.innerHTML = validNotifications.map(n => `
+                            <div class="p-3 border-b border-slate-50 hover:bg-slate-50 transition-colors ${n.statut === 'NON_LU' ? 'bg-sky-50/30' : ''}">
+                                <div class="flex justify-between items-start mb-1">
+                                    <span class="font-bold text-slate-800 text-sm">${n.titre}</span>
+                                    <span class="text-[10px] text-slate-400">${new Date(n.dateCreation).toLocaleDateString()}</span>
+                                </div>
+                                <p class="text-xs text-slate-500">${n.message}</p>
+                                ${n.lienAction ? `<a href="${n.lienAction}" class="text-[10px] font-bold text-[#12312E] mt-2 inline-block hover:underline">Voir l'action -></a>` : ''}
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (err) {
+                console.error("Erreur notifications", err);
+            }
+        };
+
         // Donezo Global Search
         const searchInput = document.getElementById('globalSearchInput');
         const searchDropdown = document.getElementById('globalSearchDropdown');
@@ -867,32 +916,25 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 let results = [];
                 
                 // Search Agents
-                if (window.agents) {
-                    window.agents.forEach(a => {
-                        const name = ((a.nom||'') + ' ' + (a.prenom||'')).toLowerCase();
-                        if (name.includes(q) || (a.telephone||'').includes(q)) {
-                            results.push({ type: 'Agent', icon: '👤', text: (a.nom||'') + ' ' + (a.prenom||''), tab: 'agents', action: () => { showTab('agents'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
-                        }
-                    });
-                }
+                const agentsData = typeof window.allAgents !== 'undefined' ? window.allAgents : [];
+                agentsData.forEach(a => {
+                    const name = ((a.nom||a.agentNom||'') + ' ' + (a.prenom||'')).toLowerCase();
+                    if (name.includes(q) || (a.telephone||'').includes(q)) {
+                        results.push({ type: 'Agent', icon: '👤', text: (a.nom||a.agentNom||'') + ' ' + (a.prenom||''), tab: 'agents', action: () => { if(typeof showTab==='function') showTab('agents'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                    }
+                });
                 
                 // Search Affectations
-                if (window.affectations) {
-                    window.affectations.forEach(a => {
-                        const name = (a.agentNom || '').toLowerCase();
-                        const site = (a.siteNom || '').toLowerCase();
-                        if (name.includes(q) || site.includes(q)) {
-                            results.push({ type: 'Affectation', icon: '🏢', text: (a.agentNom||'') + ' - ' + (a.siteNom||''), tab: 'affectations', action: () => { showTab('affectations'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
-                        }
-                    });
-                }
+                const affectationsData = typeof window.allAffectations !== 'undefined' ? window.allAffectations : [];
+                affectationsData.forEach(a => {
+                    const name = (a.agentNom || '').toLowerCase();
+                    const site = (a.siteNom || '').toLowerCase();
+                    if (name.includes(q) || site.includes(q)) {
+                        results.push({ type: 'Affectation', icon: '🏢', text: (a.agentNom||'') + ' - ' + (a.siteNom||''), tab: 'affectations', action: () => { if(typeof showTab==='function') showTab('affectations'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                    }
+                });
 
                 // Search Entreprises (Super Admin)
-                if (window.entreprises) {
-                    window.entreprises.forEach(ent => {
-                        if ((ent.nom||'').toLowerCase().includes(q)) {
-                            results.push({ type: 'Entreprise', icon: '🏢', text: ent.nom, tab: 'entreprises', action: () => { showTab('entreprises'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
-                        }
                     });
                 }
                 

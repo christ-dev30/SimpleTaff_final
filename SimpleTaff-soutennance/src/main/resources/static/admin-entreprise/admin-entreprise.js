@@ -62,26 +62,31 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 checkContractExpirations();
                 
                 // Donezo Layout: Populate Chart
-                if (window.affectations || window.agents) {
-                    const dataSource = window.affectations || window.agents || [];
+                    const dataSource = (typeof allAffectations !== 'undefined' && allAffectations.length) ? allAffectations : ((typeof allAgents !== 'undefined') ? allAgents : []);
                     const countByJob = {};
                     dataSource.forEach(a => {
                         const job = (a.poste || a.emploi || a.titre || 'Autre').substring(0, 3).toUpperCase();
                         countByJob[job] = (countByJob[job] || 0) + 1;
                     });
                     
-                    const sortedJobs = Object.keys(countByJob).sort((a,b) => countByJob[b] - countByJob[a]).slice(0, 5);
+                    const sortedJobs = Object.keys(countByJob).sort((a,b) => countByJob[b] - countByJob[a]).slice(0, 4);
                     if (sortedJobs.length > 0) {
                         const maxCount = countByJob[sortedJobs[0]];
+                        const totalJobs = Object.values(countByJob).reduce((sum, val) => sum + val, 0) || 1;
                         
                         const barsContainer = document.getElementById('chartBarsContainer');
                         const labelsContainer = document.getElementById('chartLabelsContainer');
                         
                         if (barsContainer && labelsContainer) {
                             barsContainer.innerHTML = sortedJobs.map((job, idx) => {
-                                const heightPct = Math.max(10, Math.floor((countByJob[job] / maxCount) * 100));
+                                const count = countByJob[job];
+                                const percent = Math.round((count / totalJobs) * 100);
+                                const heightPct = Math.max(15, Math.floor((count / maxCount) * 100));
                                 const colorClass = idx === 0 ? 'bg-[#12312E]' : (idx === 1 ? 'bg-[#A3D977]' : 'bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)]');
-                                return `<div class="w-full ${colorClass} rounded-full" style="height: ${heightPct}%" title="${countByJob[job]}"></div>`;
+                                return `
+                                <div class="w-full ${colorClass} rounded-full relative group" style="height: ${heightPct}%" title="${count} (${percent}%)">
+                                    <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-1 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap text-slate-800">${percent}%</div>
+                                </div>`;
                             }).join('');
                             
                             labelsContainer.innerHTML = sortedJobs.map(job => `<span>${job}</span>`).join('');
@@ -2477,26 +2482,31 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 checkContractExpirations();
                 
                 // Donezo Layout: Populate Chart
-                if (window.affectations || window.agents) {
-                    const dataSource = window.affectations || window.agents || [];
+                    const dataSource = (typeof allAffectations !== 'undefined' && allAffectations.length) ? allAffectations : ((typeof allAgents !== 'undefined') ? allAgents : []);
                     const countByJob = {};
                     dataSource.forEach(a => {
                         const job = (a.poste || a.emploi || a.titre || 'Autre').substring(0, 3).toUpperCase();
                         countByJob[job] = (countByJob[job] || 0) + 1;
                     });
                     
-                    const sortedJobs = Object.keys(countByJob).sort((a,b) => countByJob[b] - countByJob[a]).slice(0, 5);
+                    const sortedJobs = Object.keys(countByJob).sort((a,b) => countByJob[b] - countByJob[a]).slice(0, 4);
                     if (sortedJobs.length > 0) {
                         const maxCount = countByJob[sortedJobs[0]];
+                        const totalJobs = Object.values(countByJob).reduce((sum, val) => sum + val, 0) || 1;
                         
                         const barsContainer = document.getElementById('chartBarsContainer');
                         const labelsContainer = document.getElementById('chartLabelsContainer');
                         
                         if (barsContainer && labelsContainer) {
                             barsContainer.innerHTML = sortedJobs.map((job, idx) => {
-                                const heightPct = Math.max(10, Math.floor((countByJob[job] / maxCount) * 100));
+                                const count = countByJob[job];
+                                const percent = Math.round((count / totalJobs) * 100);
+                                const heightPct = Math.max(15, Math.floor((count / maxCount) * 100));
                                 const colorClass = idx === 0 ? 'bg-[#12312E]' : (idx === 1 ? 'bg-[#A3D977]' : 'bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)]');
-                                return `<div class="w-full ${colorClass} rounded-full" style="height: ${heightPct}%" title="${countByJob[job]}"></div>`;
+                                return `
+                                <div class="w-full ${colorClass} rounded-full relative group" style="height: ${heightPct}%" title="${count} (${percent}%)">
+                                    <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-1 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap text-slate-800">${percent}%</div>
+                                </div>`;
                             }).join('');
                             
                             labelsContainer.innerHTML = sortedJobs.map(job => `<span>${job}</span>`).join('');
@@ -4316,8 +4326,8 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 let results = [];
                 
                 // Search Agents
-                if (window.agents) {
-                    window.agents.forEach(a => {
+                if (typeof allAgents !== 'undefined' && allAgents.length > 0) {
+                    allAgents.forEach(a => {
                         const name = ((a.nom||'') + ' ' + (a.prenom||'')).toLowerCase();
                         if (name.includes(q) || (a.telephone||'').includes(q)) {
                             results.push({ type: 'Agent', icon: '👤', text: (a.nom||'') + ' ' + (a.prenom||''), tab: 'agents', action: () => { showTab('agents'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
@@ -4326,8 +4336,8 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 }
                 
                 // Search Affectations
-                if (window.affectations) {
-                    window.affectations.forEach(a => {
+                if (typeof allAffectations !== 'undefined' && allAffectations.length > 0) {
+                    allAffectations.forEach(a => {
                         const name = (a.agentNom || '').toLowerCase();
                         const site = (a.siteNom || '').toLowerCase();
                         if (name.includes(q) || site.includes(q)) {
@@ -4337,7 +4347,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                 }
 
                 // Search Entreprises (Super Admin)
-                if (window.entreprises) {
+                if (typeof window.entreprises !== 'undefined' && window.entreprises.length > 0) {
                     window.entreprises.forEach(ent => {
                         if ((ent.nom||'').toLowerCase().includes(q)) {
                             results.push({ type: 'Entreprise', icon: '🏢', text: ent.nom, tab: 'entreprises', action: () => { showTab('entreprises'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
