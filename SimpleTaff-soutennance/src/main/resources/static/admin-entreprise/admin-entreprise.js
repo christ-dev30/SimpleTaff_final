@@ -97,7 +97,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                                 </div>`;
                             }).join('');
                             
-                            labelsContainer.innerHTML = sortedJobs.map(job => `<span class="truncate max-w-[60px]" title="${job}">${job}</span>`).join('');
+                            labelsContainer.innerHTML = sortedJobs.map(job => `<span class="text-center w-1/4 break-words leading-tight px-1 text-[9px]" title="${job}">${job}</span>`).join('');
                         }
                     }
                 }
@@ -2526,7 +2526,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                                 </div>`;
                             }).join('');
                             
-                            labelsContainer.innerHTML = sortedJobs.map(job => `<span class="truncate max-w-[60px]" title="${job}">${job}</span>`).join('');
+                            labelsContainer.innerHTML = sortedJobs.map(job => `<span class="text-center w-1/4 break-words leading-tight px-1 text-[9px]" title="${job}">${job}</span>`).join('');
                         }
                     }
                 }
