@@ -730,21 +730,15 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
             try {
                 const stats = await apiFetch('/coordonnateur/stats');
                 if (stats) {
-                    document.getElementById('statAgentsCoord').textContent = stats.totalAgents ?? '—';
-                    document.getElementById('statAffectations').textContent = stats.totalAffectations ?? '—';
-                    document.getElementById('statPointages').textContent = stats.pointagesAujourdhui ?? '—';
+                    document.getElementById('statAgentsCoord').textContent = stats.agentsSurSite ?? '—';
+                    document.getElementById('statAffectations').textContent = stats.absencesRetards ?? '—';
+                    document.getElementById('statPointages').textContent = stats.demandesMateriel ?? '—';
+                    const statDemandes = document.getElementById('statDemandesMateriel');
+                    if(statDemandes) statDemandes.textContent = stats.rapportsIncidents ?? '—';
                 }
             } catch(e) {
                 console.error('Stats coordonnateur non disponibles', e);
             }
-
-            // Stats demandes matériel
-            try {
-                const demandes = await apiFetch('/materiels/demandes') || [];
-                const enAttente = demandes.filter(d => (d.statut || '').toUpperCase() === 'EN_ATTENTE').length;
-                const statDemandes = document.getElementById('statDemandesMateriel');
-                if (statDemandes) statDemandes.textContent = enAttente > 0 ? `${enAttente} attente` : (demandes.length || '0');
-            } catch(e) {}
 
             // 2. Dashboard List 1: Affectations récentes
             const tbodyAffRec = document.getElementById('affectationsRecentesTable');

@@ -332,7 +332,18 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 const response = await apiFetch('/employeur/personnel');
                 const agents = Array.isArray(response) ? response : [];
                 window.allAgents = agents;
-                document.getElementById('statOverviewTotal').textContent = agents.length;
+
+                try {
+                    const statsRes = await apiFetch('/employeur/stats');
+                    if (statsRes) {
+                        document.getElementById('statOverviewTotal').textContent = statsRes.totalAgents || 0;
+                        document.getElementById('statOverviewPointagesDay').textContent = statsRes.postesActifs || 0;
+                        document.getElementById('statOverviewEvals').textContent = statsRes.facturesImpayees || 0;
+                        document.getElementById('statOverviewDernier').textContent = statsRes.heuresSupp || 0;
+                    }
+                } catch (eStats) {
+                    console.warn("Could not load stats", eStats);
+                }
 
                 // Render Personnel Table
                 const tbody = document.getElementById('personnelTableBody');
@@ -376,16 +387,6 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     pointages = Array.isArray(resP) ? resP : [];
                 } catch (errP) {
                     console.warn("Could not load today pointages for overview", errP);
-                }
-
-                document.getElementById('statOverviewPointagesDay').textContent = pointages.length;
-
-                if (pointages.length > 0) {
-                    const first = pointages[0];
-                    const timeStr = formatTime(first.heure_entree);
-                    document.getElementById('statOverviewDernier').textContent = `${first.agent_nom || 'Agent'} (${timeStr})`;
-                } else {
-                    document.getElementById('statOverviewDernier').textContent = 'Aucun aujourd\'hui';
                 }
 
                 const streamTbody = document.getElementById('overviewPointagesStream');

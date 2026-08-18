@@ -32,6 +32,21 @@ public class SuperAdminController {
         return ResponseEntity.ok(entrepriseRepository.findAll());
     }
 
+    @GetMapping("/stats")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<Map<String, Object>> getStats() {
+        Long totalClients = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM entreprise", Long.class);
+        Long actifs = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM entreprise WHERE statut = 'ACTIF'", Long.class);
+        Long coordonnateurs = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM utilisateur WHERE role = 'COORDONNATEUR'", Long.class);
+        
+        return ResponseEntity.ok(Map.of(
+            "totalClients", totalClients != null ? totalClients : 0L,
+            "abonnementsActifs", actifs != null ? actifs : 0L,
+            "coordonnateurs", coordonnateurs != null ? coordonnateurs : 0L,
+            "ticketsSupport", 0L
+        ));
+    }
+
     @PostMapping("/entreprises")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<Entreprise> createEntreprise(@RequestBody Map<String, Object> payload) {

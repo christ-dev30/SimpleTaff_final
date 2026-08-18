@@ -139,6 +139,34 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
             }
         };
 
+        // Export list function for enterprises
+        window.exportEntreprises = function() {
+            // Placeholder logic (just an alert)
+            alert("L'exportation (CSV/PDF) est en cours de développement...");
+        };
+        
+        async function loadOverview() {
+            try {
+                const res = await apiFetch('/superadmin/stats');
+                if (res) {
+                    if (document.getElementById('statActives')) {
+                        document.getElementById('statActives').textContent = res.totalClients || 0;
+                    }
+                    if (document.getElementById('statPending')) {
+                        document.getElementById('statPending').textContent = res.abonnementsActifs || 0;
+                    }
+                    if (document.getElementById('statTotal')) {
+                        document.getElementById('statTotal').textContent = res.coordonnateurs || 0;
+                    }
+                    if (document.getElementById('statSupport')) {
+                        document.getElementById('statSupport').textContent = res.ticketsSupport || 0;
+                    }
+                }
+            } catch (err) {
+                console.error("Erreur chargement stats super admin:", err);
+            }
+        }
+
         let lastToken = null;
         window.copyInviteLink = function() {
             const input = document.getElementById('inviteLinkDisplay');
@@ -199,6 +227,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
         document.addEventListener('DOMContentLoaded', () => {
             if (!checkAuth()) { window.location.href = '/vitrine/login.html'; return; }
             loadEntreprises();
+            loadOverview();
             
             document.querySelectorAll('.sidebar-link').forEach(link => {
                 link.addEventListener('click', () => {

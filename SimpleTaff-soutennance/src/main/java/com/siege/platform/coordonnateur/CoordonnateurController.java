@@ -51,7 +51,16 @@ public class CoordonnateurController {
         LocalDateTime end = today.plusDays(1).atStartOfDay();
         stats.put("totalAgents", agentRepo.count());
         stats.put("totalAffectations", affectationRepo.count());
-        stats.put("pointagesAujourdhui", pointageRepo.countByDateHeureEntreeBetween(start, end));
+        
+        long pointagesJour = pointageRepo.countByDateHeureEntreeBetween(start, end);
+        long attendus = agentRepo.count();
+        
+        stats.put("pointagesAujourdhui", pointagesJour);
+        stats.put("agentsAttendus", attendus);
+        stats.put("agentsSurSite", pointagesJour);
+        stats.put("absencesRetards", Math.max(0, attendus - pointagesJour));
+        stats.put("demandesMateriel", 0); // Simulated
+        stats.put("rapportsIncidents", 0); // Simulated
         return ResponseEntity.ok(stats);
     }
 

@@ -211,6 +211,9 @@ public class EmployeurController {
         if (sites == null || sites.isEmpty()) {
             result.put("totalAgents", 0);
             result.put("pointagesAujourdhui", 0);
+            result.put("postesActifs", 0);
+            result.put("facturesImpayees", 0);
+            result.put("heuresSupp", 0);
             return ResponseEntity.ok(result);
         }
         List<UUID> siteIds = sites.stream().map(Site::getId).collect(Collectors.toList());
@@ -227,9 +230,18 @@ public class EmployeurController {
                         && p.getAffectation().getPoste().getSite() != null
                         && siteIds.contains(p.getAffectation().getPoste().getSite().getId()))
                 .count();
+                
+        long postesActifs = affectationRepository.findAllByStatut("ACTIVE").stream()
+                .filter(a -> a.getPoste() != null && a.getPoste().getSite() != null && siteIds.contains(a.getPoste().getSite().getId()))
+                .map(a -> a.getPoste().getId())
+                .distinct()
+                .count();
 
         result.put("totalAgents", totalAgents);
         result.put("pointagesAujourdhui", pointagesAujourdhui);
+        result.put("postesActifs", postesActifs);
+        result.put("facturesImpayees", 0); // Simulated for now
+        result.put("heuresSupp", 0); // Simulated for now
         return ResponseEntity.ok(result);
     }
 
