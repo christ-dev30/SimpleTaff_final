@@ -2487,7 +2487,9 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                     const dataSource = (typeof allAffectations !== 'undefined' && allAffectations.length) ? allAffectations : ((typeof allAgents !== 'undefined') ? allAgents : []);
                     const countByJob = {};
                     dataSource.forEach(a => {
-                        const job = (a.poste || a.emploi || a.titre || 'Autre').substring(0, 3).toUpperCase();
+                        let job = (a.poste || a.emploi || a.titre || 'Autre').trim();
+                        // Capitalize the first letter and make the rest lowercase for consistent grouping
+                        job = job.charAt(0).toUpperCase() + job.slice(1).toLowerCase();
                         countByJob[job] = (countByJob[job] || 0) + 1;
                     });
                     
@@ -2511,7 +2513,7 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                                 </div>`;
                             }).join('');
                             
-                            labelsContainer.innerHTML = sortedJobs.map(job => `<span>${job}</span>`).join('');
+                            labelsContainer.innerHTML = sortedJobs.map(job => `<span class="truncate max-w-[60px]" title="${job}">${job}</span>`).join('');
                         }
                     }
                 }

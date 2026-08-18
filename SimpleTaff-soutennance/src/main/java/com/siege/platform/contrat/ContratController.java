@@ -53,7 +53,9 @@ public class ContratController {
 
     @GetMapping
     public List<Map<String, Object>> list() {
-        return contratRepository.findAll().stream().map(this::toMap).toList();
+        return contratRepository.findAll().stream()
+                .filter(c -> c.getEntreprise() != null && c.getEntreprise().getId().equals(tenantService.entreprise().getId()))
+                .map(this::toMap).toList();
     }
 
     @GetMapping("/agent/{agentId}")
@@ -64,7 +66,9 @@ public class ContratController {
     @GetMapping("/expirations")
     public List<Map<String, Object>> expirations(@RequestParam(value = "jours", defaultValue = "30") int jours) {
         return contratRepository.findByDateFinBetweenAndStatut(LocalDate.now(), LocalDate.now().plusDays(jours), "ACTIF")
-                .stream().map(this::toMap).toList();
+                .stream()
+                .filter(c -> c.getEntreprise() != null && c.getEntreprise().getId().equals(tenantService.entreprise().getId()))
+                .map(this::toMap).toList();
     }
 
     @PostMapping
