@@ -888,7 +888,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                         if (justifFile) {
                             const fd = new FormData();
                             fd.append('file', justifFile);
-                            const up = await fetch('/api/agents/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwtToken') }, body: fd });
+                            const up = await fetch('/api/agents/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }, body: fd });
                             const upData = await up.json();
                             justificatifUrl = upData.url || upData.fileUrl || null;
                             const status = document.getElementById('reqCongeJustifStatus');
