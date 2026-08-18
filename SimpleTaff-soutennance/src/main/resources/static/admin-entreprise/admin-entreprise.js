@@ -78,7 +78,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                         countByJob[job] = (countByJob[job] || 0) + 1;
                     });
                     
-                    const sortedJobs = Object.keys(countByJob).sort((a,b) => countByJob[b] - countByJob[a]).slice(0, 4);
+                    const sortedJobs = Object.keys(countByJob).sort((a,b) => countByJob[b] - countByJob[a]).slice(0, 5);
                     if (sortedJobs.length > 0) {
                         const maxCount = countByJob[sortedJobs[0]];
                         const totalJobs = Object.values(countByJob).reduce((sum, val) => sum + val, 0) || 1;
@@ -93,12 +93,16 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                                 const heightPct = Math.max(15, Math.floor((count / maxCount) * 100));
                                 const colorClass = idx === 0 ? 'bg-[#12312E]' : (idx === 1 ? 'bg-[#A3D977]' : 'bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)]');
                                 return `
-                                <div class="w-full ${colorClass} rounded-full relative group" style="height: ${heightPct}%" title="${count} (${percent}%)">
-                                    <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-1 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap text-slate-800">${percent}%</div>
+                                <div class="w-full ${colorClass} rounded-t-sm relative flex flex-col justify-end" style="height: ${heightPct}%" title="${job}: ${count} (${percent}%)">
+                                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-extrabold text-slate-800">${percent}%</div>
                                 </div>`;
                             }).join('');
                             
-                            labelsContainer.innerHTML = sortedJobs.map(job => `<span class="text-center w-1/4 break-words leading-tight px-1 text-[9px]" title="${job}">${job}</span>`).join('');
+                            labelsContainer.innerHTML = sortedJobs.map(job => {
+                                const words = job.split(/[\s-]/);
+                                let abbr = job.length <= 4 ? job : (words.length > 1 ? words.map(w => w.charAt(0)).join('') : job.substring(0, 4)).toUpperCase();
+                                return `<span class="text-center w-full break-words leading-tight px-1 text-[10px] text-slate-500 font-bold" title="${job}">${abbr}</span>`;
+                            }).join('');
                         }
                     }
                 }
@@ -2516,13 +2520,13 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                     const dataSource = (window.allAffectations && window.allAffectations.length) ? window.allAffectations : (allAgents || []);
                     const countByJob = {};
                     dataSource.forEach(a => {
-                        let job = (a.poste || a.emploi || a.titre || 'Autre').trim();
-                        // Capitalize the first letter and make the rest lowercase for consistent grouping
+                        let job = (a.posteLibelle || a.poste || a.emploi || a.titre || 'Autre').trim();
+                        if (job === '—') job = 'Autre';
                         job = job.charAt(0).toUpperCase() + job.slice(1).toLowerCase();
                         countByJob[job] = (countByJob[job] || 0) + 1;
                     });
                     
-                    const sortedJobs = Object.keys(countByJob).sort((a,b) => countByJob[b] - countByJob[a]).slice(0, 4);
+                    const sortedJobs = Object.keys(countByJob).sort((a,b) => countByJob[b] - countByJob[a]).slice(0, 5);
                     if (sortedJobs.length > 0) {
                         const maxCount = countByJob[sortedJobs[0]];
                         const totalJobs = Object.values(countByJob).reduce((sum, val) => sum + val, 0) || 1;
@@ -2537,12 +2541,16 @@ mention "Lu et approuvé")                     mention "Lu et approuvé")`;
                                 const heightPct = Math.max(15, Math.floor((count / maxCount) * 100));
                                 const colorClass = idx === 0 ? 'bg-[#12312E]' : (idx === 1 ? 'bg-[#A3D977]' : 'bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)]');
                                 return `
-                                <div class="w-full ${colorClass} rounded-full relative group" style="height: ${heightPct}%" title="${count} (${percent}%)">
-                                    <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-1 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap text-slate-800">${percent}%</div>
+                                <div class="w-full ${colorClass} rounded-t-sm relative flex flex-col justify-end" style="height: ${heightPct}%" title="${job}: ${count} (${percent}%)">
+                                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-extrabold text-slate-800">${percent}%</div>
                                 </div>`;
                             }).join('');
                             
-                            labelsContainer.innerHTML = sortedJobs.map(job => `<span class="text-center w-1/4 break-words leading-tight px-1 text-[9px]" title="${job}">${job}</span>`).join('');
+                            labelsContainer.innerHTML = sortedJobs.map(job => {
+                                const words = job.split(/[\s-]/);
+                                let abbr = job.length <= 4 ? job : (words.length > 1 ? words.map(w => w.charAt(0)).join('') : job.substring(0, 4)).toUpperCase();
+                                return `<span class="text-center w-full break-words leading-tight px-1 text-[10px] text-slate-500 font-bold" title="${job}">${abbr}</span>`;
+                            }).join('');
                         }
                     }
                 }
