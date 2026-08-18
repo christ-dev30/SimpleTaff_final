@@ -41,7 +41,6 @@ public class EmployeurController {
     private final PointageService pointageService;
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
     public EmployeurController(UtilisateurRepository utilisateurRepository,
                                AffectationRepository affectationRepository,
                                PointageRepository pointageRepository,
@@ -250,13 +249,15 @@ public class EmployeurController {
                 long minutes = java.time.Duration.between(p.getDateHeureEntree(), p.getDateHeureSortie()).toMinutes();
                 if (minutes > 0) heuresPrestees += minutes;
                 
-                if (p.getAffectation().getPoste().getHeureFin() != null) {
-                    java.time.LocalTime expectedEnd = p.getAffectation().getPoste().getHeureFin();
-                    java.time.LocalTime actualEnd = p.getDateHeureSortie().toLocalTime();
-                    if (actualEnd.isAfter(expectedEnd)) {
-                        long diff = java.time.Duration.between(expectedEnd, actualEnd).toMinutes();
-                        heuresSupp += diff;
-                    }
+                if (p.getAffectation().getHeureFin() != null && !p.getAffectation().getHeureFin().isEmpty()) {
+                    try {
+                        java.time.LocalTime expectedEnd = java.time.LocalTime.parse(p.getAffectation().getHeureFin());
+                        java.time.LocalTime actualEnd = p.getDateHeureSortie().toLocalTime();
+                        if (actualEnd.isAfter(expectedEnd)) {
+                            long diff = java.time.Duration.between(expectedEnd, actualEnd).toMinutes();
+                            heuresSupp += diff;
+                        }
+                    } catch (Exception e) {}
                 }
             }
         }
@@ -267,7 +268,7 @@ public class EmployeurController {
         // 3. Dernier affecté
         String dernierAffecte = "Aucun";
         if (!affectationsActives.isEmpty()) {
-            Affectation last = affectationsActives.stream().max(java.util.Comparator.comparing(Affectation::getDateCreation, java.util.Comparator.nullsFirst(java.util.Comparator.naturalOrder()))).orElse(null);
+            Affectation last = affectationsActives.stream().max(java.util.Comparator.comparing(Affectation::getDateDebutOccupation, java.util.Comparator.nullsFirst(java.util.Comparator.naturalOrder()))).orElse(null);
             if (last != null && last.getAgent() != null) {
                 dernierAffecte = (last.getAgent().getNom() != null ? last.getAgent().getNom() : "") + " " + (last.getAgent().getPrenom() != null ? last.getAgent().getPrenom() : "");
             }
