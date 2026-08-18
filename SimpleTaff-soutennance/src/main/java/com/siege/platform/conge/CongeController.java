@@ -65,7 +65,8 @@ public class CongeController {
                 agentMap.put("prenom", c.getAgent().getPrenom());
                 map.put("agent", agentMap);
                 
-                com.siege.platform.poste.Affectation activeAff = affectationRepository.findByAgentIdAndStatut(c.getAgent().getId(), "ACTIVE").orElse(null);
+                java.util.List<com.siege.platform.poste.Affectation> affs = affectationRepository.findByAgentIdOrderByDateDebutOccupationDesc(c.getAgent().getId());
+                com.siege.platform.poste.Affectation activeAff = affs.isEmpty() ? null : affs.get(0);
                 if (activeAff != null && activeAff.getPoste() != null) {
                     map.put("posteOccupe", activeAff.getPoste().getEmploi() != null ? activeAff.getPoste().getEmploi().getLibelle() : "—");
                     if (activeAff.getPoste().getSite() != null) {
