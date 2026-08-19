@@ -63,6 +63,14 @@ public class AgentTerrainController {
             }
         }
 
+        List<com.siege.platform.contrat.ContratAgent> contrats = contratAgentRepository.findAll();
+        Map<UUID, String> agentActiveContratFonction = new HashMap<>();
+        for (com.siege.platform.contrat.ContratAgent c : contrats) {
+            if ("ACTIF".equals(c.getStatut()) && c.getFonction() != null) {
+                agentActiveContratFonction.put(c.getAgent().getId(), c.getFonction());
+            }
+        }
+
         for (AgentTerrain a : agents) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("id", a.getId());
@@ -96,6 +104,8 @@ public class AgentTerrainController {
                     libelles.add(e.getLibelle());
                 }
                 map.put("titre", String.join(", ", libelles));
+            } else if (agentActiveContratFonction.containsKey(a.getId())) {
+                map.put("titre", agentActiveContratFonction.get(a.getId()));
             } else {
                 map.put("titre", "Autre");
             }
