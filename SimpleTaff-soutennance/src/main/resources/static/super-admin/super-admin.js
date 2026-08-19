@@ -159,31 +159,39 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                         document.getElementById('statTotal').textContent = res.coordonnateurs || 0;
                     }
                     
-                    if (document.getElementById('revenuSaasVal')) {
-                        const fmt = new Intl.NumberFormat('fr-FR').format(res.revenuMensuel || 0);
+                    if (document.getElementById('revenuSaasVal') && res.chartData && res.chartData.length > 0) {
+                        const currentMonthData = res.chartData[res.chartData.length - 1];
+                        const fmt = new Intl.NumberFormat('fr-FR').format(currentMonthData.revenue || 0);
                         document.getElementById('revenuSaasVal').textContent = `${fmt} FCFA`;
+                        
+                        const container = document.getElementById('saasChartContainer');
+                        const labelsContainer = document.getElementById('saasChartLabels');
+                        
+                        if (container && labelsContainer) {
+                            const maxRev = Math.max(...res.chartData.map(d => d.revenue), 1); // Avoid div by 0
+                            
+                            container.innerHTML = res.chartData.map((d, index) => {
+                                const heightPct = Math.max(10, Math.round((d.revenue / maxRev) * 100));
+                                const isCurrent = index === res.chartData.length - 1;
+                                const colorClass = isCurrent ? 'bg-[#12312E]' : 'bg-[#A3D977]';
+                                const tooltipText = new Intl.NumberFormat('fr-FR').format(d.revenue) + ' FCFA';
+                                
+                                return `
+                                <div class="w-full ${colorClass} rounded-full relative group transition-all duration-500" style="height: ${heightPct}%">
+                                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">${tooltipText}</div>
+                                </div>
+                                `;
+                            }).join('');
+                            
+                            labelsContainer.innerHTML = res.chartData.map((d, index) => {
+                                const isCurrent = index === res.chartData.length - 1;
+                                const colorClass = isCurrent ? 'text-[#12312E] font-extrabold' : '';
+                                return `<span class="${colorClass}">${d.label}</span>`;
+                            }).join('');
+                        }
                     }
                     if (document.getElementById('croissanceValue')) {
                         document.getElementById('croissanceValue').textContent = `${res.croissanceMensuelle || 0}%`;
-                    }
-
-                    const clientsTbody = document.getElementById('dashboardDerniersClientsTable');
-                    if (clientsTbody && res.derniersClients) {
-                        if (res.derniersClients.length === 0) {
-                            clientsTbody.innerHTML = '<tr><td class="py-2 text-slate-500 text-center">Aucun client récent</td></tr>';
-                        } else {
-                            clientsTbody.innerHTML = res.derniersClients.map(c => `
-                                <tr>
-                                    <td class="py-3">
-                                        <div class="font-bold text-slate-800">${c.nom || 'N/A'}</div>
-                                        <div class="text-[10px] text-slate-400">${new Date(c.date_creation).toLocaleDateString()}</div>
-                                    </td>
-                                    <td class="py-3 text-right">
-                                        <span class="badge ${c.statut === 'ACTIF' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${c.statut}</span>
-                                    </td>
-                                </tr>
-                            `).join('');
-                        }
                     }
 
                     const adminsTbody = document.getElementById('dashboardAdminsTable');
@@ -199,6 +207,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                                         </div>
                                         <div>
                                             <div class="font-bold text-slate-800">${a.prenom} ${a.nom}</div>
+                                            <div class="text-[10px] text-slate-500 font-medium">${a.entreprise_nom || 'Sans entreprise'}</div>
                                             <div class="text-[10px] text-slate-400">${a.email}</div>
                                         </div>
                                     </td>

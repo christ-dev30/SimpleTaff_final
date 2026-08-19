@@ -230,11 +230,11 @@
 
     <!-- ROW 2 : MIDDLE -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
-        <!-- Analytics (Col span 5) -->
-        <div class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
+        <!-- Analytics (Col span 8) -->
+        <div class="lg:col-span-8 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
             <h3 class="font-bold text-slate-900 mb-2">Revenus SaaS Mensuels</h3>
             <div id="revenuSaasVal" class="text-3xl font-extrabold text-[#12312E] mb-4">0 FCFA</div>
-            <div class="flex-1 flex items-end justify-between gap-2 px-2 relative">
+            <div id="saasChartContainer" class="flex-1 flex items-end justify-between gap-2 px-2 relative">
                 <!-- Bar chart mockup -->
                 <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"></div>
                 <div class="w-full bg-[#12312E] rounded-full h-3/4"></div>
@@ -246,13 +246,13 @@
                 <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"></div>
                 <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/5"></div>
             </div>
-            <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3">
+            <div id="saasChartLabels" class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3">
                 <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
             </div>
         </div>
 
-        <!-- Reminders (Col span 3) -->
-        <div class="lg:col-span-3 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
+        <!-- Reminders (Col span 4) -->
+        <div class="lg:col-span-4 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
             <h3 class="font-bold text-slate-900 mb-4">Abonnements Expirés</h3>
             <div class="flex-1 flex flex-col justify-center">
                 <h4 class="text-xl font-bold text-[#12312E] leading-tight">Bolloré Transport</h4>
@@ -264,19 +264,7 @@
             </button>
         </div>
 
-        <!-- Project List (Col span 4) -->
-        <div class="lg:col-span-4 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-slate-900">Derniers Clients Inscrits</h3>
-            </div>
-            <div class="flex-1 overflow-y-auto pr-2 space-y-4">
-                <table class="w-full text-left">
-                    <tbody id="dashboardDerniersClientsTable" class="divide-y divide-slate-100 text-xs">
-                        <tr><td class="py-2 text-slate-500 text-center">En attente de données...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+
     </div>
 
     <!-- ROW 3 : BOTTOM -->

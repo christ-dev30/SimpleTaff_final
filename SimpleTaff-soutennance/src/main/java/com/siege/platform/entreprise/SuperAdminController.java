@@ -51,8 +51,32 @@ public class SuperAdminController {
             croissance = 100; // si aucun client le mois dernier mais des clients ce mois-ci
         }
 
-        List<Map<String, Object>> derniersClients = jdbcTemplate.queryForList("SELECT nom, statut, date_creation FROM entreprise ORDER BY date_creation DESC LIMIT 5");
-        List<Map<String, Object>> nouveauxAdmins = jdbcTemplate.queryForList("SELECT nom, prenom, email, date_creation FROM utilisateur WHERE role = 'ADMIN_ENTREPRISE' ORDER BY date_creation DESC LIMIT 5");
+        List<Map<String, Object>> nouveauxAdmins = jdbcTemplate.queryForList("SELECT u.nom, u.prenom, u.email, u.date_creation, e.nom as entreprise_nom FROM utilisateur u LEFT JOIN entreprise e ON u.entreprise_id = e.id WHERE u.role = 'ADMIN_ENTREPRISE' ORDER BY u.date_creation DESC LIMIT 5");
+
+        List<Map<String, Object>> activeEntreprises = jdbcTemplate.queryForList("SELECT formule_abonnement, date_creation FROM entreprise WHERE statut = 'ACTIF'");
+        List<Map<String, Object>> chartData = new java.util.ArrayList<>();
+        java.time.YearMonth currentMonth = java.time.YearMonth.now();
+        String[] monthNames = {"Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"};
+        
+        for (int i = 6; i >= 0; i--) {
+            java.time.YearMonth ym = currentMonth.minusMonths(i);
+            long monthlyRev = 0;
+            for (Map<String, Object> ent : activeEntreprises) {
+                java.sql.Timestamp ts = (java.sql.Timestamp) ent.get("date_creation");
+                if (ts != null) {
+                    java.time.YearMonth entYm = java.time.YearMonth.from(ts.toLocalDateTime());
+                    if (!entYm.isAfter(ym)) {
+                        String formule = (String) ent.get("formule_abonnement");
+                        if ("STARTER".equals(formule)) monthlyRev += 49000;
+                        else if ("PRO".equals(formule)) monthlyRev += 120000;
+                    }
+                }
+            }
+            chartData.add(Map.of(
+                "label", monthNames[ym.getMonthValue() - 1],
+                "revenue", monthlyRev
+            ));
+        }
 
         return ResponseEntity.ok(Map.of(
             "totalClients", totalClients != null ? totalClients : 0L,
@@ -60,7 +84,7 @@ public class SuperAdminController {
             "coordonnateurs", coordonnateurs != null ? coordonnateurs : 0L,
             "revenuMensuel", revenuMensuel != null ? revenuMensuel : 0L,
             "croissanceMensuelle", Math.round(croissance),
-            "derniersClients", derniersClients,
+            "chartData", chartData,
             "nouveauxAdmins", nouveauxAdmins
         ));
     }
