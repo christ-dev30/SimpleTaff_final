@@ -1,130 +1,271 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr" class="antialiased">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Connexion - SimpleTaff</title>
     <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        display: ['Outfit', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            dark: '#12312E',
-                            light: '#A3D977',
-                            card: '#19403B',
-                            gray: '#F8FAFC'
-                        }
-                    }
-                }
-            }
-        }
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Plus Jakarta Sans", "sans-serif"],
+              display: ["Outfit", "sans-serif"],
+            },
+            colors: {
+              brand: {
+                dark: "#12312E",
+                light: "#A3D977",
+                card: "#19403B",
+                gray: "#F8FAFC",
+              },
+            },
+          },
+        },
+      };
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/shared/global.css">
-</head>
-<body class="bg-white min-h-screen flex antialiased">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/shared/global.css" />
+  </head>
+  <body class="bg-white min-h-screen flex antialiased">
     <!-- Left: Form Section -->
-    <div class="w-full lg:w-1/2 flex flex-col justify-center items-center px-8 sm:px-16 lg:px-24">
-        
-        <div class="w-full max-w-sm fade-in-up">
-            <!-- Logo -->
-            <a href="/" class="block mb-12">
-                <div class="w-12 h-12 rounded-xl bg-[#12312E] text-white flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                </div>
-            </a>
+    <div
+      class="w-full lg:w-1/2 flex flex-col justify-center items-center px-8 sm:px-16 lg:px-24"
+    >
+      <div class="w-full max-w-sm fade-in-up">
+        <!-- Logo -->
+        <a href="/" class="block mb-12">
+          <div
+            class="w-12 h-12 rounded-xl bg-[#12312E] text-white flex items-center justify-center"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+        </a>
 
-            <!-- Header -->
-            <h2 class="font-display text-3xl font-semibold text-slate-900 mb-2">Bon retour</h2>
-            <p class="text-sm text-slate-500 mb-8">Connectez-vous à SimpleTaff - Entrez dans votre espace</p>
-            
-            <div class="h-px bg-slate-100 w-full mb-8"></div>
+        <!-- Header -->
+        <h2 class="font-display text-3xl font-semibold text-slate-900 mb-2">
+          Bon retour
+        </h2>
+        <p class="text-sm text-slate-500 mb-8">
+          Connectez-vous à SimpleTaff - Entrez dans votre espace
+        </p>
 
-            <!-- Form -->
-            <form id="loginForm" class="space-y-5">
-                <div id="errorMsg" class="hidden bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100"></div>
+        <div class="h-px bg-slate-100 w-full mb-8"></div>
 
-                <div>
-                    <label for="email" class="block text-xs font-bold text-slate-900 mb-2">Adresse email</label>
-                    <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm" placeholder="hi@simpletaff.ci">
-                </div>
+        <!-- Form -->
+        <form id="loginForm" class="space-y-5">
+          <div
+            id="errorMsg"
+            class="hidden bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100"
+          ></div>
 
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label for="password" class="block text-xs font-bold text-slate-900">Mot de passe</label>
-                    </div>
-                    <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm" placeholder="••••••••">
-                </div>
+          <div>
+            <label
+              for="email"
+              class="block text-xs font-bold text-slate-900 mb-2"
+              >Adresse email</label
+            >
+            <input
+              type="email"
+              id="email"
+              required
+              class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm"
+              placeholder="hi@simpletaff.ci"
+            />
+          </div>
 
-                <button type="submit" class="w-full py-3.5 px-4 flex justify-center items-center text-sm font-bold rounded-xl text-white bg-[#12312E] hover:bg-[#0d2421] shadow-lg transition-all hover:-translate-y-0.5 mt-4">
-                    <span id="btnText">Se connecter</span>
-                    <svg id="btnSpinner" class="hidden animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                </button>
-            </form>
-
-
-            
-            <div class="mt-12 text-center text-sm">
-                <a href="/" class="text-slate-400 hover:text-slate-600 transition-colors">← Retour à l'accueil</a>
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label
+                for="password"
+                class="block text-xs font-bold text-slate-900"
+                >Mot de passe</label
+              >
             </div>
+            <input
+              type="password"
+              id="password"
+              required
+              class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="w-full py-3.5 px-4 flex justify-center items-center text-sm font-bold rounded-xl text-white bg-[#12312E] hover:bg-[#0d2421] shadow-lg transition-all hover:-translate-y-0.5 mt-4"
+          >
+            <span id="btnText">Se connecter</span>
+            <svg
+              id="btnSpinner"
+              class="hidden animate-spin ml-2 h-4 w-4 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </button>
+        </form>
+
+        <div class="mt-12 text-center text-sm">
+          <a
+            href="/"
+            class="text-slate-400 hover:text-slate-600 transition-colors"
+            >← Retour à l'accueil</a
+          >
         </div>
+      </div>
     </div>
 
     <!-- Right: Dark Green Graphic Section -->
-    <div class="hidden lg:flex w-1/2 bg-[#12312E] p-12 relative overflow-hidden flex-col justify-center rounded-l-[3rem] shadow-2xl my-4 mr-4">
-        <!-- Abstract glowing effect -->
-        <div class="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-[#12312E] via-[#19403B] to-[#12312E] opacity-50"></div>
-        <div class="absolute -top-40 -right-40 w-96 h-96 bg-[#A3D977] rounded-full mix-blend-overlay filter blur-[100px] opacity-20"></div>
-        <div class="absolute bottom-20 left-10 w-72 h-72 bg-white rounded-full mix-blend-overlay filter blur-[100px] opacity-10"></div>
-        
-        <div class="relative z-10 max-w-lg mx-auto">
-            <h1 class="font-display text-5xl xl:text-6xl text-white mb-12 italic leading-tight">
-                Digitalisez<br>la gestion<br><span class="font-normal">de votre personnel,</span><br>aujourd'hui.
-            </h1>
-            
-            <!-- Mockup Card matching Fillianta style -->
-            <div class="relative mt-8">
-                <!-- Side smaller cards -->
-                <div class="absolute -left-12 bottom-0 w-16 h-48 bg-[#F8FAFC] rounded-2xl shadow-xl flex flex-col items-center py-6 gap-6 z-10 opacity-90">
-                    <div class="w-8 h-8 bg-[#12312E] rounded-full flex items-center justify-center text-[#A3D977]"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg></div>
-                    <div class="w-8 h-8 bg-slate-200 rounded-full"></div>
-                    <div class="w-8 h-8 bg-slate-200 rounded-full"></div>
-                </div>
-                
-                <div class="absolute -left-20 bottom-10 w-16 h-16 bg-[#F8FAFC] rounded-2xl shadow-xl flex items-center justify-center z-20">
-                    <div class="w-8 h-8 rounded-xl bg-[#12312E] text-[#A3D977] flex items-center justify-center"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
-                </div>
+    <div
+      class="hidden lg:flex w-1/2 bg-[#12312E] p-12 relative overflow-hidden flex-col justify-center rounded-l-[3rem] shadow-2xl my-4 mr-4"
+    >
+      <!-- Abstract glowing effect -->
+      <div
+        class="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-[#12312E] via-[#19403B] to-[#12312E] opacity-50"
+      ></div>
+      <div
+        class="absolute -top-40 -right-40 w-96 h-96 bg-[#A3D977] rounded-full mix-blend-overlay filter blur-[100px] opacity-20"
+      ></div>
+      <div
+        class="absolute bottom-20 left-10 w-72 h-72 bg-white rounded-full mix-blend-overlay filter blur-[100px] opacity-10"
+      ></div>
 
-                <!-- Main Balance Card -->
-                <div class="w-full h-80 bg-[#F8FAFC] rounded-[2rem] p-8 shadow-2xl relative z-0 flex flex-col justify-end">
-                    <div class="absolute top-8 left-8">
-                        <svg class="w-8 h-8 text-[#A3D977]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    </div>
-                    <div class="mb-4">
-                        <div class="font-display text-4xl font-extrabold text-[#12312E]">24,500 <span class="text-2xl">FCFA</span></div>
-                        <div class="text-sm text-slate-500 font-medium">Coût journalier estimé</div>
-                    </div>
-                    <div class="flex justify-between items-end border-t border-slate-200 pt-4">
-                        <div>
-                            <div class="text-sm font-bold text-[#12312E]">Formule Pro</div>
-                            <div class="text-xs text-slate-500 font-mono mt-1">150 AGENTS MAX</div>
-                        </div>
-                        <div class="bg-slate-200 text-slate-700 text-[10px] font-bold px-3 py-1.5 rounded-full">En savoir plus</div>
-                    </div>
-                </div>
+      <div class="relative z-10 max-w-lg mx-auto">
+        <h1
+          class="font-display text-5xl xl:text-6xl text-white mb-12 italic leading-tight"
+        >
+          Digitalisez<br />la gestion<br /><span class="font-normal"
+            >de votre personnel,</span
+          ><br />aujourd'hui.
+        </h1>
+
+        <!-- Mockup Card matching Fillianta style -->
+        <div class="relative mt-8">
+          <!-- Side smaller cards -->
+          <div
+            class="absolute -left-12 bottom-0 w-16 h-48 bg-[#F8FAFC] rounded-2xl shadow-xl flex flex-col items-center py-6 gap-6 z-10 opacity-90"
+          >
+            <div
+              class="w-8 h-8 bg-[#12312E] rounded-full flex items-center justify-center text-[#A3D977]"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                />
+              </svg>
             </div>
+            <div class="w-8 h-8 bg-slate-200 rounded-full"></div>
+            <div class="w-8 h-8 bg-slate-200 rounded-full"></div>
+          </div>
+
+          <div
+            class="absolute -left-20 bottom-10 w-16 h-16 bg-[#F8FAFC] rounded-2xl shadow-xl flex items-center justify-center z-20"
+          >
+            <div
+              class="w-8 h-8 rounded-xl bg-[#12312E] text-[#A3D977] flex items-center justify-center"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Main Balance Card -->
+          <div
+            class="w-full h-80 bg-[#F8FAFC] rounded-[2rem] p-8 shadow-2xl relative z-0 flex flex-col justify-end"
+          >
+            <div class="absolute top-8 left-8">
+              <svg
+                class="w-8 h-8 text-[#A3D977]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+            <div class="mb-4">
+              <div class="font-display text-4xl font-extrabold text-[#12312E]">
+                24,500 <span class="text-2xl">FCFA</span>
+              </div>
+              <div class="text-sm text-slate-500 font-medium">
+                Coût journalier estimé
+              </div>
+            </div>
+            <div
+              class="flex justify-between items-end border-t border-slate-200 pt-4"
+            >
+              <div>
+                <div class="text-sm font-bold text-[#12312E]">Formule Pro</div>
+                <div class="text-xs text-slate-500 font-mono mt-1">
+                  150 AGENTS MAX
+                </div>
+              </div>
+              <div
+                class="bg-slate-200 text-slate-700 text-[10px] font-bold px-3 py-1.5 rounded-full"
+              >
+                En savoir plus
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="/vitrine/login.js"></script>
-</body>
+  </body>
 </html>

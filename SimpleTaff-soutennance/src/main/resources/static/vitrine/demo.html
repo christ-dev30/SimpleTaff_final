@@ -1,283 +1,532 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SimpleTaff — Démo Interactive</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="/vitrine/demo.css" rel="stylesheet">
-</head>
-<body class="bg-[#F8FAFC] text-slate-900 min-h-screen antialiased pt-24">
-
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/vitrine/demo.css" rel="stylesheet" />
+  </head>
+  <body class="bg-[#F8FAFC] text-slate-900 min-h-screen antialiased pt-24">
     <!-- NAV -->
-    
-    <!-- Fillianta Navbar -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
-        <div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-xl bg-[#12312E] text-slate-900 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                    <svg class="w-5 h-5 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                </div>
-                <span class="font-display font-bold text-xl text-[#12312E] tracking-tight">SimpleTaff <span class="text-xs bg-[#A3D977]/20 px-2 py-0.5 rounded-full text-[#12312E] ml-2 font-normal">Fillianta</span></span>
-            </a>
-            <div class="flex items-center gap-6">
-                <a href="/" class="text-slate-500 hover:text-[#12312E] text-sm font-medium transition-colors">Accueil</a>
-                <a href="/vitrine/demo.html" class="text-slate-500 hover:text-[#12312E] text-sm font-medium transition-colors">Démo Interactive</a>
-                <a href="/vitrine/contact-souscription.html" class="text-slate-500 hover:text-[#12312E] text-sm font-medium transition-colors">Contact</a>
-                <a href="/vitrine/login.html" class="bg-[#12312E] hover:bg-[#0d2421] text-slate-900 px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">Connexion</a>
-            </div>
-        </div>
-    </nav>
 
+    <!-- Fillianta Navbar -->
+    <nav
+      class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100"
+    >
+      <div
+        class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between"
+      >
+        <a href="/" class="flex items-center gap-3 group">
+          <div
+            class="w-10 h-10 rounded-xl bg-[#12312E] text-slate-900 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform"
+          >
+            <svg
+              class="w-5 h-5 text-slate-900"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <span
+            class="font-display font-bold text-xl text-[#12312E] tracking-tight"
+            >SimpleTaff
+            <span
+              class="text-xs bg-[#A3D977]/20 px-2 py-0.5 rounded-full text-[#12312E] ml-2 font-normal"
+              >Fillianta</span
+            ></span
+          >
+        </a>
+        <div class="flex items-center gap-6">
+          <a
+            href="/"
+            class="text-slate-500 hover:text-[#12312E] text-sm font-medium transition-colors"
+            >Accueil</a
+          >
+          <a
+            href="/vitrine/demo.html"
+            class="text-slate-500 hover:text-[#12312E] text-sm font-medium transition-colors"
+            >Démo Interactive</a
+          >
+          <a
+            href="/vitrine/contact-souscription.html"
+            class="text-slate-500 hover:text-[#12312E] text-sm font-medium transition-colors"
+            >Contact</a
+          >
+          <a
+            href="/vitrine/login.html"
+            class="bg-[#12312E] hover:bg-[#0d2421] text-slate-900 px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+            >Connexion</a
+          >
+        </div>
+      </div>
+    </nav>
 
     <!-- CONTENT -->
     <main class="pt-24 pb-16 px-6 max-w-6xl mx-auto">
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-extrabold mb-4">Découvrez le fonctionnement de SimpleTaff</h1>
-            <p class="text-slate-500 max-w-xl mx-auto">Cliquez sur les étapes ci-dessous pour simuler le cycle opérationnel d'un agent de terrain.</p>
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold mb-4">
+          Découvrez le fonctionnement de SimpleTaff
+        </h1>
+        <p class="text-slate-500 max-w-xl mx-auto">
+          Cliquez sur les étapes ci-dessous pour simuler le cycle opérationnel
+          d'un agent de terrain.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Sidebar Navigation -->
+        <div class="lg:col-span-4 space-y-3">
+          <button
+            onclick="showStep(1)"
+            id="btn-1"
+            class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4 active"
+          >
+            <span
+              class="w-8 h-8 rounded-lg bg-[#A3D977]/20 text-[#12312E] flex items-center justify-center font-bold flex-shrink-0"
+              >1</span
+            >
+            <div>
+              <h3 class="font-semibold text-sm">Étape 1 : Recrutement</h3>
+              <p class="text-xs text-slate-500 mt-1">
+                Enregistrement de l'agent et affectation à une zone
+                opérationnelle.
+              </p>
+            </div>
+          </button>
+
+          <button
+            onclick="showStep(2)"
+            id="btn-2"
+            class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4"
+          >
+            <span
+              class="w-8 h-8 rounded-lg bg-[#12312E]/10 text-[#12312E] flex items-center justify-center font-bold flex-shrink-0"
+              >2</span
+            >
+            <div>
+              <h3 class="font-semibold text-sm">
+                Étape 2 : Affectation au poste
+              </h3>
+              <p class="text-xs text-slate-500 mt-1">
+                Création du poste client et affectation nominative.
+              </p>
+            </div>
+          </button>
+
+          <button
+            onclick="showStep(3)"
+            id="btn-3"
+            class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4"
+          >
+            <span
+              class="w-8 h-8 rounded-lg bg-[#A3D977]/20 text-[#12312E] flex items-center justify-center font-bold flex-shrink-0"
+              >3</span
+            >
+            <div>
+              <h3 class="font-semibold text-sm">Étape 3 : Pointage QR Code</h3>
+              <p class="text-xs text-slate-500 mt-1">
+                Scan de la carte de l'agent à son arrivée sur le site client.
+              </p>
+            </div>
+          </button>
+
+          <button
+            onclick="showStep(4)"
+            id="btn-4"
+            class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4"
+          >
+            <span
+              class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold flex-shrink-0"
+              >4</span
+            >
+            <div>
+              <h3 class="font-semibold text-sm">Étape 4 : Paie</h3>
+              <p class="text-xs text-slate-500 mt-1">
+                Génération automatique des bulletins.
+              </p>
+            </div>
+          </button>
+
+          <button
+            onclick="showStep(5)"
+            id="btn-5"
+            class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4"
+          >
+            <span
+              class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center font-bold flex-shrink-0"
+              >5</span
+            >
+            <div>
+              <h3 class="font-semibold text-sm">Étape 5 : Tarifs & Devis</h3>
+              <p class="text-xs text-slate-500 mt-1">
+                Simulez le coût d'abonnement et générez un devis personnalisé.
+              </p>
+            </div>
+          </button>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Sidebar Navigation -->
-            <div class="lg:col-span-4 space-y-3">
-                <button onclick="showStep(1)" id="btn-1" class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4 active">
-                    <span class="w-8 h-8 rounded-lg bg-[#A3D977]/20 text-[#12312E] flex items-center justify-center font-bold flex-shrink-0">1</span>
-                    <div>
-                        <h3 class="font-semibold text-sm">Étape 1 : Recrutement</h3>
-                        <p class="text-xs text-slate-500 mt-1">Enregistrement de l'agent et affectation à une zone opérationnelle.</p>
-                    </div>
-                </button>
+        <!-- Simulation Area -->
+        <div
+          class="lg:col-span-8 bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 min-h-[450px] flex flex-col justify-between"
+        >
+          <!-- Step 1 Content -->
+          <div id="step-1-content" class="step-content space-y-6">
+            <div>
+              <span
+                class="text-xs font-semibold uppercase tracking-wider text-[#A3D977]"
+                >Backoffice Admin</span
+              >
+              <h2 class="text-2xl font-bold mt-1">Fiche Agent Terrain</h2>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div
+                class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100"
+              >
+                <label class="block text-xs text-slate-500 mb-1"
+                  >Nom Complet</label
+                >
+                <div class="text-sm font-semibold">Junior Kouassi</div>
+              </div>
+              <div
+                class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100"
+              >
+                <label class="block text-xs text-slate-500 mb-1"
+                  >Zone Tarifaire</label
+                >
+                <div class="text-sm font-semibold text-[#12312E]">
+                  Zone Industrielle Yopougon
+                </div>
+              </div>
+              <div
+                class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100"
+              >
+                <label class="block text-xs text-slate-500 mb-1"
+                  >Emploi / Qualification</label
+                >
+                <div class="text-sm font-semibold">
+                  Agent de Sécurité Confirmé
+                </div>
+              </div>
+              <div
+                class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100"
+              >
+                <label class="block text-xs text-slate-500 mb-1"
+                  >Taux Horaire</label
+                >
+                <div class="text-sm font-semibold text-[#A3D977]">
+                  1 200 FCFA / heure
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100 space-y-2"
+            >
+              <div class="text-xs text-slate-500 font-semibold uppercase">
+                Documents requis validés
+              </div>
+              <div class="flex items-center gap-2 text-sm text-[#A3D977]">
+                ✓ Pièce d'identité (CNI / Passeport)
+              </div>
+              <div class="flex items-center gap-2 text-sm text-[#A3D977]">
+                ✓ Casier judiciaire vierge
+              </div>
+            </div>
+          </div>
 
-                <button onclick="showStep(2)" id="btn-2" class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4">
-                    <span class="w-8 h-8 rounded-lg bg-[#12312E]/10 text-[#12312E] flex items-center justify-center font-bold flex-shrink-0">2</span>
-                    <div>
-                        <h3 class="font-semibold text-sm">Étape 2 : Affectation au poste</h3>
-                        <p class="text-xs text-slate-500 mt-1">Création du poste client et affectation nominative.</p>
-                    </div>
-                </button>
+          <!-- Step 2 Content -->
+          <div id="step-2-content" class="step-content space-y-6 hidden">
+            <div>
+              <span
+                class="text-xs font-semibold uppercase tracking-wider text-[#12312E]"
+                >Planning & Logistique</span
+              >
+              <h2 class="text-2xl font-bold mt-1">
+                Création de Poste & Affectation
+              </h2>
+            </div>
+            <div class="space-y-4">
+              <div
+                class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100 flex justify-between items-center"
+              >
+                <div>
+                  <div class="text-xs text-slate-500">
+                    Structure Demandeuse (Client)
+                  </div>
+                  <div class="text-sm font-bold">
+                    Bolloré Africa Logistics (Port d'Abidjan)
+                  </div>
+                </div>
+                <span
+                  class="text-xs bg-[#A3D977]/20 text-[#12312E] px-3 py-1 rounded-full border border-[#A3D977]"
+                  >Client Actif</span
+                >
+              </div>
 
-                <button onclick="showStep(3)" id="btn-3" class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4">
-                    <span class="w-8 h-8 rounded-lg bg-[#A3D977]/20 text-[#12312E] flex items-center justify-center font-bold flex-shrink-0">3</span>
-                    <div>
-                        <h3 class="font-semibold text-sm">Étape 3 : Pointage QR Code</h3>
-                        <p class="text-xs text-slate-500 mt-1">Scan de la carte de l'agent à son arrivée sur le site client.</p>
-                    </div>
-                </button>
+              <div class="grid grid-cols-2 gap-4">
+                <div
+                  class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100"
+                >
+                  <div class="text-xs text-slate-500">Poste Demandé</div>
+                  <div class="text-sm font-semibold">
+                    Surveillant de Quai de nuit
+                  </div>
+                </div>
+                <div
+                  class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100"
+                >
+                  <div class="text-xs text-slate-500">Agent Assigné</div>
+                  <div class="text-sm font-semibold text-[#12312E]">
+                    Junior Kouassi
+                  </div>
+                </div>
+              </div>
 
-                <button onclick="showStep(4)" id="btn-4" class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4">
-                    <span class="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold flex-shrink-0">4</span>
-                    <div>
-                        <h3 class="font-semibold text-sm">Étape 4 : Paie</h3>
-                        <p class="text-xs text-slate-500 mt-1">Génération automatique des bulletins.</p>
-                    </div>
-                </button>
+              <div
+                class="bg-[#A3D977]/10 border border-[#A3D977] rounded-xl p-4 text-xs text-slate-600"
+              >
+                💡 **Règles d'affectation :** En cas d'absence, le coordonnateur
+                peut libérer Junior Kouassi de son affectation en un clic et y
+                affecter un remplaçant qualifié de la même zone tarifaire.
+              </div>
+            </div>
+          </div>
 
-                <button onclick="showStep(5)" id="btn-5" class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4">
-                    <span class="w-8 h-8 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center font-bold flex-shrink-0">5</span>
-                    <div>
-                        <h3 class="font-semibold text-sm">Étape 5 : Tarifs & Devis</h3>
-                        <p class="text-xs text-slate-500 mt-1">Simulez le coût d'abonnement et générez un devis personnalisé.</p>
-                    </div>
-                </button>
+          <!-- Step 3 Content -->
+          <div id="step-3-content" class="step-content space-y-6 hidden">
+            <div>
+              <span
+                class="text-xs font-semibold uppercase tracking-wider text-[#A3D977]"
+                >Pointage Mobile</span
+              >
+              <h2 class="text-2xl font-bold mt-1">Scan de la Carte QR Code</h2>
+            </div>
+            <div class="flex flex-col md:flex-row gap-6 items-center">
+              <div
+                class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-200 flex flex-col items-center justify-center w-48 h-48 bg-white/5"
+              >
+                <!-- Simulated QR Code -->
+                <div
+                  class="w-32 h-32 bg-white p-2 rounded-lg flex items-center justify-center"
+                >
+                  <svg
+                    class="w-full h-full text-black"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm13-2h3v2h-3zm-3 3h3v3h-3zm3 3h3v-3h-3zm-3-3v-3h-3v3zm-3 3h3v-3h-3z"
+                    />
+                  </svg>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-2">
+                  CARTE #ST-77901
+                </div>
+              </div>
+              <div class="flex-grow space-y-3">
+                <div
+                  class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100"
+                >
+                  <div class="text-xs text-slate-500">Statut du scan</div>
+                  <div
+                    class="text-sm font-bold text-[#A3D977] flex items-center gap-2 mt-1"
+                  >
+                    <span
+                      class="w-2 h-2 rounded-full bg-green-400 animate-ping"
+                    ></span>
+                    Arrivée Validée : 19h00
+                  </div>
+                </div>
+                <div
+                  class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100"
+                >
+                  <div class="text-xs text-slate-500">
+                    Validateur (Employeur/Superviseur)
+                  </div>
+                  <div class="text-sm text-slate-900/70">
+                    Responsable de Site - Bolloré
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 4 Content -->
+          <div id="step-4-content" class="step-content space-y-6 hidden">
+            <div>
+              <span
+                class="text-xs font-semibold uppercase tracking-wider text-yellow-400"
+                >Finances & Comptabilité</span
+              >
+              <h2 class="text-2xl font-bold mt-1">Clôture du mois : Paie</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div
+                class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100 space-y-2"
+              >
+                <div class="text-xs text-[#A3D977] font-bold">
+                  1. Bulletin d'Agent
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span>Heures Travaillées :</span>
+                  <span class="font-semibold">168 h</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span>Salaire Brut :</span>
+                  <span class="font-semibold text-[#A3D977]">201 600 FCFA</span>
+                </div>
+                <div
+                  class="flex justify-between text-sm border-t border-slate-200 pt-2 text-xs text-slate-500"
+                >
+                  <span>Cotisations CNPS incluses</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 5 Content -->
+          <div id="step-5-content" class="step-content space-y-6 hidden">
+            <div>
+              <span
+                class="text-xs font-semibold uppercase tracking-wider text-red-400"
+                >Simulation d'Abonnement</span
+              >
+              <h2 class="text-2xl font-bold mt-1">
+                Estimez vos Tarifs & Obtenez votre Devis
+              </h2>
             </div>
 
-            <!-- Simulation Area -->
-            <div class="lg:col-span-8 bg-white rounded-[2rem] border border-slate-100 shadow-sm p-6 min-h-[450px] flex flex-col justify-between">
-                
-                <!-- Step 1 Content -->
-                <div id="step-1-content" class="step-content space-y-6">
-                    <div>
-                        <span class="text-xs font-semibold uppercase tracking-wider text-[#A3D977]">Backoffice Admin</span>
-                        <h2 class="text-2xl font-bold mt-1">Fiche Agent Terrain</h2>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100">
-                            <label class="block text-xs text-slate-500 mb-1">Nom Complet</label>
-                            <div class="text-sm font-semibold">Junior Kouassi</div>
-                        </div>
-                        <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100">
-                            <label class="block text-xs text-slate-500 mb-1">Zone Tarifaire</label>
-                            <div class="text-sm font-semibold text-[#12312E]">Zone Industrielle Yopougon</div>
-                        </div>
-                        <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100">
-                            <label class="block text-xs text-slate-500 mb-1">Emploi / Qualification</label>
-                            <div class="text-sm font-semibold">Agent de Sécurité Confirmé</div>
-                        </div>
-                        <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100">
-                            <label class="block text-xs text-slate-500 mb-1">Taux Horaire</label>
-                            <div class="text-sm font-semibold text-[#A3D977]">1 200 FCFA / heure</div>
-                        </div>
-                    </div>
-                    <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100 space-y-2">
-                        <div class="text-xs text-slate-500 font-semibold uppercase">Documents requis validés</div>
-                        <div class="flex items-center gap-2 text-sm text-[#A3D977]">
-                            ✓ Pièce d'identité (CNI / Passeport)
-                        </div>
-                        <div class="flex items-center gap-2 text-sm text-[#A3D977]">
-                            ✓ Casier judiciaire vierge
-                        </div>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-4">
+                <div>
+                  <label
+                    class="block text-xs text-slate-500 mb-1 flex justify-between"
+                  >
+                    <span>Volume d'agents prévus :</span>
+                    <span id="demo-agent-val" class="font-bold text-red-400"
+                      >45 agents</span
+                    >
+                  </label>
+                  <input
+                    id="demo-agent-slider"
+                    type="range"
+                    min="5"
+                    max="250"
+                    value="45"
+                    class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-red-500"
+                    oninput="updateDemoPricing()"
+                  />
+                  <div
+                    class="flex justify-between text-[10px] text-slate-900/30 mt-1"
+                  >
+                    <span>5 agents</span>
+                    <span>125 agents</span>
+                    <span>250 agents</span>
+                  </div>
                 </div>
 
-                <!-- Step 2 Content -->
-                <div id="step-2-content" class="step-content space-y-6 hidden">
-                    <div>
-                        <span class="text-xs font-semibold uppercase tracking-wider text-[#12312E]">Planning & Logistique</span>
-                        <h2 class="text-2xl font-bold mt-1">Création de Poste & Affectation</h2>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100 flex justify-between items-center">
-                            <div>
-                                <div class="text-xs text-slate-500">Structure Demandeuse (Client)</div>
-                                <div class="text-sm font-bold">Bolloré Africa Logistics (Port d'Abidjan)</div>
-                            </div>
-                            <span class="text-xs bg-[#A3D977]/20 text-[#12312E] px-3 py-1 rounded-full border border-[#A3D977]">Client Actif</span>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100">
-                                <div class="text-xs text-slate-500">Poste Demandé</div>
-                                <div class="text-sm font-semibold">Surveillant de Quai de nuit</div>
-                            </div>
-                            <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100">
-                                <div class="text-xs text-slate-500">Agent Assigné</div>
-                                <div class="text-sm font-semibold text-[#12312E]">Junior Kouassi</div>
-                            </div>
-                        </div>
-
-                        <div class="bg-[#A3D977]/10 border border-[#A3D977] rounded-xl p-4 text-xs text-slate-600">
-                            💡 **Règles d'affectation :** En cas d'absence, le coordonnateur peut libérer Junior Kouassi de son affectation en un clic et y affecter un remplaçant qualifié de la même zone tarifaire.
-                        </div>
-                    </div>
+                <div
+                  class="bg-white border border-slate-200 shadow-sm rounded-xl p-3 border border-slate-100 space-y-1 text-xs"
+                >
+                  <span class="text-slate-500 block">Formule adéquate :</span>
+                  <div
+                    id="demo-formula-badge"
+                    class="font-semibold text-slate-900"
+                  >
+                    Formule Pro
+                  </div>
                 </div>
+              </div>
 
-                <!-- Step 3 Content -->
-                <div id="step-3-content" class="step-content space-y-6 hidden">
-                    <div>
-                        <span class="text-xs font-semibold uppercase tracking-wider text-[#A3D977]">Pointage Mobile</span>
-                        <h2 class="text-2xl font-bold mt-1">Scan de la Carte QR Code</h2>
-                    </div>
-                    <div class="flex flex-col md:flex-row gap-6 items-center">
-                        <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-200 flex flex-col items-center justify-center w-48 h-48 bg-white/5">
-                            <!-- Simulated QR Code -->
-                            <div class="w-32 h-32 bg-white p-2 rounded-lg flex items-center justify-center">
-                                <svg class="w-full h-full text-black" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm13-2h3v2h-3zm-3 3h3v3h-3zm3 3h3v-3h-3zm-3-3v-3h-3v3zm-3 3h3v-3h-3z"/>
-                                </svg>
-                            </div>
-                            <div class="text-[10px] text-slate-500 mt-2">CARTE #ST-77901</div>
-                        </div>
-                        <div class="flex-grow space-y-3">
-                            <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100">
-                                <div class="text-xs text-slate-500">Statut du scan</div>
-                                <div class="text-sm font-bold text-[#A3D977] flex items-center gap-2 mt-1">
-                                    <span class="w-2 h-2 rounded-full bg-green-400 animate-ping"></span>
-                                    Arrivée Validée : 19h00
-                                </div>
-                            </div>
-                            <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100">
-                                <div class="text-xs text-slate-500">Validateur (Employeur/Superviseur)</div>
-                                <div class="text-sm text-slate-900/70">Responsable de Site - Bolloré</div>
-                            </div>
-                        </div>
-                    </div>
+              <div
+                class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100 bg-white/5 flex flex-col justify-center items-center text-center space-y-2"
+              >
+                <span class="text-[10px] text-slate-500 uppercase"
+                  >Abonnement Mensuel</span
+                >
+                <div
+                  id="demo-price-val"
+                  class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-indigo-400"
+                >
+                  120 000 FCFA
                 </div>
-
-                <!-- Step 4 Content -->
-                <div id="step-4-content" class="step-content space-y-6 hidden">
-                    <div>
-                        <span class="text-xs font-semibold uppercase tracking-wider text-yellow-400">Finances & Comptabilité</span>
-                        <h2 class="text-2xl font-bold mt-1">Clôture du mois : Paie</h2>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100 space-y-2">
-                            <div class="text-xs text-[#A3D977] font-bold">1. Bulletin d'Agent</div>
-                            <div class="flex justify-between text-sm">
-                                <span>Heures Travaillées :</span>
-                                <span class="font-semibold">168 h</span>
-                            </div>
-                            <div class="flex justify-between text-sm">
-                                <span>Salaire Brut :</span>
-                                <span class="font-semibold text-[#A3D977]">201 600 FCFA</span>
-                            </div>
-                            <div class="flex justify-between text-sm border-t border-slate-200 pt-2 text-xs text-slate-500">
-                                <span>Cotisations CNPS incluses</span>
-                            </div>
-                        </div>
-
-
-                    </div>
-                </div>
-
-                <!-- Step 5 Content -->
-                <div id="step-5-content" class="step-content space-y-6 hidden">
-                    <div>
-                        <span class="text-xs font-semibold uppercase tracking-wider text-red-400">Simulation d'Abonnement</span>
-                        <h2 class="text-2xl font-bold mt-1">Estimez vos Tarifs & Obtenez votre Devis</h2>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-xs text-slate-500 mb-1 flex justify-between">
-                                    <span>Volume d'agents prévus :</span>
-                                    <span id="demo-agent-val" class="font-bold text-red-400">45 agents</span>
-                                </label>
-                                <input id="demo-agent-slider" type="range" min="5" max="250" value="45" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-red-500" oninput="updateDemoPricing()">
-                                <div class="flex justify-between text-[10px] text-slate-900/30 mt-1">
-                                    <span>5 agents</span>
-                                    <span>125 agents</span>
-                                    <span>250 agents</span>
-                                </div>
-                            </div>
-                            
-                            <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-3 border border-slate-100 space-y-1 text-xs">
-                                <span class="text-slate-500 block">Formule adéquate :</span>
-                                <div id="demo-formula-badge" class="font-semibold text-slate-900">Formule Pro</div>
-                            </div>
-                        </div>
-
-                        <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100 bg-white/5 flex flex-col justify-center items-center text-center space-y-2">
-                            <span class="text-[10px] text-slate-500 uppercase">Abonnement Mensuel</span>
-                            <div id="demo-price-val" class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-indigo-400">120 000 FCFA</div>
-                            <span class="text-[10px] text-slate-900/30">Hébergement cloud & Mises à jour incluses</span>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-100 pt-4">
-                        <div id="demo-quote-form" class="space-y-3">
-                            <p class="text-xs text-slate-500 font-medium">Générez instantanément votre devis de démonstration :</p>
-                            <div class="flex gap-2">
-                                <input id="demo-company" type="text" placeholder="Nom de l'entreprise" class="flex-1 bg-white/5 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-red-500 text-slate-900">
-                                <button onclick="generateDemoQuote()" class="bg-red-600 hover:bg-red-500 text-slate-900 px-4 py-2 rounded-xl text-xs font-semibold transition-all">
-                                    Simuler le Devis
-                                </button>
-                            </div>
-                        </div>
-                        <div id="demo-quote-result" class="hidden bg-white border border-slate-200 shadow-sm rounded-xl p-3 border border-red-500/20 bg-red-500/5 text-xs flex items-center justify-between">
-                            <div>
-                                <span class="text-[#A3D977] font-semibold">✓ Devis généré avec succès !</span>
-                                <p class="text-slate-500 mt-1">Fichier de devis disponible au téléchargement.</p>
-                            </div>
-                            <button onclick="downloadDemoQuoteTxt()" class="bg-white/10 hover:bg-white/20 text-slate-900 px-3 py-1.5 rounded-lg font-medium">
-                                Télécharger (.txt)
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Action Button at the bottom -->
-                <div class="mt-8 flex justify-between items-center border-t border-slate-200 pt-4">
-                    <span class="text-xs text-slate-900/30">SimpleTaff Demonstration Concept</span>
-                    <button onclick="nextStep()" class="bg-brand-dark text-slate-900 hover:bg-[#0d2421] transition-colors px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-2">
-                        Continuer la démo →
-                    </button>
-                </div>
+                <span class="text-[10px] text-slate-900/30"
+                  >Hébergement cloud & Mises à jour incluses</span
+                >
+              </div>
             </div>
+
+            <div class="border-t border-slate-100 pt-4">
+              <div id="demo-quote-form" class="space-y-3">
+                <p class="text-xs text-slate-500 font-medium">
+                  Générez instantanément votre devis de démonstration :
+                </p>
+                <div class="flex gap-2">
+                  <input
+                    id="demo-company"
+                    type="text"
+                    placeholder="Nom de l'entreprise"
+                    class="flex-1 bg-white/5 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-red-500 text-slate-900"
+                  />
+                  <button
+                    onclick="generateDemoQuote()"
+                    class="bg-red-600 hover:bg-red-500 text-slate-900 px-4 py-2 rounded-xl text-xs font-semibold transition-all"
+                  >
+                    Simuler le Devis
+                  </button>
+                </div>
+              </div>
+              <div
+                id="demo-quote-result"
+                class="hidden bg-white border border-slate-200 shadow-sm rounded-xl p-3 border border-red-500/20 bg-red-500/5 text-xs flex items-center justify-between"
+              >
+                <div>
+                  <span class="text-[#A3D977] font-semibold"
+                    >✓ Devis généré avec succès !</span
+                  >
+                  <p class="text-slate-500 mt-1">
+                    Fichier de devis disponible au téléchargement.
+                  </p>
+                </div>
+                <button
+                  onclick="downloadDemoQuoteTxt()"
+                  class="bg-white/10 hover:bg-white/20 text-slate-900 px-3 py-1.5 rounded-lg font-medium"
+                >
+                  Télécharger (.txt)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Button at the bottom -->
+          <div
+            class="mt-8 flex justify-between items-center border-t border-slate-200 pt-4"
+          >
+            <span class="text-xs text-slate-900/30"
+              >SimpleTaff Demonstration Concept</span
+            >
+            <button
+              onclick="nextStep()"
+              class="bg-brand-dark text-slate-900 hover:bg-[#0d2421] transition-colors px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-2"
+            >
+              Continuer la démo →
+            </button>
+          </div>
         </div>
+      </div>
     </main>
 
     <script src="/vitrine/demo.js"></script>
-</body>
+  </body>
 </html>
