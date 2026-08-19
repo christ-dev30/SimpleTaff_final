@@ -90,14 +90,20 @@ async function loadOverview() {
           : allAgents || [];
       const countByJob = {};
       dataSource.forEach((a) => {
+        let emploisText = null;
+        if (a.emplois && Array.isArray(a.emplois) && a.emplois.length > 0) {
+           emploisText = a.emplois.map(e => e.libelle).join(", ");
+        }
         let job = (
           a.posteLibelle ||
           a.poste ||
+          emploisText ||
           a.emploi ||
           a.titre ||
           "Autre"
-        ).trim();
-        if (job === "—") job = "Autre";
+        );
+        if (typeof job === 'string') job = job.trim();
+        if (job === "—" || !job) job = "Autre";
         job = job.charAt(0).toUpperCase() + job.slice(1).toLowerCase();
         countByJob[job] = (countByJob[job] || 0) + 1;
       });
