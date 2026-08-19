@@ -751,11 +751,11 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                                 
                                 // Bar
                                 const barDiv = document.createElement('div');
-                                barDiv.className = `w-full ${bgColor} rounded-full relative group transition-all duration-500`;
+                                barDiv.className = `w-full ${bgColor} rounded-full relative transition-all duration-500`;
                                 barDiv.style.height = `${heightPercent}%`;
                                 barDiv.innerHTML = `
-                                    <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-1 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap">
-                                        ${zc.pourcentage}% (${zc.presents}/${zc.attendus})
+                                    <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm z-10 whitespace-nowrap">
+                                        ${zc.pourcentage}%
                                     </div>
                                 `;
                                 chartContainer.appendChild(barDiv);
@@ -769,28 +769,6 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                             });
                         }
                     }
-
-                    // Render Remplacement Urgent Alerts
-                    const alertesContainer = document.getElementById('alerteRemplacementContainer');
-                    if (alertesContainer && stats.alertesRemplacement) {
-                        alertesContainer.innerHTML = '';
-                        if (stats.alertesRemplacement.length === 0) {
-                            alertesContainer.innerHTML = '<div class="text-center text-emerald-600 font-medium my-auto"><div class="text-2xl mb-2">✅</div>Tous les agents sont présents !</div>';
-                        } else {
-                            stats.alertesRemplacement.forEach(alerte => {
-                                alertesContainer.innerHTML += `
-                                    <div class="bg-rose-50/50 border border-rose-100 rounded-xl p-3 flex flex-col gap-2">
-                                        <div>
-                                            <h4 class="text-sm font-bold text-rose-900 leading-tight">${alerte.site}</h4>
-                                            <p class="text-[10px] text-rose-500 font-medium">Manquant: <span class="font-bold">${alerte.agentManquant}</span></p>
-                                        </div>
-                                        <button onclick="alert('Demande de remplacement envoyée à l\\'administrateur pour : ' + '${alerte.agentManquant}')" class="bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 w-full py-1.5 rounded-lg font-bold text-[11px] shadow-sm transition-all">
-                                            Signaler à l'Administrateur
-                                        </button>
-                                    </div>
-                                `;
-                            });
-                        }
                     }
                 }
             } catch(e) {
