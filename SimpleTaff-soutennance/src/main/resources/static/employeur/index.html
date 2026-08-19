@@ -275,24 +275,22 @@
 
         <!-- Project Progress (Col span 5 - Expanded!) -->
         <div class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72 justify-between">
-            <h3 class="font-bold text-slate-900 mb-2">Indice de Satisfaction</h3>
+            <h3 class="font-bold text-slate-900 mb-2">Indice de Satisfaction Global</h3>
             
             <div class="relative flex-1 flex items-center justify-center">
                 <svg viewBox="0 0 100 100" class="w-40 h-40 transform -rotate-90">
                     <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="15" fill="none"></circle>
-                    <circle cx="50" cy="50" r="40" stroke="#12312E" stroke-width="15" fill="none" stroke-dasharray="100 150" stroke-linecap="round"></circle>
-                    <circle cx="50" cy="50" r="40" stroke="#A3D977" stroke-width="15" fill="none" stroke-dasharray="60 190" stroke-dashoffset="-100" stroke-linecap="round"></circle>
+                    <circle id="satisfactionCircle" cx="50" cy="50" r="40" stroke="#12312E" stroke-width="15" fill="none" stroke-dasharray="0 251.2" stroke-linecap="round" class="transition-all duration-1000 ease-out"></circle>
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center">
                     <span id="statIndiceSatisfaction" class="text-3xl font-extrabold text-[#12312E]">0%</span>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Objectif</span>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Moyenne</span>
                 </div>
             </div>
 
-            <div class="flex items-center justify-between text-xs font-bold text-slate-600 mt-4 px-4">
-                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#12312E]"></span> Validé</div>
-                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#A3D977]"></span> Partiel</div>
-                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span> À risque</div>
+            <div class="flex items-center justify-center gap-6 text-xs font-bold text-slate-600 mt-4 px-4">
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#12312E]"></span> Obtenu</div>
+                <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span> À améliorer</div>
             </div>
         </div>
     </div>

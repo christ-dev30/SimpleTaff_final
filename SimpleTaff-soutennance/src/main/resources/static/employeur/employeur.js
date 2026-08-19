@@ -348,7 +348,19 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                         if (dAffecte) dAffecte.textContent = statsRes.dernierAffecte || 'Aucun';
                         
                         const iSatisfaction = document.getElementById('statIndiceSatisfaction');
-                        if (iSatisfaction) iSatisfaction.textContent = (statsRes.indiceSatisfaction || 0) + '%';
+                        if (iSatisfaction) {
+                            const satisfactionRate = statsRes.indiceSatisfaction || 0;
+                            iSatisfaction.textContent = satisfactionRate + '%';
+                            
+                            const satisfactionCircle = document.getElementById('satisfactionCircle');
+                            if(satisfactionCircle) {
+                                const maxDash = 251.2;
+                                const dash = (satisfactionRate / 100) * maxDash;
+                                setTimeout(() => {
+                                    satisfactionCircle.style.strokeDasharray = `${dash} ${maxDash}`;
+                                }, 100);
+                            }
+                        }
                     }
                 } catch (eStats) {
                     console.warn("Could not load stats", eStats);
