@@ -461,7 +461,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     if (Array.isArray(evals) && evals.length > 0) {
                         const totalScore = evals.reduce((sum, e) => sum + (e.scoreGlobal || e.scoreTotal || 8), 0);
                         const avg = (totalScore / evals.length).toFixed(1);
-                        document.getElementById('statOverviewEvals').textContent = `${avg} / 10`;
+                        document.getElementById('statOverviewEvals').textContent = `${avg} / 80`;
                     } else {
                         document.getElementById('statOverviewEvals').textContent = '—';
                     }
