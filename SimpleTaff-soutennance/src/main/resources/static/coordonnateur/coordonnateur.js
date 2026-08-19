@@ -784,8 +784,8 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                                             <h4 class="text-sm font-bold text-rose-900 leading-tight">${alerte.site}</h4>
                                             <p class="text-[10px] text-rose-500 font-medium">Manquant: <span class="font-bold">${alerte.agentManquant}</span></p>
                                         </div>
-                                        <button onclick="window.showTab('affectations')" class="bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 w-full py-1.5 rounded-lg font-bold text-[11px] shadow-sm transition-all">
-                                            Affecter un Remplaçant
+                                        <button onclick="alert('Demande de remplacement envoyée à l\\'administrateur pour : ' + '${alerte.agentManquant}')" class="bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 w-full py-1.5 rounded-lg font-bold text-[11px] shadow-sm transition-all">
+                                            Signaler à l'Administrateur
                                         </button>
                                     </div>
                                 `;
