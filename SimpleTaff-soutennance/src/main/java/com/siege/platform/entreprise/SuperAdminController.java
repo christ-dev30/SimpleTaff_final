@@ -39,11 +39,29 @@ public class SuperAdminController {
         Long actifs = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM entreprise WHERE statut = 'ACTIF'", Long.class);
         Long coordonnateurs = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM utilisateur WHERE role = 'COORDONNATEUR'", Long.class);
         
+        Long revenuMensuel = jdbcTemplate.queryForObject("SELECT SUM(CASE WHEN formule_abonnement = 'STARTER' THEN 49000 WHEN formule_abonnement = 'PRO' THEN 120000 ELSE 0 END) FROM entreprise WHERE statut = 'ACTIF'", Long.class);
+        
+        Long currentMonthCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM entreprise WHERE YEAR(date_creation) = YEAR(CURRENT_DATE) AND MONTH(date_creation) = MONTH(CURRENT_DATE)", Long.class);
+        Long lastMonthCount = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM entreprise WHERE YEAR(date_creation) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(date_creation) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH)", Long.class);
+        
+        double croissance = 0;
+        if (lastMonthCount != null && lastMonthCount > 0) {
+            croissance = ((double) (currentMonthCount - lastMonthCount) / lastMonthCount) * 100;
+        } else if (currentMonthCount != null && currentMonthCount > 0) {
+            croissance = 100; // si aucun client le mois dernier mais des clients ce mois-ci
+        }
+
+        List<Map<String, Object>> derniersClients = jdbcTemplate.queryForList("SELECT nom, statut, date_creation FROM entreprise ORDER BY date_creation DESC LIMIT 5");
+        List<Map<String, Object>> nouveauxAdmins = jdbcTemplate.queryForList("SELECT nom, prenom, email, date_creation FROM utilisateur WHERE role = 'ADMIN_ENTREPRISE' ORDER BY date_creation DESC LIMIT 5");
+
         return ResponseEntity.ok(Map.of(
             "totalClients", totalClients != null ? totalClients : 0L,
             "abonnementsActifs", actifs != null ? actifs : 0L,
             "coordonnateurs", coordonnateurs != null ? coordonnateurs : 0L,
-            "ticketsSupport", 0L
+            "revenuMensuel", revenuMensuel != null ? revenuMensuel : 0L,
+            "croissanceMensuelle", Math.round(croissance),
+            "derniersClients", derniersClients,
+            "nouveauxAdmins", nouveauxAdmins
         ));
     }
 

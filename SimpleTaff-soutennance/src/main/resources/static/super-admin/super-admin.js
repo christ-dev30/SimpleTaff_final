@@ -158,8 +158,56 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     if (document.getElementById('statTotal')) {
                         document.getElementById('statTotal').textContent = res.coordonnateurs || 0;
                     }
-                    if (document.getElementById('statSupport')) {
-                        document.getElementById('statSupport').textContent = res.ticketsSupport || 0;
+                    
+                    if (document.getElementById('revenuSaasVal')) {
+                        const fmt = new Intl.NumberFormat('fr-FR').format(res.revenuMensuel || 0);
+                        document.getElementById('revenuSaasVal').textContent = `${fmt} FCFA`;
+                    }
+                    if (document.getElementById('croissanceValue')) {
+                        document.getElementById('croissanceValue').textContent = `${res.croissanceMensuelle || 0}%`;
+                    }
+
+                    const clientsTbody = document.getElementById('dashboardDerniersClientsTable');
+                    if (clientsTbody && res.derniersClients) {
+                        if (res.derniersClients.length === 0) {
+                            clientsTbody.innerHTML = '<tr><td class="py-2 text-slate-500 text-center">Aucun client récent</td></tr>';
+                        } else {
+                            clientsTbody.innerHTML = res.derniersClients.map(c => `
+                                <tr>
+                                    <td class="py-3">
+                                        <div class="font-bold text-slate-800">${c.nom || 'N/A'}</div>
+                                        <div class="text-[10px] text-slate-400">${new Date(c.date_creation).toLocaleDateString()}</div>
+                                    </td>
+                                    <td class="py-3 text-right">
+                                        <span class="badge ${c.statut === 'ACTIF' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">${c.statut}</span>
+                                    </td>
+                                </tr>
+                            `).join('');
+                        }
+                    }
+
+                    const adminsTbody = document.getElementById('dashboardAdminsTable');
+                    if (adminsTbody && res.nouveauxAdmins) {
+                        if (res.nouveauxAdmins.length === 0) {
+                            adminsTbody.innerHTML = '<tr><td class="py-2 text-slate-500 text-center">Aucun administrateur récent</td></tr>';
+                        } else {
+                            adminsTbody.innerHTML = res.nouveauxAdmins.map(a => `
+                                <tr>
+                                    <td class="py-3 flex gap-3 items-center">
+                                        <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600 text-xs">
+                                            ${(a.nom?.[0] || '')}${(a.prenom?.[0] || '')}
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-slate-800">${a.prenom} ${a.nom}</div>
+                                            <div class="text-[10px] text-slate-400">${a.email}</div>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 text-right text-[10px] text-slate-400">
+                                        ${new Date(a.date_creation).toLocaleDateString()}
+                                    </td>
+                                </tr>
+                            `).join('');
+                        }
                     }
                 }
             } catch (err) {
