@@ -20,10 +20,12 @@ public class SuperAdminController {
 
     private final EntrepriseRepository entrepriseRepository;
     private final JdbcTemplate jdbcTemplate;
+    private final com.siege.platform.notification.NotificationService notificationService;
 
-    public SuperAdminController(EntrepriseRepository entrepriseRepository, JdbcTemplate jdbcTemplate) {
+    public SuperAdminController(EntrepriseRepository entrepriseRepository, JdbcTemplate jdbcTemplate, com.siege.platform.notification.NotificationService notificationService) {
         this.entrepriseRepository = entrepriseRepository;
         this.jdbcTemplate = jdbcTemplate;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/entreprises")
@@ -127,6 +129,9 @@ public class SuperAdminController {
         entreprise.setStatut(StatutEntreprise.ACTIF);
 
         Entreprise saved = entrepriseRepository.save(entreprise);
+        
+        notificationService.creerAlerte(saved, "SUPER_ADMIN", "Nouvelle entreprise cliente enregistrée : " + nom);
+        
         return ResponseEntity.ok(saved);
     }
 
@@ -137,6 +142,7 @@ public class SuperAdminController {
                 .map(entreprise -> {
                     entreprise.setStatut(StatutEntreprise.SUSPENDUE);
                     entrepriseRepository.save(entreprise);
+                    notificationService.creerAlerte(entreprise, "SUPER_ADMIN", "L'entreprise " + entreprise.getNom() + " a été suspendue.");
                     return ResponseEntity.noContent().build();
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -149,6 +155,7 @@ public class SuperAdminController {
                 .map(entreprise -> {
                     entreprise.setStatut(StatutEntreprise.ACTIF);
                     entrepriseRepository.save(entreprise);
+                    notificationService.creerAlerte(entreprise, "SUPER_ADMIN", "L'entreprise " + entreprise.getNom() + " a été réactivée.");
                     return ResponseEntity.noContent().build();
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -167,6 +174,9 @@ public class SuperAdminController {
     @Transactional
     public ResponseEntity<?> supprimerEntreprise(@PathVariable("id") UUID id) {
         try {
+            // Check if enterprise exists before deleting to get its name
+            String nomEntreprise = entrepriseRepository.findById(id).map(Entreprise::getNom).orElse("Inconnue");
+            
             // Dans Hibernate 6 avec MySQL, les UUID sont stockés en binary(16).
             // JdbcTemplate ne fait pas la conversion automatique, on passe donc un byte[].
             byte[] idBytes = uuidToBytes(id);
@@ -223,6 +233,7 @@ public class SuperAdminController {
             int rowsDeleted = jdbcTemplate.update("DELETE FROM entreprise WHERE id = ?", idBytes);
             
             if (rowsDeleted > 0) {
+                notificationService.creerAlerte(null, "SUPER_ADMIN", "L'entreprise " + nomEntreprise + " a été définitivement supprimée.");
                 return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.notFound().build();

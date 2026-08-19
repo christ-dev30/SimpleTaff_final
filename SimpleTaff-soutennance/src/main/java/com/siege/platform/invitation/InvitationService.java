@@ -24,18 +24,21 @@ public class InvitationService {
     private final UtilisateurRepository utilisateurRepository;
     private final JavaMailSender mailSender;
     private final PasswordEncoder passwordEncoder;
+    private final com.siege.platform.notification.NotificationService notificationService;
 
     public InvitationService(
             InvitationEntrepriseRepository invitationRepository,
             EntrepriseRepository entrepriseRepository,
             UtilisateurRepository utilisateurRepository,
             JavaMailSender mailSender,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            com.siege.platform.notification.NotificationService notificationService) {
         this.invitationRepository = invitationRepository;
         this.entrepriseRepository = entrepriseRepository;
         this.utilisateurRepository = utilisateurRepository;
         this.mailSender = mailSender;
         this.passwordEncoder = passwordEncoder;
+        this.notificationService = notificationService;
     }
 
     /**
@@ -118,6 +121,9 @@ public class InvitationService {
         // Marquer le token comme utilisé
         invitation.setUtilise(true);
         invitationRepository.save(invitation);
+        
+        // Envoyer une notification au super admin
+        notificationService.creerAlerte(entreprise, "SUPER_ADMIN", "L'entreprise " + entreprise.getNom() + " a finalisé son inscription (Abonnement Actif).");
     }
 
     private void envoyerEmailInvitation(String destinataire, String nomEntreprise, String lien, String formule) {

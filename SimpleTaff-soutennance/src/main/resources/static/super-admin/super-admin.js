@@ -67,11 +67,12 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
             const tbody = document.getElementById('entreprisesTable');
             try {
                 const data = await apiFetch('/superadmin/entreprises');
+                window.entreprises = data;
                 const actives = data.filter(e => e.statut === 'ACTIF' || e.statut === 'ACTIVE').length;
                 const pending = data.filter(e => e.statut === 'INACTIF' || e.statut === 'SUSPENDUE').length;
-                document.getElementById('statActives').textContent = actives;
-                document.getElementById('statPending').textContent = pending;
-                document.getElementById('statTotal').textContent = data.length;
+                if (document.getElementById('statActives')) document.getElementById('statActives').textContent = actives;
+                if (document.getElementById('statPending')) document.getElementById('statPending').textContent = pending;
+                if (document.getElementById('statTotal')) document.getElementById('statTotal').textContent = data.length;
 
                 tbody.innerHTML = data.map(e => {
                     let statusColor = 'bg-rose-100 text-rose-700';
@@ -207,6 +208,9 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     }
 
                     const adminsTbody = document.getElementById('dashboardAdminsTable');
+                    if (res.nouveauxAdmins) {
+                        window.admins = res.nouveauxAdmins;
+                    }
                     if (adminsTbody && res.nouveauxAdmins) {
                         if (res.nouveauxAdmins.length === 0) {
                             adminsTbody.innerHTML = '<tr><td class="py-2 text-slate-500 text-center">Aucun administrateur récent</td></tr>';
@@ -297,6 +301,7 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
             if (!checkAuth()) { window.location.href = '/vitrine/login.html'; return; }
             loadEntreprises();
             loadOverview();
+            loadNotifications();
             
             document.querySelectorAll('.sidebar-link').forEach(link => {
                 link.addEventListener('click', () => {
@@ -325,23 +330,12 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 
                 let results = [];
                 
-                // Search Agents
-                if (window.agents) {
-                    window.agents.forEach(a => {
+                // Search Admins
+                if (window.admins) {
+                    window.admins.forEach(a => {
                         const name = ((a.nom||'') + ' ' + (a.prenom||'')).toLowerCase();
-                        if (name.includes(q) || (a.telephone||'').includes(q)) {
-                            results.push({ type: 'Agent', icon: '👤', text: (a.nom||'') + ' ' + (a.prenom||''), tab: 'agents', action: () => { showTab('agents'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
-                        }
-                    });
-                }
-                
-                // Search Affectations
-                if (window.affectations) {
-                    window.affectations.forEach(a => {
-                        const name = (a.agentNom || '').toLowerCase();
-                        const site = (a.siteNom || '').toLowerCase();
-                        if (name.includes(q) || site.includes(q)) {
-                            results.push({ type: 'Affectation', icon: '🏢', text: (a.agentNom||'') + ' - ' + (a.siteNom||''), tab: 'affectations', action: () => { showTab('affectations'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
+                        if (name.includes(q) || (a.email||'').toLowerCase().includes(q) || (a.entreprise_nom||'').toLowerCase().includes(q)) {
+                            results.push({ type: 'Administrateur', icon: '👤', text: (a.prenom||'') + ' ' + (a.nom||''), tab: 'dashboard', action: () => { showTab('dashboard'); searchInput.value=''; searchDropdown.classList.add('hidden'); }});
                         }
                     });
                 }
