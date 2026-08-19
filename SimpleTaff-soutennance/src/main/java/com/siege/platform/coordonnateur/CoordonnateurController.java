@@ -28,9 +28,9 @@ public class CoordonnateurController {
     private final PointageRepository pointageRepo;
     private final com.siege.platform.agent.AgentTerrainService agentTerrainService;
     private final com.siege.platform.pointage.CarteAgentRepository carteAgentRepository;
-
     private final com.siege.platform.materiel.DemandeMaterielRepository demandeMaterielRepo;
     private final com.siege.platform.evaluation.EvaluationAgentRepository evaluationAgentRepo;
+    private final com.siege.platform.structuredemandeuse.SiteRepository siteRepo;
 
     public CoordonnateurController(AgentTerrainRepository agentRepo,
                                     AffectationRepository affectationRepo,
@@ -39,7 +39,8 @@ public class CoordonnateurController {
                                     com.siege.platform.agent.AgentTerrainService agentTerrainService,
                                     com.siege.platform.pointage.CarteAgentRepository carteAgentRepository,
                                     com.siege.platform.materiel.DemandeMaterielRepository demandeMaterielRepo,
-                                    com.siege.platform.evaluation.EvaluationAgentRepository evaluationAgentRepo) {
+                                    com.siege.platform.evaluation.EvaluationAgentRepository evaluationAgentRepo,
+                                    com.siege.platform.structuredemandeuse.SiteRepository siteRepo) {
         this.agentRepo = agentRepo;
         this.affectationRepo = affectationRepo;
         this.zoneRepo = zoneRepo;
@@ -48,6 +49,7 @@ public class CoordonnateurController {
         this.carteAgentRepository = carteAgentRepository;
         this.demandeMaterielRepo = demandeMaterielRepo;
         this.evaluationAgentRepo = evaluationAgentRepo;
+        this.siteRepo = siteRepo;
     }
 
     @GetMapping("/stats")
@@ -259,6 +261,8 @@ public class CoordonnateurController {
     @GetMapping("/zones")
     public ResponseEntity<List<Map<String, Object>>> getZones() {
         List<Zone> zones = zoneRepo.findAll();
+        List<com.siege.platform.structuredemandeuse.Site> allSites = siteRepo.findAll();
+        
         List<Map<String, Object>> result = new ArrayList<>();
         for (Zone z : zones) {
             Map<String, Object> map = new LinkedHashMap<>();
@@ -267,6 +271,13 @@ public class CoordonnateurController {
             map.put("description", z.getDescription());
             map.put("perimetre", z.getPerimetre());
             map.put("statut", z.getStatut());
+            
+            List<String> sitesInZone = allSites.stream()
+                    .filter(s -> s.getZone() != null && s.getZone().getId().equals(z.getId()))
+                    .map(com.siege.platform.structuredemandeuse.Site::getNom)
+                    .toList();
+            map.put("sites", sitesInZone);
+            
             result.add(map);
         }
         return ResponseEntity.ok(result);

@@ -460,9 +460,10 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                         <div class="w-9 h-9 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
                             <svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
                         </div>
-                        <div>
+                        <div class="flex-1">
                             <p class="font-bold text-slate-900 text-sm">${z.nom}</p>
                             <p class="text-xs text-slate-400 mt-0.5">${z.perimetre || z.description || '—'}</p>
+                            ${z.sites && z.sites.length > 0 ? `<div class="mt-2 flex flex-wrap gap-1">${z.sites.map(s => `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-medium border border-slate-200">${s}</span>`).join('')}</div>` : ''}
                         </div>
                         <span class="ml-auto badge ${z.statut === 'ACTIF' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}">${z.statut}</span>
                     </div>`).join('');
