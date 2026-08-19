@@ -90,6 +90,16 @@ public class AgentTerrainController {
             map.put("ville", a.getVille());
             map.put("email", a.getEmail());
             
+            if (a.getEmplois() != null && !a.getEmplois().isEmpty()) {
+                java.util.List<String> libelles = new java.util.ArrayList<>();
+                for (com.siege.platform.emploi.Emploi e : a.getEmplois()) {
+                    libelles.add(e.getLibelle());
+                }
+                map.put("titre", String.join(", ", libelles));
+            } else {
+                map.put("titre", "Autre");
+            }
+            
             if (a.getCreatedByCoordonnateur() != null) {
                 map.put("createdByCoordonnateurId", a.getCreatedByCoordonnateur().getId());
                 map.put("createdByCoordonnateurNomPrenom", a.getCreatedByCoordonnateur().getNom() + " " + a.getCreatedByCoordonnateur().getPrenom());
