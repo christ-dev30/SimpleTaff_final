@@ -735,62 +735,79 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     document.getElementById('statPointages').textContent = stats.demandesMateriel ?? '—';
                     const statDemandes = document.getElementById('statDemandesMateriel');
                     if(statDemandes) statDemandes.textContent = stats.rapportsIncidents ?? '—';
+                    
+                    // Render Zones Coverage Chart
+                    const chartContainer = document.getElementById('zoneCoverageChartContainer');
+                    const labelsContainer = document.getElementById('zoneCoverageLabels');
+                    if (chartContainer && labelsContainer && stats.zonesCoverage) {
+                        chartContainer.innerHTML = '';
+                        labelsContainer.innerHTML = '';
+                        if (stats.zonesCoverage.length === 0) {
+                            chartContainer.innerHTML = '<div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm">Aucune donnée</div>';
+                        } else {
+                            stats.zonesCoverage.forEach(zc => {
+                                const heightPercent = Math.max(10, Math.min(100, zc.pourcentage));
+                                const bgColor = zc.pourcentage >= 80 ? 'bg-[#12312E]' : (zc.pourcentage >= 50 ? 'bg-[#A3D977]' : 'bg-rose-400');
+                                
+                                // Bar
+                                const barDiv = document.createElement('div');
+                                barDiv.className = `w-full ${bgColor} rounded-full relative group transition-all duration-500`;
+                                barDiv.style.height = `${heightPercent}%`;
+                                barDiv.innerHTML = `
+                                    <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-1 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap">
+                                        ${zc.pourcentage}% (${zc.presents}/${zc.attendus})
+                                    </div>
+                                `;
+                                chartContainer.appendChild(barDiv);
+                                
+                                // Label
+                                const labelSpan = document.createElement('span');
+                                labelSpan.className = "truncate w-full text-center px-1";
+                                labelSpan.title = zc.zone;
+                                labelSpan.textContent = zc.zone.substring(0, 3);
+                                labelsContainer.appendChild(labelSpan);
+                            });
+                        }
+                    }
+
+                    // Render Remplacement Urgent Alerts
+                    const alertesContainer = document.getElementById('alerteRemplacementContainer');
+                    if (alertesContainer && stats.alertesRemplacement) {
+                        alertesContainer.innerHTML = '';
+                        if (stats.alertesRemplacement.length === 0) {
+                            alertesContainer.innerHTML = '<div class="text-center text-emerald-600 font-medium my-auto"><div class="text-2xl mb-2">✅</div>Tous les agents sont présents !</div>';
+                        } else {
+                            stats.alertesRemplacement.forEach(alerte => {
+                                alertesContainer.innerHTML += `
+                                    <div class="bg-rose-50/50 border border-rose-100 rounded-xl p-3 flex flex-col gap-2">
+                                        <div>
+                                            <h4 class="text-sm font-bold text-rose-900 leading-tight">${alerte.site}</h4>
+                                            <p class="text-[10px] text-rose-500 font-medium">Manquant: <span class="font-bold">${alerte.agentManquant}</span></p>
+                                        </div>
+                                        <button onclick="window.showTab('affectations')" class="bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 w-full py-1.5 rounded-lg font-bold text-[11px] shadow-sm transition-all">
+                                            Affecter un Remplaçant
+                                        </button>
+                                    </div>
+                                `;
+                            });
+                        }
+                    }
                 }
             } catch(e) {
                 console.error('Stats coordonnateur non disponibles', e);
             }
 
-            // 2. Dashboard List 1: Affectations récentes
-            const tbodyAffRec = document.getElementById('affectationsRecentesTable');
-            try {
-                const affectations = await apiFetch('/coordonnateur/affectations') || [];
-                if (tbodyAffRec) {
-                    if (affectations.length === 0) {
-                        tbodyAffRec.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400 font-medium">Aucune affectation active.</td></tr>';
-                    } else {
-                        tbodyAffRec.innerHTML = affectations.slice(0, 6).map(a => {
-                            const agentNom = a.agentNom || 'Agent Inconnu';
-                            const initials = agentNom.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'AG';
-                            const badge = (a.statut || '').toUpperCase() === 'ACTIVE' 
-                                ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 En Mission</span>'
-                                : '<span class="badge bg-slate-100 text-slate-600 font-medium">Clôturé</span>';
-                            const clientName = a.structureCliente && a.structureCliente !== '—' ? a.structureCliente : 'Client Inconnu';
-                            
-                            return `
-                                <tr class="hover:bg-slate-50/70 transition-colors border-b border-slate-100/60">
-                                    <td class="px-5 py-3.5">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-8 h-8 rounded-full bg-violet-600 text-white font-bold text-[11px] flex items-center justify-center shadow-xs">
-                                                ${initials}
-                                            </div>
-                                            <div>
-                                                <p class="font-bold text-slate-900 text-xs">${agentNom}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-5 py-3.5 text-slate-700 font-semibold">${clientName} <div class="font-normal text-[10px] text-slate-500">Site: ${a.siteNom || '—'}</div></td>
-                                    <td class="px-5 py-3.5 text-slate-700 font-semibold">${a.posteLibelle || '—'} <div class="font-normal text-[10px] text-slate-500">Zone: ${a.zoneNom || '—'}</div></td>
-                                    <td class="px-5 py-3.5 text-slate-500 font-medium"><div class="text-emerald-600 text-[10px]">Début: ${a.dateDebut ? formatDateLabel(a.dateDebut) : '—'}</div><div class="text-rose-500 text-[10px]">Fin: ${a.dateFin && a.dateFin !== '—' ? formatDateLabel(a.dateFin) : 'Indéterminée'}</div></td>
-                                    <td class="px-5 py-3.5 text-right">${badge}</td>
-                                </tr>
-                            `;
-                        }).join('');
-                    }
-                }
-            } catch (e) {
-                if (tbodyAffRec) tbodyAffRec.innerHTML = `<tr><td colspan="4" class="px-6 py-6 text-center text-red-400">${e.message}</td></tr>`;
-            }
-
-            // 3. Dashboard List 2: Pointages aujourd'hui
+            // 2. Dashboard List 1: Pointages aujourd'hui
             const tbodyPtRec = document.getElementById('pointagesRecentsDashboardTable');
             const todayStr = new Date().toISOString().slice(0, 10);
+            let todayPointagesList = [];
             try {
-                const pointages = await apiFetch(`/coordonnateur/pointages?date=${todayStr}`) || [];
+                todayPointagesList = await apiFetch(`/coordonnateur/pointages?date=${todayStr}`) || [];
                 if (tbodyPtRec) {
-                    if (pointages.length === 0) {
+                    if (todayPointagesList.length === 0) {
                         tbodyPtRec.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400 font-medium">Aucun pointage enregistré aujourd\'hui.</td></tr>';
                     } else {
-                        tbodyPtRec.innerHTML = pointages.slice(0, 6).map(p => {
+                        tbodyPtRec.innerHTML = todayPointagesList.slice(0, 6).map(p => {
                             const isEntree = (p.typePointage || '').toUpperCase() === 'ENTREE';
                             const badge = isEntree 
                                 ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 Entrée</span>'
@@ -810,6 +827,60 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 }
             } catch(e) {
                 if (tbodyPtRec) tbodyPtRec.innerHTML = `<tr><td colspan="4" class="px-6 py-6 text-center text-red-400">${e.message}</td></tr>`;
+            }
+
+            // 3. Dashboard List 2: Agents Actuellement sur Site (Affectations + Pointages)
+            const tbodyAffRec = document.getElementById('affectationsRecentesTable');
+            try {
+                const affectations = await apiFetch('/coordonnateur/affectations') || [];
+                if (tbodyAffRec) {
+                    const activeAffectations = affectations.filter(a => (a.statut || '').toUpperCase() === 'ACTIVE');
+                    if (activeAffectations.length === 0) {
+                        tbodyAffRec.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400 font-medium">Aucun agent actuellement assigné.</td></tr>';
+                    } else {
+                        tbodyAffRec.innerHTML = activeAffectations.slice(0, 6).map(a => {
+                            const agentNom = a.agentNom || 'Agent Inconnu';
+                            const initials = agentNom.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'AG';
+                            const clientName = a.structureCliente && a.structureCliente !== '—' ? a.structureCliente : 'Client Inconnu';
+                            
+                            // Check if agent clocked in today
+                            const pointageAjd = todayPointagesList.find(p => p.agentNom === agentNom);
+                            let statusBadge = '<span class="badge bg-slate-100 text-slate-600 font-medium">Non pointé</span>';
+                            let timeInfo = '<div class="text-slate-500 text-[10px]">En attente de prise de poste</div>';
+                            
+                            if (pointageAjd) {
+                                if ((pointageAjd.typePointage || '').toUpperCase() === 'ENTREE') {
+                                    statusBadge = '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 Sur Site</span>';
+                                    timeInfo = `<div class="text-emerald-600 text-[10px]">Arrivée: ${new Date(pointageAjd.dateHeureEntree || pointageAjd.dateHeure).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</div>`;
+                                } else {
+                                    statusBadge = '<span class="badge bg-rose-100 text-rose-700 font-bold">🔴 Fin de service</span>';
+                                    timeInfo = `<div class="text-rose-500 text-[10px]">Départ: ${new Date(pointageAjd.dateHeureSortie || pointageAjd.dateHeure).toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}</div>`;
+                                }
+                            }
+
+                            return `
+                                <tr class="hover:bg-slate-50/70 transition-colors border-b border-slate-100/60">
+                                    <td class="px-5 py-3.5">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-violet-600 text-white font-bold text-[11px] flex items-center justify-center shadow-xs">
+                                                ${initials}
+                                            </div>
+                                            <div>
+                                                <p class="font-bold text-slate-900 text-xs">${agentNom}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-5 py-3.5 text-slate-700 font-semibold">${clientName} <div class="font-normal text-[10px] text-slate-500">Site: ${a.siteNom || '—'}</div></td>
+                                    <td class="px-5 py-3.5 text-slate-700 font-semibold">${a.posteLibelle || '—'} <div class="font-normal text-[10px] text-slate-500">Zone: ${a.zoneNom || '—'}</div></td>
+                                    <td class="px-5 py-3.5 font-medium">${timeInfo}</td>
+                                    <td class="px-5 py-3.5 text-right">${statusBadge}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                }
+            } catch (e) {
+                if (tbodyAffRec) tbodyAffRec.innerHTML = `<tr><td colspan="4" class="px-6 py-6 text-center text-red-400">${e.message}</td></tr>`;
             }
         }
         window.loadOverview = loadOverview;

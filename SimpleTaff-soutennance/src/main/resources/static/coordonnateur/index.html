@@ -269,35 +269,21 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
         <!-- Analytics (Col span 5) -->
         <div class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
-            <h3 class="font-bold text-slate-900 mb-6">Couverture par Zone</h3>
-            <div class="flex-1 flex items-end justify-between gap-2 px-2 relative">
-                <!-- Bar chart mockup -->
-                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"></div>
-                <div class="w-full bg-[#12312E] rounded-full h-3/4"></div>
-                <div class="w-full bg-[#A3D977] rounded-full h-4/5 relative group">
-                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">74%</div>
-                </div>
-                <div class="w-full bg-[#12312E] rounded-full h-full"></div>
-                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/3"></div>
-                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"></div>
-                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/5"></div>
+            <h3 class="font-bold text-slate-900 mb-6">Couverture par Zone (%)</h3>
+            <div id="zoneCoverageChartContainer" class="flex-1 flex items-end justify-around gap-2 px-2 relative h-full">
+                <!-- Bars will be inserted here via JS -->
             </div>
-            <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3">
-                <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+            <div id="zoneCoverageLabels" class="flex justify-around text-[9px] font-bold text-slate-400 uppercase mt-4 px-1">
+                <!-- Labels will be inserted here via JS -->
             </div>
         </div>
 
         <!-- Reminders (Col span 3) -->
         <div class="lg:col-span-3 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
             <h3 class="font-bold text-slate-900 mb-4">Remplacement Urgent</h3>
-            <div class="flex-1 flex flex-col justify-center">
-                <h4 class="text-xl font-bold text-[#12312E] leading-tight">Zone Portuaire - Poste A2</h4>
-                <p class="text-xs text-slate-500 font-medium mt-2">Heure : 08h00 - 16h00</p>
+            <div id="alerteRemplacementContainer" class="flex-1 flex flex-col justify-start gap-3 overflow-y-auto pr-2">
+                <!-- Dynamic alerts will go here -->
             </div>
-            <button class="bg-[#12312E] hover:bg-[#0d2421] text-white w-full py-3 rounded-xl font-bold text-sm shadow-md transition-all flex justify-center items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                Affecter Agent
-            </button>
         </div>
 
         <!-- Project List (Col span 4) -->

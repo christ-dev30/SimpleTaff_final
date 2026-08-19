@@ -52,15 +52,68 @@ public class CoordonnateurController {
         stats.put("totalAgents", agentRepo.count());
         stats.put("totalAffectations", affectationRepo.count());
         
-        long pointagesJour = pointageRepo.countByDateHeureEntreeBetween(start, end);
-        long attendus = agentRepo.count();
+        List<Affectation> activeAffectations = affectationRepo.findAll().stream()
+                .filter(a -> "ACTIVE".equalsIgnoreCase(a.getStatut()) && a.getAgent() != null)
+                .toList();
+
+        long attendus = activeAffectations.size();
         
-        stats.put("pointagesAujourdhui", pointagesJour);
+        List<Pointage> todayPointages = pointageRepo.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(start, end);
+        Set<UUID> agentsPresents = new HashSet<>();
+        for (Pointage p : todayPointages) {
+            if (p.getAffectation() != null && p.getAffectation().getAgent() != null) {
+                agentsPresents.add(p.getAffectation().getAgent().getId());
+            }
+        }
+        long pointagesJour = agentsPresents.size();
+
+        stats.put("pointagesAujourdhui", todayPointages.size());
         stats.put("agentsAttendus", attendus);
         stats.put("agentsSurSite", pointagesJour);
         stats.put("absencesRetards", Math.max(0, attendus - pointagesJour));
         stats.put("demandesMateriel", 0); // Simulated
         stats.put("rapportsIncidents", 0); // Simulated
+
+        // Calculate Zones Coverage & Alerts
+        Map<String, int[]> zoneStats = new HashMap<>(); // zoneNom -> {attendus, presents}
+        List<Map<String, Object>> alertes = new ArrayList<>();
+
+        for (Affectation af : activeAffectations) {
+            String zoneNom = (af.getPoste() != null && af.getPoste().getSite() != null && af.getPoste().getSite().getZone() != null)
+                    ? af.getPoste().getSite().getZone().getNom() : "Non Assignée";
+            
+            zoneStats.putIfAbsent(zoneNom, new int[]{0, 0});
+            zoneStats.get(zoneNom)[0]++; // attendu
+            
+            if (agentsPresents.contains(af.getAgent().getId())) {
+                zoneStats.get(zoneNom)[1]++; // present
+            } else {
+                // Agent absent -> Alerte de remplacement
+                String siteNom = af.getPoste() != null && af.getPoste().getSite() != null ? af.getPoste().getSite().getNom() : "Site Inconnu";
+                String posteNom = af.getPoste() != null && af.getPoste().getEmploi() != null ? af.getPoste().getEmploi().getLibelle() : "Poste Inconnu";
+                
+                Map<String, Object> alerte = new HashMap<>();
+                alerte.put("zone", zoneNom);
+                alerte.put("site", siteNom);
+                alerte.put("poste", posteNom);
+                alerte.put("agentManquant", af.getAgent().getNom() + " " + af.getAgent().getPrenom());
+                alertes.add(alerte);
+            }
+        }
+
+        List<Map<String, Object>> zonesCoverage = new ArrayList<>();
+        for (Map.Entry<String, int[]> entry : zoneStats.entrySet()) {
+            Map<String, Object> zc = new HashMap<>();
+            zc.put("zone", entry.getKey());
+            zc.put("attendus", entry.getValue()[0]);
+            zc.put("presents", entry.getValue()[1]);
+            zc.put("pourcentage", entry.getValue()[0] > 0 ? (entry.getValue()[1] * 100 / entry.getValue()[0]) : 0);
+            zonesCoverage.add(zc);
+        }
+        
+        stats.put("zonesCoverage", zonesCoverage);
+        stats.put("alertesRemplacement", alertes);
+
         return ResponseEntity.ok(stats);
     }
 
