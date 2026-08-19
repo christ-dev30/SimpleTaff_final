@@ -49,7 +49,12 @@ window.closeFactureModal = function () {
 // Load Overview
 async function loadOverview() {
   try {
-    const config = await apiFetch("/admin/entreprise/config");
+    let config = null;
+    try {
+      config = await apiFetch("/admin/entreprise/config");
+    } catch(e) {
+      console.warn("Could not fetch entreprise config:", e);
+    }
     if (config) {
       const enterpriseNameDisplay = document.getElementById(
         "enterpriseNameDisplay",
@@ -144,10 +149,24 @@ async function loadOverview() {
             })
             .join("");
         }
+      } else {
+        const barsContainer = document.getElementById("chartBarsContainer");
+        const labelsContainer = document.getElementById("chartLabelsContainer");
+        if (barsContainer) {
+          barsContainer.innerHTML = `<div class="w-full text-center text-xs text-slate-400 py-4 h-full flex items-center justify-center font-bold">Aucune donnée disponible</div>`;
+        }
+        if (labelsContainer) {
+          labelsContainer.innerHTML = "";
+        }
       }
     }
 
-    const stats = (await apiFetch("/dashboard/admin")) || {};
+    let stats = {};
+    try {
+      stats = (await apiFetch("/dashboard/admin")) || {};
+    } catch(e) {
+      console.warn("Could not fetch admin stats:", e);
+    }
     document.getElementById("statOverviewAgents").textContent =
       stats.totalAgents ?? "0";
     document.getElementById("statOverviewPostes").textContent =
@@ -3361,6 +3380,15 @@ async function loadContrats() {
               return `<span class="text-center w-full break-words leading-tight px-1 text-[10px] text-slate-500 font-bold" title="${job}">${abbr}</span>`;
             })
             .join("");
+        }
+      } else {
+        const barsContainer = document.getElementById("chartBarsContainer");
+        const labelsContainer = document.getElementById("chartLabelsContainer");
+        if (barsContainer) {
+          barsContainer.innerHTML = `<div class="w-full text-center text-xs text-slate-400 py-4 h-full flex items-center justify-center font-bold">Aucune donnée disponible</div>`;
+        }
+        if (labelsContainer) {
+          labelsContainer.innerHTML = "";
         }
       }
     }
