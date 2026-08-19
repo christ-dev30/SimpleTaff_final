@@ -62,9 +62,18 @@ public class SuperAdminController {
             java.time.YearMonth ym = currentMonth.minusMonths(i);
             long monthlyRev = 0;
             for (Map<String, Object> ent : activeEntreprises) {
-                java.sql.Timestamp ts = (java.sql.Timestamp) ent.get("date_creation");
-                if (ts != null) {
-                    java.time.YearMonth entYm = java.time.YearMonth.from(ts.toLocalDateTime());
+                Object dateObj = ent.get("date_creation");
+                java.time.LocalDateTime ldt = null;
+                if (dateObj instanceof java.sql.Timestamp) {
+                    ldt = ((java.sql.Timestamp) dateObj).toLocalDateTime();
+                } else if (dateObj instanceof java.time.LocalDateTime) {
+                    ldt = (java.time.LocalDateTime) dateObj;
+                } else if (dateObj instanceof java.sql.Date) {
+                    ldt = ((java.sql.Date) dateObj).toLocalDate().atStartOfDay();
+                }
+                
+                if (ldt != null) {
+                    java.time.YearMonth entYm = java.time.YearMonth.from(ldt);
                     if (!entYm.isAfter(ym)) {
                         String formule = (String) ent.get("formule_abonnement");
                         if ("STARTER".equals(formule)) monthlyRev += 49000;
