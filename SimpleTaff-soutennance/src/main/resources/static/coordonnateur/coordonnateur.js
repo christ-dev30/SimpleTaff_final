@@ -769,7 +769,6 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                             });
                         }
                     }
-                    }
                 }
             } catch(e) {
                 console.error('Stats coordonnateur non disponibles', e);
