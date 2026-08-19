@@ -87,6 +87,9 @@ public class SuperAdminController {
             ));
         }
 
+        List<Map<String, Object>> abonnementsExpires = jdbcTemplate.queryForList("SELECT nom, date_creation FROM entreprise WHERE statut IN ('SUSPENDUE', 'INACTIF') ORDER BY date_creation DESC LIMIT 1");
+        Map<String, Object> abonnementExpire = abonnementsExpires.isEmpty() ? null : abonnementsExpires.get(0);
+
         return ResponseEntity.ok(Map.of(
             "totalClients", totalClients != null ? totalClients : 0L,
             "abonnementsActifs", actifs != null ? actifs : 0L,
@@ -94,7 +97,8 @@ public class SuperAdminController {
             "revenuMensuel", revenuMensuel != null ? revenuMensuel : 0L,
             "croissanceMensuelle", Math.round(croissance),
             "chartData", chartData,
-            "nouveauxAdmins", nouveauxAdmins
+            "nouveauxAdmins", nouveauxAdmins,
+            "abonnementExpire", abonnementExpire != null ? abonnementExpire : ""
         ));
     }
 

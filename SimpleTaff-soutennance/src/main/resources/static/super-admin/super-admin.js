@@ -193,6 +193,18 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     if (document.getElementById('croissanceValue')) {
                         document.getElementById('croissanceValue').textContent = `${res.croissanceMensuelle || 0}%`;
                     }
+                    
+                    if (document.getElementById('abonnementExpireNom') && document.getElementById('abonnementExpireDate')) {
+                        if (res.abonnementExpire && res.abonnementExpire.nom) {
+                            document.getElementById('abonnementExpireNom').textContent = res.abonnementExpire.nom;
+                            const d = new Date(res.abonnementExpire.date_creation);
+                            d.setMonth(d.getMonth() + 1); // Mock 1 month expiration date
+                            document.getElementById('abonnementExpireDate').textContent = `Expiré le : ${d.toLocaleDateString()}`;
+                        } else {
+                            document.getElementById('abonnementExpireNom').textContent = "Aucun abonnement expiré";
+                            document.getElementById('abonnementExpireDate').textContent = "-";
+                        }
+                    }
 
                     const adminsTbody = document.getElementById('dashboardAdminsTable');
                     if (adminsTbody && res.nouveauxAdmins) {
