@@ -549,11 +549,11 @@
         </div>
     </footer>
 
-    <!-- MODAL DEVIS -->
-    <div id="devis-modal" class="fixed inset-0 bg-brand-dark/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 hidden transition-opacity duration-300">
+    <!-- MODAL DEVIS 2 -->
+    <div id="devis-modal-2" class="fixed inset-0 bg-brand-dark/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 hidden transition-opacity duration-300">
         <div class="bg-white rounded-[2rem] w-full max-w-lg shadow-2xl overflow-hidden relative">
             <!-- Form State -->
-            <div id="devis-form" class="p-8 md:p-10">
+            <div id="devis-form-2" class="p-8 md:p-10">
                 <button onclick="closeDevisModal()" class="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -567,7 +567,7 @@
                 
                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 text-sm">
                     <div class="font-semibold text-slate-900 mb-1">Résumé de la demande :</div>
-                    <div id="modal-summary" class="text-slate-600 font-mono text-xs">Formule Pro (150 agents) - 120 000 FCFA/mois</div>
+                    <div id="modal-summary-2" class="text-slate-600 font-mono text-xs">Formule Pro (150 agents) - 120 000 FCFA/mois</div>
                 </div>
 
                 <form onsubmit="submitDevis(event)" class="space-y-4">
@@ -586,7 +586,7 @@
             </div>
             
             <!-- Success State -->
-            <div id="devis-success" class="hidden text-center p-8 md:p-10 space-y-4">
+            <div id="devis-success-2" class="hidden text-center p-8 md:p-10 space-y-4">
                 <div class="w-16 h-16 bg-[#EAF4E3] text-[#22C55E] rounded-full flex items-center justify-center mx-auto shadow-inner">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                 </div>
@@ -594,11 +594,11 @@
                 <p class="text-slate-600 text-sm">Un e-mail contenant le devis officiel PDF a été envoyé à l'adresse indiquée.</p>
                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-left text-xs space-y-2 text-slate-700">
                     <div class="flex justify-between"><span class="text-slate-400 font-semibold">Numéro de Devis :</span> <span class="font-mono text-brand-dark font-bold">DEVIS-2026-0042</span></div>
-                    <div class="flex justify-between"><span class="text-slate-400 font-semibold">Destinataire :</span> <span id="success-email" class="font-bold">contact@entreprise.ci</span></div>
-                    <div class="flex justify-between"><span class="text-slate-400 font-semibold">Total Mensuel :</span> <span id="success-cost" class="font-bold text-slate-950">120 000 FCFA</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400 font-semibold">Destinataire :</span> <span id="success-email-2" class="font-bold">contact@entreprise.ci</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400 font-semibold">Total Mensuel :</span> <span id="success-cost-2" class="font-bold text-slate-950">120 000 FCFA</span></div>
                 </div>
                 <div class="flex gap-3 mt-6">
-                    <a href="#" id="download-devis-btn" onclick="downloadMockDevisPdf(event)" class="flex-1 text-center bg-brand-dark text-white hover:bg-[#0d2421] py-3 rounded-full font-bold text-xs shadow-md transition-colors">
+                    <a href="#" id="download-devis-btn-2" onclick="downloadMockDevisPdf(event)" class="flex-1 text-center bg-brand-dark text-white hover:bg-[#0d2421] py-3 rounded-full font-bold text-xs shadow-md transition-colors">
                         Télécharger PDF
                     </a>
                     <button onclick="closeDevisModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-3 rounded-full font-bold text-xs transition-colors">
