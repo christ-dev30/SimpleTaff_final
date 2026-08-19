@@ -6,7 +6,8 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 const container = document.getElementById('notificationsContainer');
                 const badge = document.getElementById('notificationBadge');
 
-                const validNotifications = Array.isArray(notifications) ? notifications : [];
+                const allNotifs = Array.isArray(notifications) ? notifications : [];
+                const validNotifications = allNotifs.filter(n => n.type === 'SUPER_ADMIN');
                 const unread = validNotifications.filter(n => n.statut !== 'LU');
                 
                 const lastUnreadCount = parseInt(badge?.dataset?.lastCount || '0');
