@@ -361,6 +361,31 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                                 }, 100);
                             }
                         }
+
+                        // Animate Hours chart
+                        const heuresArray = statsRes.heuresParJour || [0,0,0,0,0,0,0];
+                        const maxHeures = Math.max(8, ...heuresArray);
+                        for (let i = 0; i < 7; i++) {
+                            const bar = document.getElementById(`bar-day-${i + 1}`);
+                            if (bar) {
+                                const h = heuresArray[i];
+                                const percent = (h / maxHeures) * 100;
+                                
+                                // Color logic
+                                if (h > 0) {
+                                    bar.className = "w-full rounded-full transition-all duration-1000 ease-out relative group " + (h >= 8 ? "bg-[#12312E]" : "bg-[#A3D977]");
+                                    // Add tooltip
+                                    bar.innerHTML = `<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">${h}h</div>`;
+                                } else {
+                                    bar.className = "w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out";
+                                    bar.innerHTML = "";
+                                }
+
+                                setTimeout(() => {
+                                    bar.style.height = Math.max(10, percent) + '%';
+                                }, 100);
+                            }
+                        }
                     }
                 } catch (eStats) {
                     console.warn("Could not load stats", eStats);

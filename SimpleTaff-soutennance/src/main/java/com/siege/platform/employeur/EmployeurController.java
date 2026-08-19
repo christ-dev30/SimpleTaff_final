@@ -237,6 +237,11 @@ public class EmployeurController {
         LocalDateTime end = LocalDate.now().plusDays(1).atStartOfDay();
         long pointagesAujourdhui = 0;
         
+        long[] heuresParJour = new long[7];
+        LocalDate startOfWeek = LocalDate.now().with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+        LocalDateTime startOfWeekTime = startOfWeek.atStartOfDay();
+        LocalDateTime endOfWeekTime = startOfWeek.plusDays(7).atStartOfDay();
+        
         List<Pointage> allPointages = pointageRepository.findAll().stream()
                 .filter(p -> p.getAffectation() != null && p.getAffectation().getPoste() != null && p.getAffectation().getPoste().getSite() != null && siteIds.contains(p.getAffectation().getPoste().getSite().getId()))
                 .collect(Collectors.toList());
@@ -247,7 +252,13 @@ public class EmployeurController {
             }
             if (p.getDateHeureEntree() != null && p.getDateHeureSortie() != null && "VALIDE".equals(p.getStatut())) {
                 long minutes = java.time.Duration.between(p.getDateHeureEntree(), p.getDateHeureSortie()).toMinutes();
-                if (minutes > 0) heuresPrestees += minutes;
+                if (minutes > 0) {
+                    heuresPrestees += minutes;
+                    if (!p.getDateHeureEntree().isBefore(startOfWeekTime) && p.getDateHeureEntree().isBefore(endOfWeekTime)) {
+                        int dayOfWeek = p.getDateHeureEntree().getDayOfWeek().getValue();
+                        heuresParJour[dayOfWeek - 1] += minutes;
+                    }
+                }
                 
                 if (p.getAffectation().getHeureFin() != null && !p.getAffectation().getHeureFin().isEmpty()) {
                     try {
@@ -264,6 +275,11 @@ public class EmployeurController {
         
         long heuresPresteesH = heuresPrestees / 60;
         long heuresSuppH = heuresSupp / 60;
+        
+        List<Long> heuresParJourH = new ArrayList<>();
+        for (long mins : heuresParJour) {
+            heuresParJourH.add(mins / 60);
+        }
         
         // 3. Dernier affecté
         String dernierAffecte = "Aucun";
@@ -299,6 +315,7 @@ public class EmployeurController {
         result.put("heuresPrestees", heuresPresteesH);
         result.put("heuresSupp", heuresSuppH);
         result.put("dernierAffecte", dernierAffecte);
+        result.put("heuresParJour", heuresParJourH);
         return ResponseEntity.ok(result);
     }
 

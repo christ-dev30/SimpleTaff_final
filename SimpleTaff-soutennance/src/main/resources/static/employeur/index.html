@@ -226,19 +226,19 @@
         <div class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72">
             <h3 class="font-bold text-slate-900 mb-2">Heures Prestées (Globales)</h3>
             <div id="statHeuresPresteesGlobal" class="text-4xl font-extrabold text-[#12312E] mb-4">0h</div>
-            <div class="flex-1 flex items-end justify-between gap-2 px-2 relative">
-                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"></div>
-                <div class="w-full bg-[#12312E] rounded-full h-3/4"></div>
-                <div class="w-full bg-[#A3D977] rounded-full h-4/5 relative group">
-                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">74%</div>
+            <div class="flex-1 flex items-end justify-between gap-2 px-2 relative" id="heuresChartContainer">
+                <div id="bar-day-1" class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out" style="height: 10%;"></div>
+                <div id="bar-day-2" class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out" style="height: 10%;"></div>
+                <div id="bar-day-3" class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out relative group" style="height: 10%;">
+                    <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 hidden" id="tooltip-day-3">0h</div>
                 </div>
-                <div class="w-full bg-[#12312E] rounded-full h-full"></div>
-                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/3"></div>
-                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"></div>
-                <div class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/5"></div>
+                <div id="bar-day-4" class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out" style="height: 10%;"></div>
+                <div id="bar-day-5" class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out" style="height: 10%;"></div>
+                <div id="bar-day-6" class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out" style="height: 10%;"></div>
+                <div id="bar-day-7" class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out" style="height: 10%;"></div>
             </div>
-            <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3">
-                <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+            <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3 w-full">
+                <span class="w-full text-center">L</span><span class="w-full text-center">M</span><span class="w-full text-center">M</span><span class="w-full text-center">J</span><span class="w-full text-center">V</span><span class="w-full text-center">S</span><span class="w-full text-center">D</span>
             </div>
         </div>
 
