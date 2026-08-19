@@ -250,8 +250,19 @@ async function loadOverview() {
         }
       }
       if (document.getElementById("croissanceValue")) {
-        document.getElementById("croissanceValue").textContent =
-          `${res.croissanceMensuelle || 0}%`;
+        const croissanceValue = res.croissanceMensuelle || 0;
+        document.getElementById("croissanceValue").textContent = `${croissanceValue}%`;
+        
+        const circle = document.getElementById("croissanceCircle");
+        if (circle) {
+          const circumference = 251.3;
+          // Limiter entre 0 et 100 pour l'affichage visuel du cercle
+          const displayValue = Math.min(Math.max(croissanceValue, 0), 100);
+          const offset = circumference - (circumference * displayValue) / 100;
+          setTimeout(() => {
+            circle.style.strokeDashoffset = offset;
+          }, 100);
+        }
       }
 
       if (
