@@ -739,6 +739,25 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     document.getElementById('statPointages').textContent = stats.demandesMateriel ?? '—';
                     const statEvals = document.getElementById('statEvaluations');
                     if(statEvals) statEvals.textContent = stats.evaluations ?? '—';
+
+                    // Update Presence Rate Chart
+                    const attendus = stats.agentsAttendus || 0;
+                    const presents = stats.agentsSurSite || 0;
+                    let presenceRate = 0;
+                    if (attendus > 0) {
+                        presenceRate = Math.round((presents / attendus) * 100);
+                    }
+                    const presenceSpan = document.getElementById('statPresenceRate');
+                    if(presenceSpan) presenceSpan.textContent = presenceRate + '%';
+                    const presenceCircle = document.getElementById('presenceCircle');
+                    if(presenceCircle) {
+                        const maxDash = 251.2;
+                        const dash = (presenceRate / 100) * maxDash;
+                        // small timeout to trigger animation
+                        setTimeout(() => {
+                            presenceCircle.style.strokeDasharray = `${dash} ${maxDash}`;
+                        }, 100);
+                    }
                     
                     // Render Zones Coverage Chart
                     const chartContainer = document.getElementById('zoneCoverageChartContainer');
