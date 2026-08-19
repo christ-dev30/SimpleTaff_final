@@ -29,18 +29,25 @@ public class CoordonnateurController {
     private final com.siege.platform.agent.AgentTerrainService agentTerrainService;
     private final com.siege.platform.pointage.CarteAgentRepository carteAgentRepository;
 
+    private final com.siege.platform.materiel.DemandeMaterielRepository demandeMaterielRepo;
+    private final com.siege.platform.evaluation.EvaluationAgentRepository evaluationAgentRepo;
+
     public CoordonnateurController(AgentTerrainRepository agentRepo,
                                     AffectationRepository affectationRepo,
                                     ZoneRepository zoneRepo,
                                     PointageRepository pointageRepo,
                                     com.siege.platform.agent.AgentTerrainService agentTerrainService,
-                                    com.siege.platform.pointage.CarteAgentRepository carteAgentRepository) {
+                                    com.siege.platform.pointage.CarteAgentRepository carteAgentRepository,
+                                    com.siege.platform.materiel.DemandeMaterielRepository demandeMaterielRepo,
+                                    com.siege.platform.evaluation.EvaluationAgentRepository evaluationAgentRepo) {
         this.agentRepo = agentRepo;
         this.affectationRepo = affectationRepo;
         this.zoneRepo = zoneRepo;
         this.pointageRepo = pointageRepo;
         this.agentTerrainService = agentTerrainService;
         this.carteAgentRepository = carteAgentRepository;
+        this.demandeMaterielRepo = demandeMaterielRepo;
+        this.evaluationAgentRepo = evaluationAgentRepo;
     }
 
     @GetMapping("/stats")
@@ -66,13 +73,19 @@ public class CoordonnateurController {
             }
         }
         long pointagesJour = agentsPresents.size();
+        
+        long demandesCount = demandeMaterielRepo.findAll().stream()
+                .filter(d -> "EN_ATTENTE".equalsIgnoreCase(d.getStatut()))
+                .count();
+        long evaluationsCount = evaluationAgentRepo.count();
 
         stats.put("pointagesAujourdhui", todayPointages.size());
         stats.put("agentsAttendus", attendus);
         stats.put("agentsSurSite", pointagesJour);
         stats.put("absencesRetards", Math.max(0, attendus - pointagesJour));
-        stats.put("demandesMateriel", 0); // Simulated
-        stats.put("rapportsIncidents", 0); // Simulated
+        stats.put("demandesMateriel", demandesCount);
+        stats.put("rapportsIncidents", evaluationsCount); 
+        stats.put("evaluations", evaluationsCount); 
 
         // Calculate Zones Coverage & Alerts
         Map<String, int[]> zoneStats = new HashMap<>(); // zoneNom -> {attendus, presents}

@@ -731,10 +731,13 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                 const stats = await apiFetch('/coordonnateur/stats');
                 if (stats) {
                     document.getElementById('statAgentsCoord').textContent = stats.agentsSurSite ?? '—';
+                    const attendusEl = document.getElementById('statAgentsAttendusCoord');
+                    if(attendusEl) attendusEl.textContent = `Sur ${stats.agentsAttendus ?? 0} attendus`;
+
                     document.getElementById('statAffectations').textContent = stats.absencesRetards ?? '—';
                     document.getElementById('statPointages').textContent = stats.demandesMateriel ?? '—';
-                    const statDemandes = document.getElementById('statDemandesMateriel');
-                    if(statDemandes) statDemandes.textContent = stats.rapportsIncidents ?? '—';
+                    const statEvals = document.getElementById('statEvaluations');
+                    if(statEvals) statEvals.textContent = stats.evaluations ?? '—';
                     
                     // Render Zones Coverage Chart
                     const chartContainer = document.getElementById('zoneCoverageChartContainer');
