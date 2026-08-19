@@ -185,7 +185,11 @@ import { apiFetch, logout, checkAuth } from '/shared/api.js';
                     const empty = circumference - filled;
                     
                     const chartValide = document.getElementById('presenceChartValide');
-                    if (chartValide) chartValide.setAttribute('stroke-dasharray', `${filled} ${empty}`);
+                    if (chartValide) {
+                        setTimeout(() => {
+                            chartValide.style.strokeDasharray = `${filled} ${empty}`;
+                        }, 100);
+                    }
                     
                     const chartText = document.getElementById('presenceChartText');
                     if (chartText) chartText.textContent = `${tauxPresence}%`;
