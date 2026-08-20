@@ -2773,6 +2773,7 @@ document.getElementById("addAffForm")?.addEventListener("submit", async (e) => {
       siteId: document.getElementById("affSiteId").value,
       agentId: document.getElementById("affAgentSelect").value,
       dateDebut: document.getElementById("affDateDebut").value,
+      dateFin: document.getElementById("affDateFin").value,
       employeurResponsable: document.getElementById("affEmployeurEmail").value,
       heureDebut: document.getElementById("affHeureDebut").value,
       heureFin: document.getElementById("affHeureFin").value,
@@ -2788,6 +2789,7 @@ document.getElementById("addAffForm")?.addEventListener("submit", async (e) => {
     document.getElementById("affEntrepriseId").value = "";
     document.getElementById("affSiteId").value = "";
     document.getElementById("affEmployeurEmail").value = "";
+    document.getElementById("affDateFin").value = "";
 
     const siteInput = document.getElementById("affSiteInput");
     siteInput.disabled = true;

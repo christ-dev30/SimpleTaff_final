@@ -45,8 +45,29 @@ public class MaterielController {
     }
 
     @GetMapping("/historique")
-    public List<AffectationMateriel> getHistorique() {
-        return affectationRepository.findAllByOrderByDateRemiseDesc();
+    public ResponseEntity<?> getHistorique() {
+        java.util.UUID enterpriseId = tenantService.entreprise().getId();
+        List<Map<String, Object>> historique = affectationRepository.findAllByOrderByDateRemiseDesc().stream()
+            .filter(a -> a.getMateriel() != null && a.getMateriel().getEntreprise() != null &&
+                         a.getMateriel().getEntreprise().getId().equals(enterpriseId))
+            .map(a -> {
+                Map<String, Object> map = new java.util.HashMap<>();
+                map.put("id", a.getId());
+                if (a.getAgent() != null) {
+                    map.put("agentNom", a.getAgent().getNom() + " " + a.getAgent().getPrenom());
+                    map.put("agentMatricule", a.getAgent().getMatricule());
+                }
+                if (a.getMateriel() != null) {
+                    map.put("materielLibelle", a.getMateriel().getLibelle());
+                    map.put("materielNumeroSerie", a.getMateriel().getNumeroSerie());
+                }
+                map.put("dateRemise", a.getDateRemise());
+                map.put("dateRetour", a.getDateRetour());
+                map.put("statut", a.getStatut());
+                return map;
+            })
+            .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(historique);
     }
 
     @GetMapping
