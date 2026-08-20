@@ -2,6 +2,7 @@ package com.siege.platform.evaluation;
  
 import com.siege.platform.agent.AgentTerrainRepository;
 import com.siege.platform.common.CurrentTenantService;
+import com.siege.platform.utilisateur.UtilisateurRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +22,20 @@ public class EvaluationController {
     private final CurrentTenantService tenantService;
     private final com.siege.platform.contrat.ContratAgentRepository contratRepository;
     private final com.siege.platform.poste.AffectationRepository affectationRepository;
+    private final UtilisateurRepository utilisateurRepository;
  
     public EvaluationController(EvaluationAgentRepository evaluationRepository,
                                 AgentTerrainRepository agentRepository,
                                 CurrentTenantService tenantService,
                                 com.siege.platform.contrat.ContratAgentRepository contratRepository,
-                                com.siege.platform.poste.AffectationRepository affectationRepository) {
+                                com.siege.platform.poste.AffectationRepository affectationRepository,
+                                UtilisateurRepository utilisateurRepository) {
         this.evaluationRepository = evaluationRepository;
         this.agentRepository = agentRepository;
         this.tenantService = tenantService;
         this.contratRepository = contratRepository;
         this.affectationRepository = affectationRepository;
+        this.utilisateurRepository = utilisateurRepository;
     }
  
     @GetMapping
@@ -51,7 +55,19 @@ public class EvaluationController {
         m.put("dateEvaluation", ev.getDateEvaluation());
         m.put("scoreTotal", ev.getScoreTotal());
         m.put("commentaire", ev.getCommentaire());
-        m.put("employeurEvaluateur", ev.getEmployeurEvaluateur() != null ? ev.getEmployeurEvaluateur() : "N/A");
+        
+        String evaluateurName = ev.getEmployeurEvaluateur() != null ? ev.getEmployeurEvaluateur() : "N/A";
+        if (ev.getEmployeurEvaluateur() != null && !ev.getEmployeurEvaluateur().isBlank()) {
+            com.siege.platform.utilisateur.Utilisateur u = utilisateurRepository.findByEmail(ev.getEmployeurEvaluateur()).orElse(null);
+            if (u != null) {
+                String nom = u.getNom() != null ? u.getNom() : "";
+                String prenom = u.getPrenom() != null ? u.getPrenom() : "";
+                if (!nom.isBlank() || !prenom.isBlank()) {
+                    evaluateurName = (nom + " " + prenom).trim();
+                }
+            }
+        }
+        m.put("employeurEvaluateur", evaluateurName);
         
         // Fetch structure cliente from latest affectation or contract
         String structure = "—";
