@@ -49,7 +49,6 @@ public class NotificationService {
     /**
      * Send email notification to an enterprise contact
      */
-    @org.springframework.scheduling.annotation.Async("taskExecutor")
     public void envoyerEmailNotification(String destinataire, String titre, String contenu) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -195,7 +194,8 @@ public class NotificationService {
             String message = "Le contrat de l'agent " + agentNom + " (" + matricule + ") expire dans " + labelEcheance + " (le " + dateFin + ").";
             
             // Deduplicate: check if this message for this enterprise and type already exists
-            List<NotificationEvenement> existing = repository.findByTypeAndMessageContaining(
+            List<NotificationEvenement> existing = repository.findByEntrepriseIdAndTypeAndMessageContaining(
+                    c.getEntreprise() != null ? c.getEntreprise().getId() : null,
                     "RH_CONTRAT_EXPIRATION",
                     matricule
             );

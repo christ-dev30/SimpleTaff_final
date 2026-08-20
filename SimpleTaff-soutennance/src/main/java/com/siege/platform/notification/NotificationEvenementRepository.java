@@ -12,5 +12,4 @@ public interface NotificationEvenementRepository extends JpaRepository<Notificat
     List<NotificationEvenement> findByStatut(String statut);
     List<NotificationEvenement> findAllByOrderByCreeLeDesc();
     List<NotificationEvenement> findByEntrepriseIdAndTypeAndMessageContaining(UUID entrepriseId, String type, String messagePart);
-    List<NotificationEvenement> findByTypeAndMessageContaining(String type, String messagePart);
 }

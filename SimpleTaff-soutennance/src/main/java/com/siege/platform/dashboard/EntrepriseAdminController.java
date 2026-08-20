@@ -19,8 +19,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
-import org.springframework.transaction.annotation.Transactional;
-
 @RestController
 @RequestMapping("/api/admin")
 @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN', 'COORDONNATEUR')")
@@ -55,7 +53,6 @@ public class EntrepriseAdminController {
 
 
     @GetMapping("/sites")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getSites() {
         List<Site> sites = siteRepository.findAll();
         List<Map<String, Object>> response = new ArrayList<>();
@@ -71,7 +68,6 @@ public class EntrepriseAdminController {
     }
 
     @GetMapping("/emplois")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<Emploi>> getEmplois() {
         return ResponseEntity.ok(emploiRepository.findAll());
     }
@@ -105,7 +101,6 @@ public class EntrepriseAdminController {
     }
 
     @GetMapping("/postes")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getPostes() {
         List<Poste> postes = posteRepository.findAll();
         List<Map<String, Object>> response = new ArrayList<>();
@@ -122,7 +117,6 @@ public class EntrepriseAdminController {
     }
 
     @GetMapping("/affectations")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getAffectations() {
         List<Affectation> affectations = affectationRepository.findAll();
         List<Map<String, Object>> response = new ArrayList<>();

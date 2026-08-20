@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-import org.springframework.transaction.annotation.Transactional;
-
 /**
  * Controller exposing CRUD endpoints for the full organisational structure:
  *  - Zones géographiques
@@ -66,10 +64,9 @@ public class OrganisationController {
     // ============================= ZONES =============================
 
     @GetMapping("/zones")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getZones(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
-        List<Zone> zones = entreprise == null ? zoneRepo.findAll() : zoneRepo.findByEntrepriseId(entreprise.getId());
+        List<Zone> zones = zoneRepo.findByEntrepriseId(entreprise.getId());
         List<Map<String, Object>> result = new ArrayList<>();
         for (Zone z : zones) {
             Map<String, Object> m = new LinkedHashMap<>();
@@ -113,10 +110,10 @@ public class OrganisationController {
     // ========================= COORDONNATEURS =========================
 
     @GetMapping("/coordonnateurs")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getCoordonnateurs(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
-        List<Coordonnateur> coords = entreprise == null ? utilisateurRepo.findAll().stream().filter(u -> u instanceof Coordonnateur).map(u -> (Coordonnateur) u).toList() : utilisateurRepo.findCoordsByEntrepriseId(entreprise.getId());
+        // Requête JPQL typée — pas d'instanceof sur proxy Hibernate
+        List<Coordonnateur> coords = utilisateurRepo.findCoordsByEntrepriseId(entreprise.getId());
         List<Map<String, Object>> result = new ArrayList<>();
         for (Coordonnateur c : coords) {
             Map<String, Object> m = new LinkedHashMap<>();
@@ -199,10 +196,9 @@ public class OrganisationController {
     // ========================= EMPLOIS (CATALOGUE) =========================
 
     @GetMapping("/emplois")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getEmplois(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
-        List<Emploi> emplois = entreprise == null ? emploiRepo.findAll() : emploiRepo.findByEntrepriseId(entreprise.getId());
+        List<Emploi> emplois = emploiRepo.findByEntrepriseId(entreprise.getId());
         List<Map<String, Object>> result = new ArrayList<>();
         for (Emploi e : emplois) {
             Map<String, Object> m = new LinkedHashMap<>();
@@ -257,10 +253,9 @@ public class OrganisationController {
     // ====================== STRUCTURES DEMANDEUSES (CLIENTS) ======================
 
     @GetMapping("/structures")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getStructures(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
-        List<StructureDemandeuse> structures = entreprise == null ? structureRepo.findAll() : structureRepo.findByEntrepriseId(entreprise.getId());
+        List<StructureDemandeuse> structures = structureRepo.findByEntrepriseId(entreprise.getId());
         List<Map<String, Object>> result = new ArrayList<>();
         for (StructureDemandeuse s : structures) {
             Map<String, Object> m = new LinkedHashMap<>();
@@ -301,10 +296,9 @@ public class OrganisationController {
     // ========================= SITES =========================
 
     @GetMapping("/sites")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getSites(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
-        List<Site> sites = entreprise == null ? siteRepo.findAll() : siteRepo.findByEntrepriseId(entreprise.getId());
+        List<Site> sites = siteRepo.findByEntrepriseId(entreprise.getId());
         List<Map<String, Object>> result = new ArrayList<>();
         for (Site s : sites) {
             Map<String, Object> m = new LinkedHashMap<>();
@@ -362,10 +356,10 @@ public class OrganisationController {
     // ====================== EMPLOYEURS ======================
 
     @GetMapping("/employeurs")
-    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getEmployeurs(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
-        List<Employeur> employeurs = entreprise == null ? utilisateurRepo.findAll().stream().filter(u -> u instanceof Employeur).map(u -> (Employeur) u).toList() : utilisateurRepo.findEmployeursByEntrepriseId(entreprise.getId());
+        // Requête JPQL typée — évite instanceof sur proxy Hibernate
+        List<Employeur> employeurs = utilisateurRepo.findEmployeursByEntrepriseId(entreprise.getId());
         List<Map<String, Object>> result = new ArrayList<>();
         for (Employeur emp : employeurs) {
             Map<String, Object> m = new LinkedHashMap<>();
@@ -461,9 +455,6 @@ public class OrganisationController {
         String email = jwtUtils.getUserNameFromJwtToken(token);
         Utilisateur user = utilisateurRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable."));
-        if (com.siege.platform.common.enums.Role.SUPER_ADMIN.equals(user.getRole())) {
-            return null;
-        }
         if (user.getEntreprise() == null) throw new RuntimeException("Aucune entreprise associée à ce compte.");
         return user.getEntreprise();
     }
