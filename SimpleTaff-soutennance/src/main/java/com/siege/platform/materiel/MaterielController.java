@@ -225,7 +225,7 @@ public class MaterielController {
         DemandeMateriel saved = demandeRepository.save(demande);
 
         // If approved, automatically insert the new material into inventory
-        if ("APPROUVEE".equalsIgnoreCase(nouveauStatut) || "ACCORDE".equalsIgnoreCase(nouveauStatut)) {
+        if ("APPROUVE".equalsIgnoreCase(nouveauStatut) || "APPROUVEE".equalsIgnoreCase(nouveauStatut) || "ACCORDE".equalsIgnoreCase(nouveauStatut)) {
             Materiel mat = new Materiel();
             mat.setEntreprise(saved.getEntreprise());
             mat.setLibelle(saved.getLibelle());
