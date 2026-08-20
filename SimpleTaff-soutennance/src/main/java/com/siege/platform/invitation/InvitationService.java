@@ -72,7 +72,7 @@ public class InvitationService {
         // Envoyer l'email avec un lien générique (ou basé sur une variable d'environnement)
         String baseUrl = System.getenv("APP_URL");
         if (baseUrl == null || baseUrl.isEmpty()) {
-            baseUrl = "https://simpletafffinal-production.up.railway.app";
+            baseUrl = "https://simpletafffinal.up.railway.app";
         }
         String lien = baseUrl + "/vitrine/inscription.html?token=" + token;
         envoyerEmailInvitation(emailDestinataire, nomEntreprise, lien, savedEntreprise.getFormuleAbonnement().name());
