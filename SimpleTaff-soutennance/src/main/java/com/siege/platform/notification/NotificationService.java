@@ -195,8 +195,7 @@ public class NotificationService {
             String message = "Le contrat de l'agent " + agentNom + " (" + matricule + ") expire dans " + labelEcheance + " (le " + dateFin + ").";
             
             // Deduplicate: check if this message for this enterprise and type already exists
-            List<NotificationEvenement> existing = repository.findByEntrepriseIdAndTypeAndMessageContaining(
-                    c.getEntreprise() != null ? c.getEntreprise().getId() : null,
+            List<NotificationEvenement> existing = repository.findByTypeAndMessageContaining(
                     "RH_CONTRAT_EXPIRATION",
                     matricule
             );

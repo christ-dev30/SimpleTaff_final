@@ -117,10 +117,7 @@ public class RapportController {
             mois = String.format("%d-%02d", now.getYear(), now.getMonthValue());
         }
         
-        // Use global generation but we could filter it for the agent inside the builder if needed.
-        // Since RapportService doesn't have a specific genererRapportAgent method, we will just use global for now.
-        Map<String, Object> rapport = rapportService.genererRapportGlobal(mois);
-        rapport.put("titre", "RAPPORT AGENT - " + mois);
+        Map<String, Object> rapport = rapportService.genererRapportAgent(mois, agentId);
         
         boolean isPdf = "pdf".equalsIgnoreCase(format);
         byte[] content = isPdf ? RapportPdfBuilder.build(rapport, mois) : rapportService.exportToExcel(rapport);

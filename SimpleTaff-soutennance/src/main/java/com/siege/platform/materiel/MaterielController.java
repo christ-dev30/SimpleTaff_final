@@ -341,7 +341,11 @@ public class MaterielController {
         if (!materielRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
-        materielRepository.deleteById(id);
-        return ResponseEntity.ok(Map.of("message", "Matériel supprimé de l'inventaire."));
+        try {
+            materielRepository.deleteById(id);
+            return ResponseEntity.ok(Map.of("message", "Matériel supprimé de l'inventaire."));
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Impossible de supprimer ce matériel car il possède un historique d'affectation."));
+        }
     }
 }

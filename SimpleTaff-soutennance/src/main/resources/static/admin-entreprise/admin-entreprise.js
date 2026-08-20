@@ -4213,7 +4213,7 @@ window.paramCreateEmploi = async function () {
         libelle,
         description,
         categorie,
-        competences,
+        competencesRequises: competences,
         salaireBrutReference,
       }),
     });
@@ -5243,8 +5243,8 @@ document
           type,
           dateDebut,
           dateFin,
-          justifUrl,
-          commentaire,
+          justificatifUrl: justifUrl,
+          motif: commentaire,
         }),
       });
       showToast("Demande de conge enregistree !", "success");

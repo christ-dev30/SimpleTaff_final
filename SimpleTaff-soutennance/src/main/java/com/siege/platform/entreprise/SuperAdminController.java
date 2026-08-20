@@ -229,6 +229,9 @@ public class SuperAdminController {
             // 15.5 Invitations
             jdbcTemplate.update("DELETE FROM invitation_entreprise WHERE entreprise_id = ?", idBytes);
             
+            // 15.75 Notifications
+            jdbcTemplate.update("DELETE FROM notification_evenement WHERE entreprise_id = ?", idBytes);
+            
             // 16. L'entreprise elle-même
             int rowsDeleted = jdbcTemplate.update("DELETE FROM entreprise WHERE id = ?", idBytes);
             
@@ -238,6 +241,8 @@ public class SuperAdminController {
             } else {
                 return ResponseEntity.notFound().build();
             }
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Impossible de supprimer l'entreprise car elle possède des données liées (agents, pointages, alertes)."));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Map.of("message", "Erreur lors de la suppression en cascade: " + e.getMessage()));
         }
