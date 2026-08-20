@@ -58,8 +58,9 @@ public class ContratController {
                 .map(this::toMap).toList();
     }
 
-    @GetMapping("/agent/{agentId}")
-    public List<Map<String, Object>> byAgent(@PathVariable("agentId") UUID agentId) {
+    @GetMapping({"/agent/{agentId}", "/agent/"})
+    public List<Map<String, Object>> byAgent(@PathVariable(value = "agentId", required = false) UUID agentId) {
+        if (agentId == null) return Collections.emptyList();
         return contratRepository.findByAgentIdOrderByDateDebutDesc(agentId).stream().map(this::toMap).toList();
     }
 

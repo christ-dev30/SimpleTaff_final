@@ -138,24 +138,35 @@ public class SuperAdminController {
     @PutMapping("/entreprises/{id}/suspendre")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> suspendreEntreprise(@PathVariable("id") UUID id) {
-        return entrepriseRepository.findById(id)
-                .map(entreprise -> {
-                    entreprise.setStatut(StatutEntreprise.SUSPENDUE);
-                    entrepriseRepository.save(entreprise);
-                    notificationService.creerAlerte(entreprise, "SUPER_ADMIN", "L'entreprise " + entreprise.getNom() + " a été suspendue.");
-                    return ResponseEntity.noContent().build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return handleEntrepriseAction(id, "suspendre");
     }
 
     @PutMapping("/entreprises/{id}/activer")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> activerEntreprise(@PathVariable("id") UUID id) {
+        return handleEntrepriseAction(id, "activer");
+    }
+
+    @GetMapping("/entreprises/{id}/{action}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<?> actionEntrepriseGet(@PathVariable("id") UUID id, @PathVariable("action") String action) {
+        return handleEntrepriseAction(id, action);
+    }
+
+    private ResponseEntity<?> handleEntrepriseAction(UUID id, String action) {
         return entrepriseRepository.findById(id)
                 .map(entreprise -> {
-                    entreprise.setStatut(StatutEntreprise.ACTIF);
-                    entrepriseRepository.save(entreprise);
-                    notificationService.creerAlerte(entreprise, "SUPER_ADMIN", "L'entreprise " + entreprise.getNom() + " a été réactivée.");
+                    if ("activer".equalsIgnoreCase(action)) {
+                        entreprise.setStatut(StatutEntreprise.ACTIF);
+                        entrepriseRepository.save(entreprise);
+                        notificationService.creerAlerte(entreprise, "SUPER_ADMIN", "L'entreprise " + entreprise.getNom() + " a été réactivée.");
+                    } else if ("suspendre".equalsIgnoreCase(action)) {
+                        entreprise.setStatut(StatutEntreprise.SUSPENDUE);
+                        entrepriseRepository.save(entreprise);
+                        notificationService.creerAlerte(entreprise, "SUPER_ADMIN", "L'entreprise " + entreprise.getNom() + " a été suspendue.");
+                    } else {
+                        return ResponseEntity.badRequest().build();
+                    }
                     return ResponseEntity.noContent().build();
                 })
                 .orElse(ResponseEntity.notFound().build());
