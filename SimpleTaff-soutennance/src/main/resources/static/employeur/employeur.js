@@ -434,7 +434,10 @@ async function loadOverview() {
                 "w-full rounded-full transition-all duration-1000 ease-out relative group " +
                 (h >= 8 ? "bg-[#12312E]" : "bg-[#A3D977]");
               // Add tooltip
-              bar.innerHTML = `<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">${h}h</div>`;
+              const hInt = Math.floor(h);
+              const mInt = Math.round((h - hInt) * 60);
+              const formattedH = `${hInt}h ${mInt.toString().padStart(2, '0')}m`;
+              bar.innerHTML = `<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">${formattedH}</div>`;
             } else {
               bar.className =
                 "w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out";

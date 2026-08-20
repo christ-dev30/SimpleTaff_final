@@ -278,9 +278,9 @@ public class EmployeurController {
         String heuresPresteesFormatted = String.format("%dh %02dm", heuresPrestees / 60, heuresPrestees % 60);
         String heuresSuppFormatted = String.format("%dh %02dm", heuresSupp / 60, heuresSupp % 60);
         
-        List<Long> heuresParJourH = new ArrayList<>();
+        List<Double> heuresParJourH = new ArrayList<>();
         for (long mins : heuresParJour) {
-            heuresParJourH.add(mins / 60);
+            heuresParJourH.add(Math.round((mins / 60.0) * 100.0) / 100.0);
         }
         
         // 3. Dernier affecté
