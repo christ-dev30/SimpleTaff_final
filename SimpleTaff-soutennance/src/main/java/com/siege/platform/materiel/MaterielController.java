@@ -78,7 +78,7 @@ public class MaterielController {
         if (u instanceof com.siege.platform.utilisateur.Coordonnateur) {
             com.siege.platform.utilisateur.Coordonnateur c = (com.siege.platform.utilisateur.Coordonnateur) u;
             return all.stream()
-                .filter(m -> "DISPONIBLE".equals(m.getStatut()) || 
+                .filter(m -> ("DISPONIBLE".equals(m.getStatut()) && (m.getCoordonnateur() == null || m.getCoordonnateur().getId().equals(c.getId()))) || 
                              ("ASSIGNE".equals(m.getStatut()) && m.getCoordonnateur() != null && m.getCoordonnateur().getId().equals(c.getId())))
                 .collect(java.util.stream.Collectors.toList());
         }
@@ -236,6 +236,14 @@ public class MaterielController {
             mat.setSourceAjout("Coordonnateur : " + (saved.getCoordonnateurNom() != null ? saved.getCoordonnateurNom() : "N/A"));
             mat.setDateAjout(java.time.LocalDate.now());
             mat.setDescription("Créé suite à l'approbation de la demande de matériel");
+            
+            if (saved.getCoordonnateurNom() != null && !saved.getCoordonnateurNom().isBlank()) {
+                com.siege.platform.utilisateur.Utilisateur u = utilisateurRepository.findByEmail(saved.getCoordonnateurNom()).orElse(null);
+                if (u instanceof com.siege.platform.utilisateur.Coordonnateur) {
+                    mat.setCoordonnateur((com.siege.platform.utilisateur.Coordonnateur) u);
+                }
+            }
+            
             materielRepository.save(mat);
         }
 
