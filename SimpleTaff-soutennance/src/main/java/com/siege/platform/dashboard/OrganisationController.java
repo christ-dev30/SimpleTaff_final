@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Controller exposing CRUD endpoints for the full organisational structure:
  *  - Zones géographiques
@@ -64,6 +66,7 @@ public class OrganisationController {
     // ============================= ZONES =============================
 
     @GetMapping("/zones")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getZones(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
         List<Zone> zones = entreprise == null ? zoneRepo.findAll() : zoneRepo.findByEntrepriseId(entreprise.getId());
@@ -110,6 +113,7 @@ public class OrganisationController {
     // ========================= COORDONNATEURS =========================
 
     @GetMapping("/coordonnateurs")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getCoordonnateurs(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
         List<Coordonnateur> coords = entreprise == null ? utilisateurRepo.findAll().stream().filter(u -> u instanceof Coordonnateur).map(u -> (Coordonnateur) u).toList() : utilisateurRepo.findCoordsByEntrepriseId(entreprise.getId());
@@ -195,6 +199,7 @@ public class OrganisationController {
     // ========================= EMPLOIS (CATALOGUE) =========================
 
     @GetMapping("/emplois")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getEmplois(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
         List<Emploi> emplois = entreprise == null ? emploiRepo.findAll() : emploiRepo.findByEntrepriseId(entreprise.getId());
@@ -252,6 +257,7 @@ public class OrganisationController {
     // ====================== STRUCTURES DEMANDEUSES (CLIENTS) ======================
 
     @GetMapping("/structures")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getStructures(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
         List<StructureDemandeuse> structures = entreprise == null ? structureRepo.findAll() : structureRepo.findByEntrepriseId(entreprise.getId());
@@ -295,6 +301,7 @@ public class OrganisationController {
     // ========================= SITES =========================
 
     @GetMapping("/sites")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getSites(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
         List<Site> sites = entreprise == null ? siteRepo.findAll() : siteRepo.findByEntrepriseId(entreprise.getId());
@@ -355,6 +362,7 @@ public class OrganisationController {
     // ====================== EMPLOYEURS ======================
 
     @GetMapping("/employeurs")
+    @Transactional(readOnly = true)
     public ResponseEntity<List<Map<String, Object>>> getEmployeurs(HttpServletRequest request) {
         Entreprise entreprise = getEntrepriseFromToken(request);
         List<Employeur> employeurs = entreprise == null ? utilisateurRepo.findAll().stream().filter(u -> u instanceof Employeur).map(u -> (Employeur) u).toList() : utilisateurRepo.findEmployeursByEntrepriseId(entreprise.getId());
