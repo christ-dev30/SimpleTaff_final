@@ -32,6 +32,9 @@ public class ReglePrimeRendement {
     @Column(nullable = false)
     private Integer seuilMinimum = 0;
 
+    @Column(precision = 10, scale = 2)
+    private BigDecimal plafondMax;
+
     @Column(nullable = false)
     private String statut = "ACTIF";
 }

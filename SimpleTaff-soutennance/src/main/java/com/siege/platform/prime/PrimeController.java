@@ -37,6 +37,7 @@ public class PrimeController {
         BigDecimal montantParPoint = new BigDecimal(payload.getOrDefault("montantParPoint", "0").toString());
         int score = Integer.parseInt(payload.getOrDefault("score", "0").toString());
         int seuilMinimum = Integer.parseInt(payload.getOrDefault("seuilMinimum", "0").toString());
+        BigDecimal plafondMax = payload.get("plafondMax") != null ? new BigDecimal(payload.get("plafondMax").toString()) : null;
         
         // Find matching active rules from DB for current tenant
         List<ReglePrimeRendement> regles = repository.findAll();
@@ -56,17 +57,25 @@ public class PrimeController {
             if (seuilMinimum == 0) {
                 seuilMinimum = regleAppliquee.getSeuilMinimum();
             }
+            if (plafondMax == null && regleAppliquee.getPlafondMax() != null) {
+                plafondMax = regleAppliquee.getPlafondMax();
+            }
         }
 
         BigDecimal montantCalcule = BigDecimal.ZERO;
         if (score >= seuilMinimum) {
             montantCalcule = montantParPoint.multiply(BigDecimal.valueOf(score));
         }
+        
+        if (plafondMax != null && montantCalcule.compareTo(plafondMax) > 0) {
+            montantCalcule = plafondMax;
+        }
 
         return Map.of(
             "score", score,
             "seuilMinimumApplique", seuilMinimum,
             "montantParPointApplique", montantParPoint,
+            "plafondMaxApplique", plafondMax != null ? plafondMax : "Aucun",
             "montantCalcule", montantCalcule,
             "regleAssociee", regleAppliquee != null ? regleAppliquee.getLibelle() : "Aucune règle spécifique"
         );
