@@ -80,8 +80,6 @@ public class RapportPdfBuilder {
                 s = addDisciplinaire(doc, (Map<String, Object>) report.get("disciplinaire"), s);
             if (report.containsKey("missions"))
                 s = addMissions(doc, (Map<String, Object>) report.get("missions"), s);
-            if (report.containsKey("facturation"))
-                addFacturation(doc, report, s);
 
             doc.close();
             return baos.toByteArray();
@@ -373,36 +371,6 @@ public class RapportPdfBuilder {
         return num + 1;
     }
 
-    // =========================================================================
-    //  SECTION 6 — FACTURATION
-    // =========================================================================
-    private static void addFacturation(Document doc, Map<String, Object> report, int num) throws Exception {
-        Color C_GREEN = new Color(20, 83, 45);
-        addSectionHeader(doc, num, "FACTURATION & HEURES VALORISÉES", C_GREEN);
-        addKpiRow(doc, new String[][]{
-            {str(report.get("total_heures"), "0") + " h",            "Heures travaillées"},
-            {str(report.get("taux_horaire_defaut"), "15") + " FCFA/h",  "Taux horaire"},
-            {str(report.get("montant_total_estime"), "0") + " FCFA",    "Montant total estimé"}
-        });
-
-        Map<String, Map<String, Object>> lignes =
-            (Map<String, Map<String, Object>>) report.getOrDefault("lignes_facturation", Collections.emptyMap());
-        PdfPTable t = new PdfPTable(new float[]{40, 25, 35});
-        t.setWidthPercentage(100);
-        t.setSpacingAfter(12);
-        addHeaderRow(t, C_GREEN, "Agent", "Heures Travaillées", "Valorisation Estimée (15 FCFA/h)");
-
-        boolean alt = false;
-        for (Map<String, Object> ligne : lignes.values()) {
-            long h = ligne.get("heures") instanceof Number
-                ? ((Number) ligne.get("heures")).longValue() : 0L;
-            addRow(t, alt ? C_ALT : C_WHITE, false,
-                str(ligne.get("agent"), "—"), h + " h", (h * 15) + " FCFA");
-            alt = !alt;
-        }
-        if (lignes.isEmpty()) addEmptyRow(t, 3);
-        doc.add(t);
-    }
 
     // =========================================================================
     //  SHARED HELPERS

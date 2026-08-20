@@ -4,7 +4,6 @@ import com.siege.platform.agent.AgentTerrainRepository;
 import com.siege.platform.agent.PieceJustificativeRepository;
 import com.siege.platform.contrat.ContratAgentRepository;
 import com.siege.platform.materiel.MaterielRepository;
-import com.siege.platform.paie.BulletinDePaieRepository;
 import com.siege.platform.poste.AffectationRepository;
 import com.siege.platform.poste.PosteRepository;
 import org.springframework.http.ResponseEntity;
@@ -27,22 +26,19 @@ public class DashboardController {
     private final ContratAgentRepository contratRepository;
     private final PieceJustificativeRepository pieceRepository;
     private final MaterielRepository materielRepository;
-    private final BulletinDePaieRepository bulletinRepository;
 
     public DashboardController(AgentTerrainRepository agentTerrainRepository,
                                PosteRepository posteRepository,
                                AffectationRepository affectationRepository,
                                ContratAgentRepository contratRepository,
                                PieceJustificativeRepository pieceRepository,
-                               MaterielRepository materielRepository,
-                               BulletinDePaieRepository bulletinRepository) {
+                               MaterielRepository materielRepository) {
         this.agentTerrainRepository = agentTerrainRepository;
         this.posteRepository = posteRepository;
         this.affectationRepository = affectationRepository;
         this.contratRepository = contratRepository;
         this.pieceRepository = pieceRepository;
         this.materielRepository = materielRepository;
-        this.bulletinRepository = bulletinRepository;
     }
 
     @GetMapping("/admin")
@@ -59,7 +55,6 @@ public class DashboardController {
         stats.put("materielsEnPanne", materielRepository.countByStatut("CASSE"));
         stats.put("contratsExpirant", contratRepository.findByDateFinBetweenAndStatut(today, today.plusDays(30), "ACTIF").size());
         stats.put("documentsExpirant", pieceRepository.findByDateExpirationBetween(today, today.plusDays(30)).size());
-        stats.put("bulletinsMois", bulletinRepository.count());
         stats.put("tauxOccupation", 0);
         stats.put("tauxPresence", 0);
         stats.put("masseSalarialeMois", 0);

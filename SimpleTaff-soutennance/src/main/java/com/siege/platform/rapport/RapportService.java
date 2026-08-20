@@ -348,47 +348,6 @@ public class RapportService {
         return report;
     }
 
-    public Map<String, Object> genererRapportFacturation(String mois) {
-        YearMonth ym = YearMonth.parse(mois);
-        LocalDateTime debut = ym.atDay(1).atStartOfDay();
-        LocalDateTime fin = ym.plusMonths(1).atDay(1).atStartOfDay();
-
-        List<Pointage> pointages = pointageRepository.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(debut, fin);
-
-        Map<String, Object> report = new LinkedHashMap<>();
-        report.put("titre", "Rapport de Facturation - " + mois);
-        report.put("dateGeneration", LocalDate.now());
-        report.put("period", mois);
-
-        long totalHeures = calculateTotalDuration(pointages) / 60;
-        report.put("total_heures", totalHeures);
-        report.put("taux_horaire_defaut", 15.0);
-        report.put("montant_total_estime", totalHeures * 15.0);
-
-        Map<String, Map<String, Object>> parAffectation = new LinkedHashMap<>();
-        for (Pointage p : pointages) {
-            String affectationKey = (p.getAffectation() != null && p.getAffectation().getId() != null) 
-                    ? p.getAffectation().getId().toString() 
-                    : "GLOBAL";
-            if (!parAffectation.containsKey(affectationKey)) {
-                parAffectation.put(affectationKey, new LinkedHashMap<>());
-                String agentNom = (p.getAffectation() != null && p.getAffectation().getAgent() != null)
-                        ? getAgentNomComplet(p.getAffectation().getAgent())
-                        : "Agent Non Assigné";
-                parAffectation.get(affectationKey).put("agent", agentNom);
-                parAffectation.get(affectationKey).put("heures", 0L);
-                parAffectation.get(affectationKey).put("pointages", new ArrayList<>());
-            }
-
-            long heures = calculateDurationMinutes(p) / 60;
-            long currentHeures = ((Number) parAffectation.get(affectationKey).get("heures")).longValue();
-            parAffectation.get(affectationKey).put("heures", currentHeures + heures);
-            ((List<Object>) parAffectation.get(affectationKey).get("pointages")).add(pointageToMap(p));
-        }
-
-        report.put("lignes_facturation", parAffectation);
-        return report;
-    }
 
     /**
      * Generates a structured PDF presence report with one page per agent per week,
