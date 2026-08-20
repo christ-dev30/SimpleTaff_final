@@ -55,10 +55,10 @@ EXPOSE 8080
 
 # Variables d'env par défaut (surchargées par .env ou docker-compose)
 ENV PORT=8080 \
-    DB_HOST=94.130.65.236 \
-    DB_PORT=3306 \
-    DB_NAME=ehuicp_simpletaff \
-    DB_USERNAME=ehuicp \
+    MYSQLHOST=94.130.65.236 \
+    MYSQLPORT=3306 \
+    MYSQLDATABASE=ehuicp_simpletaff \
+    MYSQLUSER=ehuicp \
     JWT_EXPIRATION_MS=86400000 \
     JWT_REFRESH_EXPIRATION_MS=604800000 \
     MAIL_HOST=smtp-relay.brevo.com \
