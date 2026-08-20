@@ -85,6 +85,8 @@ public class InvitationController {
         try {
             invitationService.inscrireAdminEntreprise(token, nom, prenom, password);
             return ResponseEntity.ok(Map.of("message", "Compte créé avec succès ! Vous pouvez maintenant vous connecter."));
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Cette adresse email est déjà utilisée par un autre compte."));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
