@@ -250,7 +250,7 @@ public class EmployeurController {
             if (p.getDateHeureEntree() != null && p.getDateHeureEntree().isAfter(start) && p.getDateHeureEntree().isBefore(end)) {
                 pointagesAujourdhui++;
             }
-            if (p.getDateHeureEntree() != null && p.getDateHeureSortie() != null && "VALIDE".equals(p.getStatut())) {
+            if (p.getDateHeureEntree() != null && p.getDateHeureSortie() != null) {
                 long minutes = java.time.Duration.between(p.getDateHeureEntree(), p.getDateHeureSortie()).toMinutes();
                 if (minutes > 0) {
                     heuresPrestees += minutes;
