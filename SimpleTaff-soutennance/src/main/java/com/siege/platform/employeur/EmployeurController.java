@@ -275,6 +275,8 @@ public class EmployeurController {
         
         long heuresPresteesH = heuresPrestees / 60;
         long heuresSuppH = heuresSupp / 60;
+        String heuresPresteesFormatted = String.format("%dh %02dm", heuresPrestees / 60, heuresPrestees % 60);
+        String heuresSuppFormatted = String.format("%dh %02dm", heuresSupp / 60, heuresSupp % 60);
         
         List<Long> heuresParJourH = new ArrayList<>();
         for (long mins : heuresParJour) {
@@ -313,7 +315,9 @@ public class EmployeurController {
         result.put("moyenneEvaluations", moyenneBrute);
         result.put("indiceSatisfaction", Math.round(indiceSatisfaction));
         result.put("heuresPrestees", heuresPresteesH);
+        result.put("heuresPresteesFormatted", heuresPresteesFormatted);
         result.put("heuresSupp", heuresSuppH);
+        result.put("heuresSuppFormatted", heuresSuppFormatted);
         result.put("dernierAffecte", dernierAffecte);
         result.put("heuresParJour", heuresParJourH);
         return ResponseEntity.ok(result);

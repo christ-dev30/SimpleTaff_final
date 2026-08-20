@@ -394,11 +394,11 @@ async function loadOverview() {
         document.getElementById("statOverviewEvals").textContent =
           statsRes.moyenneEvaluations || 0;
         document.getElementById("statOverviewDernier").textContent =
-          (statsRes.heuresSupp || 0) + "h";
+          statsRes.heuresSuppFormatted || ((statsRes.heuresSupp || 0) + "h");
 
         const hPrestees = document.getElementById("statHeuresPresteesGlobal");
         if (hPrestees)
-          hPrestees.textContent = (statsRes.heuresPrestees || 0) + "h";
+          hPrestees.textContent = statsRes.heuresPresteesFormatted || ((statsRes.heuresPrestees || 0) + "h");
 
         const dAffecte = document.getElementById("statDernierAffecte");
         if (dAffecte) dAffecte.textContent = statsRes.dernierAffecte || "Aucun";
