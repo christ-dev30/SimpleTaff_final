@@ -1164,9 +1164,9 @@ if (searchInput) {
           type: "Agent",
           icon: "👤",
           text: (a.nom || a.agentNom || "") + " " + (a.prenom || ""),
-          tab: "agents",
+          tab: "personnel",
           action: () => {
-            if (typeof showTab === "function") showTab("agents");
+            if (typeof showTab === "function") showTab("personnel");
             searchInput.value = "";
             searchDropdown.classList.add("hidden");
           },
