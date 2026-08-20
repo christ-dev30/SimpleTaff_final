@@ -32,7 +32,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
             uploadDir.mkdirs();
         }
         String absolutePath = uploadDir.toURI().toString();
+        
+        // Cache control for uploads
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations(absolutePath, "file:uploads/", "file:./uploads/");
+                .addResourceLocations(absolutePath, "file:uploads/", "file:./uploads/")
+                .setCacheControl(org.springframework.http.CacheControl.maxAge(365, java.util.concurrent.TimeUnit.DAYS).cachePublic());
+
+        // Cache control for static assets
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/")
+                .setCacheControl(org.springframework.http.CacheControl.maxAge(365, java.util.concurrent.TimeUnit.DAYS).cachePublic());
     }
 }

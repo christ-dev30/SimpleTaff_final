@@ -5270,7 +5270,7 @@ document
     try {
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch("/upload", {
+      const res = await fetch("/api/agents/upload", {
         method: "POST",
         headers: { Authorization: "Bearer " + localStorage.getItem("token") },
         body: fd,

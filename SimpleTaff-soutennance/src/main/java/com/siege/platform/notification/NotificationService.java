@@ -49,6 +49,7 @@ public class NotificationService {
     /**
      * Send email notification to an enterprise contact
      */
+    @org.springframework.scheduling.annotation.Async("taskExecutor")
     public void envoyerEmailNotification(String destinataire, String titre, String contenu) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
