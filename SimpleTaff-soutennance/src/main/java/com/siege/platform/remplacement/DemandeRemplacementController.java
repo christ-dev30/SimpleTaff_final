@@ -98,7 +98,7 @@ public class DemandeRemplacementController {
 
         if ("ACCEPTEE".equals(action)) {
             // Terminer l'affectation actuelle de l'agent
-            List<Affectation> affectations = affectationRepository.findByAgentId(demande.getAgent().getId());
+            List<Affectation> affectations = affectationRepository.findByAgentIdOrderByDateDebutOccupationDesc(demande.getAgent().getId());
             for (Affectation aff : affectations) {
                 if ("EN_COURS".equals(aff.getStatut())) {
                     aff.setStatut("CLOTUREE");
