@@ -71,9 +71,14 @@ public class BulletinDePaie {
     private BigDecimal retenueAbsence;
 
     private LocalDateTime creeLe;
+    private LocalDateTime dateCloture;
+    
     
     @PrePersist
     protected void onCreate() {
         creeLe = LocalDateTime.now();
+        if (dateCloture == null) {
+            dateCloture = LocalDateTime.now();
+        }
     }
 }

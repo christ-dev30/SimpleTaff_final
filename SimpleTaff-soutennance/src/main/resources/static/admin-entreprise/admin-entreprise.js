@@ -5989,7 +5989,7 @@ window.loadPaieAndConfig = async function() {
         agents.forEach(a => {
           const opt = document.createElement("option");
           opt.value = a.id;
-          opt.textContent = `${a.nom} ${a.prenoms} - ${a.matricule || ''}`;
+          opt.textContent = `${a.nom || ''} ${a.prenom || ''} - ${a.matricule || ''}`;
           select.appendChild(opt);
         });
       }
@@ -6044,7 +6044,7 @@ window.chargerBulletins = async function() {
       <tr class="hover:bg-slate-50 transition-colors">
         <td class="p-3 font-medium">${b.periode}</td>
         <td class="p-3">
-          <div class="font-medium text-slate-700">${b.agent.nom} ${b.agent.prenoms}</div>
+          <div class="font-medium text-slate-700">${b.agent.nom || ''} ${b.agent.prenom || ''}</div>
           <div class="text-[10px] font-mono text-slate-400">${b.agent.matricule || b.agent.id.substring(0,8)}</div>
         </td>
         <td class="p-3 text-[#12312E] font-bold">${b.salaireBrutEffectif} F CFA</td>
