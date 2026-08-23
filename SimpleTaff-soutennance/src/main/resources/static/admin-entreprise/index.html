@@ -61,65 +61,48 @@
           }
         });
         // Close mobile sidebar after navigation
-        closeMobileSidebar();
-        // Trigger data load — check function exists before calling (module may not be ready yet)
-        setTimeout(() => {
-          if (name === "overview" && typeof window.loadOverview === "function")
-            window.loadOverview();
-          if (name === "org" && typeof window.loadOrg === "function")
-            window.loadOrg();
-          if (name === "catalog" && typeof window.loadCatalog === "function")
-            window.loadCatalog();
-          if (name === "clients" && typeof window.loadClients === "function")
-            window.loadClients();
-          if (
-            name === "postes" &&
-            typeof window.loadPostesAndAff === "function"
-          )
-            window.loadPostesAndAff();
-          if (name === "paie" && typeof window.loadPaieAndConfig === "function")
-            window.loadPaieAndConfig();
-          if (name === "remplacements" && typeof window.loadAdminRemplacements === "function")
-            window.loadAdminRemplacements();
-          if (
-            name === "parametres" &&
-            typeof window.loadCatalog === "function"
-          ) {
-            window.loadCatalog();
-            if (typeof window.loadMateriel === "function")
-              window.loadMateriel();
-            if (typeof window.loadParametresPaie === "function")
-              window.loadParametresPaie();
+        if (typeof closeMobileSidebar === "function") closeMobileSidebar();
+
+        // Trigger data load — retry up to 20x (2s total) waiting for module to load
+        const loaderMap = {
+          overview: "loadOverview",
+          org: "loadOrg",
+          catalog: "loadCatalog",
+          clients: "loadClients",
+          postes: "loadPostesAndAff",
+          paie: "loadPaieAndConfig",
+          remplacements: "loadAdminRemplacements",
+          contrats: "loadContrats",
+          pointage: "loadPointages",
+          presences: "loadPresences",
+          materiel: "loadMateriel",
+          conges: "loadConges",
+          disciplinaire: "loadDisciplinaire",
+          evaluations: "loadEvaluations",
+          audit: "loadAudit",
+          rapports: "loadRapports",
+        };
+        // parametres needs multiple loaders
+        const extraLoaders = {
+          parametres: ["loadCatalog", "loadMateriel", "loadParametresPaie"],
+        };
+
+        function tryLoad(attempts) {
+          const fnName = loaderMap[name];
+          const extras = extraLoaders[name];
+          const ready = fnName
+            ? typeof window[fnName] === "function"
+            : extras && extras.some((n) => typeof window[n] === "function");
+          if (ready) {
+            if (fnName && typeof window[fnName] === "function") window[fnName]();
+            if (extras) extras.forEach((n) => { if (typeof window[n] === "function") window[n](); });
+          } else if (attempts > 0) {
+            setTimeout(() => tryLoad(attempts - 1), 100);
           }
-          if (name === "contrats" && typeof window.loadContrats === "function")
-            window.loadContrats();
-          if (name === "pointage" && typeof window.loadPointages === "function")
-            window.loadPointages();
-          if (
-            name === "presences" &&
-            typeof window.loadPresences === "function"
-          )
-            window.loadPresences();
-          if (name === "materiel" && typeof window.loadMateriel === "function")
-            window.loadMateriel();
-          if (name === "conges" && typeof window.loadConges === "function")
-            window.loadConges();
-          if (
-            name === "disciplinaire" &&
-            typeof window.loadDisciplinaire === "function"
-          )
-            window.loadDisciplinaire();
-          if (
-            name === "evaluations" &&
-            typeof window.loadEvaluations === "function"
-          )
-            window.loadEvaluations();
-          if (name === "audit" && typeof window.loadAudit === "function")
-            window.loadAudit();
-          if (name === "rapports" && typeof window.loadRapports === "function")
-            window.loadRapports();
-        }, 50);
+        }
+        setTimeout(() => tryLoad(20), 50);
       };
+
 
       // toggleNotificationsDropdown
       window.toggleNotificationsDropdown = function () {
@@ -4949,7 +4932,7 @@
 
       <script
         type="module"
-        src="/admin-entreprise/admin-entreprise.js?v=7"
+        src="/admin-entreprise/admin-entreprise.js?v=8"
       ></script>
 
       <!-- Modal QR Code Admin -->
