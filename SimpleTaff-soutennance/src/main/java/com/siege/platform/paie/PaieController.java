@@ -29,11 +29,8 @@ public class PaieController {
     @PostMapping("/calculer")
     public ResponseEntity<?> calculerPaie(@RequestBody PaieRequest request) {
         try {
-            BulletinDePaie bulletin = paieService.calculerEtGenererBulletin(request);
-            return ResponseEntity.ok(Map.of(
-                    "message", "Bulletin calculé avec succès",
-                    "bulletin", bulletin
-            ));
+            paieService.calculerEtGenererBulletin(request);
+            return ResponseEntity.ok(Map.of("message", "Bulletin calculé avec succès"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
@@ -43,7 +40,29 @@ public class PaieController {
     public ResponseEntity<?> getBulletinsByPeriode(@PathVariable String periode) {
         Entreprise entreprise = tenantService.entreprise();
         List<BulletinDePaie> bulletins = bulletinRepository.findByEntrepriseIdAndPeriode(entreprise.getId(), periode);
-        return ResponseEntity.ok(bulletins);
+        
+        List<Map<String, Object>> result = bulletins.stream().map(b -> {
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", b.getId());
+            map.put("periode", b.getPeriode());
+            map.put("salaireBrutEffectif", b.getSalaireBrutEffectif());
+            map.put("totalPrimes", b.getTotalPrimes());
+            map.put("cotisationCnps", b.getCotisationCnps());
+            map.put("cotisationCnam", b.getCotisationCnam());
+            map.put("impotSurRevenu", b.getImpotSurRevenu());
+            map.put("salaireNetCalcule", b.getSalaireNetCalcule());
+            
+            Map<String, Object> agentInfo = new java.util.HashMap<>();
+            agentInfo.put("id", b.getAgent().getId());
+            agentInfo.put("nom", b.getAgent().getNom());
+            agentInfo.put("prenom", b.getAgent().getPrenom());
+            agentInfo.put("matricule", b.getAgent().getMatricule());
+            map.put("agent", agentInfo);
+            
+            return map;
+        }).collect(java.util.stream.Collectors.toList());
+        
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
