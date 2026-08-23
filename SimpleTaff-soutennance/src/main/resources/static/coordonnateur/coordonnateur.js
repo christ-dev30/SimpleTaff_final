@@ -397,6 +397,7 @@ window.loadAgents = loadAgents;
 async function loadAffectations() {
   const tbody = document.getElementById("affectationsTable");
   try {
+    loadFormulaireAffectation();
     const data = await apiFetch("/coordonnateur/affectations");
     window.allCoordAffectations = data || [];
     if (!data || data.length === 0) {
@@ -444,6 +445,68 @@ async function loadAffectations() {
   }
 }
 window.loadAffectations = loadAffectations;
+
+async function loadFormulaireAffectation() {
+  try {
+    // Charger les postes vacants
+    const postes = await apiFetch("/coordonnateur/postes-vacants");
+    const posteSelect = document.getElementById("newAffectPoste");
+    if (posteSelect) {
+      posteSelect.innerHTML = '<option value="">-- Sélectionner un poste --</option>' + 
+        (postes || []).map(p => `<option value="${p.id}">${p.titre} - ${p.siteNom} (${p.clientNom})</option>`).join("");
+    }
+
+    // Charger les agents (Pour l'instant, on prend tous les agents via l'API)
+    const agents = await apiFetch("/agents");
+    const agentSelect = document.getElementById("newAffectAgent");
+    if (agentSelect) {
+      agentSelect.innerHTML = '<option value="">-- Sélectionner un agent --</option>' + 
+        (agents || []).map(a => `<option value="${a.id}">${a.matricule || ''} - ${a.nom} ${a.prenom}</option>`).join("");
+    }
+  } catch (e) {
+    console.error("Erreur chargement formulaire affectation:", e);
+  }
+}
+
+window.submitNouvelleAffectation = async function() {
+  const posteId = document.getElementById("newAffectPoste").value;
+  const agentId = document.getElementById("newAffectAgent").value;
+  const heureArrivee = document.getElementById("newAffectArrivee").value;
+  const heureDepart = document.getElementById("newAffectDepart").value;
+
+  if (!posteId || !agentId) {
+    alert("Veuillez sélectionner un agent et un poste.");
+    return;
+  }
+
+  try {
+    const btn = document.querySelector("button[onclick='submitNouvelleAffectation()']");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> En cours...';
+    btn.disabled = true;
+
+    await apiFetch("/coordonnateur/affectations", {
+      method: "POST",
+      body: JSON.stringify({
+        posteId,
+        agentId,
+        heureArrivee,
+        heureDepart
+      })
+    });
+
+    alert("Affectation créée avec succès !");
+    loadAffectations();
+    
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  } catch (e) {
+    alert("Erreur lors de l'affectation : " + e.message);
+    const btn = document.querySelector("button[onclick='submitNouvelleAffectation()']");
+    btn.innerHTML = '<i class="fa-solid fa-plus"></i> Valider l\'affectation';
+    btn.disabled = false;
+  }
+};
 
 let _coordPointages = [];
 
