@@ -5984,7 +5984,7 @@ window.loadPaieAndConfig = async function() {
   const select = document.getElementById("paieAgentId");
   if(select && select.options.length <= 1) { 
     try {
-      const agents = await apiCall("/api/agents", "GET");
+      const agents = await apiFetch("/agents");
       if(agents) {
         agents.forEach(a => {
           const opt = document.createElement("option");
@@ -6009,12 +6009,16 @@ window.calculerPaie = async function() {
   }
   
   try {
-    const res = await apiCall("/api/paie/calculer", "POST", {
-      agentId: agentId,
-      periode: periode,
-      joursPrevus: 30,
-      joursValides: 30, // Mocked for UI simplicity
-      joursAbsenceNonJustifiee: 0
+    const res = await apiFetch("/paie/calculer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        agentId: agentId,
+        periode: periode,
+        joursPrevus: 30,
+        joursValides: 30, // Mocked for UI simplicity
+        joursAbsenceNonJustifiee: 0
+      })
     });
     alert("Paie calculée avec succès !");
     window.chargerBulletins();
@@ -6030,7 +6034,7 @@ window.chargerBulletins = async function() {
   tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">Chargement des bulletins...</td></tr>';
   
   try {
-    const bulletins = await apiCall(`/api/paie/periode/${periode}`, "GET");
+    const bulletins = await apiFetch(`/paie/periode/${periode}`);
     if(!bulletins || bulletins.length === 0) {
       tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">Aucun bulletin trouvé pour cette période.</td></tr>';
       return;
