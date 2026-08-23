@@ -1,4 +1,4 @@
-import { apiFetch, logout, checkAuth } from "/shared/api.js";
+import { apiFetch, logout, checkAuth } from "../shared/api.js";
 window.logout = logout;
 window.loadNotifications = async function () {
   try {
