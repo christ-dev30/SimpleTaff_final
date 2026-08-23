@@ -5049,59 +5049,7 @@ window.renderVisualRapportPreview = function (payload) {
                 `;
   }
 
-  // 5. Missions Section
-  if (payload.missions) {
-    const sec = payload.missions;
-    const list = sec.liste || [];
-    html += `
-                    <div class="space-y-3 pt-2">
-                        <div class="flex justify-between items-center bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold text-xs">
-                            <span>🚀 5. MISSIONS & DÉPLACEMENTS</span>
-                            <span class="text-slate-300 font-normal">Missions: ${sec.total_missions || list.length}</span>
-                        </div>
-                        <div class="overflow-x-auto border border-slate-200 rounded-xl">
-                            <table class="min-w-full text-left text-xs whitespace-nowrap">
-                                <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                                    <tr>
-                                        <th class="p-3">Titre Mission</th>
-                                        <th class="p-3">Agent Assigné</th>
-                                        <th class="p-3">Début</th>
-                                        <th class="p-3">Fin</th>
-                                        <th class="p-3">Statut</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    ${
-                                      list.length
-                                        ? list
-                                            .map((m) => {
-                                              const st = (
-                                                m.statut || ""
-                                              ).toUpperCase();
-                                              let badgeClass =
-                                                "bg-purple-50 text-purple-700 border-purple-200";
-                                              if (st.includes("TERMINE"))
-                                                badgeClass =
-                                                  "bg-emerald-50 text-emerald-700 border-emerald-200";
-                                              return `
-                                        <tr class="hover:bg-slate-50 transition-colors">
-                                            <td class="p-3 font-semibold text-slate-900">${m.titre || "—"}</td>
-                                            <td class="p-3 text-slate-600">${m.agent || "—"}</td>
-                                            <td class="p-3 text-slate-600">${m.debut || "—"}</td>
-                                            <td class="p-3 text-slate-600">${m.fin || "—"}</td>
-                                            <td class="p-3"><span class="px-2 py-0.5 text-[10px] font-extrabold rounded-full border ${badgeClass}">${st}</span></td>
-                                        </tr>
-                                        `;
-                                            })
-                                            .join("")
-                                        : '<tr><td colspan="5" class="p-3 text-center text-slate-400">Aucune mission enregistrée sur la période.</td></tr>'
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-  }
+  // (Section Missions supprimée - module retiré)
 
   // Document Footer
   html += `
@@ -5380,16 +5328,15 @@ window.loadRapportAgent = async function () {
       apiFetch("/agents/" + agentId),
       apiFetch("/conges?agentId=" + agentId),
       apiFetch("/disciplinaire/sanctions?agentId=" + agentId),
-      apiFetch("/missions?agentId=" + agentId),
       apiFetch("/pointages?agentId=" + agentId + (mois ? "&mois=" + mois : "")),
       apiFetch("/paie/agent/" + agentId),
     ]);
     var ag = results[0].status === "fulfilled" ? results[0].value : {};
     var cg = results[1].status === "fulfilled" ? results[1].value || [] : [];
     var sc = results[2].status === "fulfilled" ? results[2].value || [] : [];
-    var ms = results[3].status === "fulfilled" ? results[3].value || [] : [];
-    var pt = results[4].status === "fulfilled" ? results[4].value || [] : [];
-    var paie = results[5].status === "fulfilled" ? results[5].value || [] : [];
+    var ms = []; // missions supprimées
+    var pt = results[3].status === "fulfilled" ? results[3].value || [] : [];
+    var paie = results[4].status === "fulfilled" ? results[4].value || [] : [];
     if (mois) { paie = paie.filter(p => p.periode === mois); }
     var nomAgent = ag.nom ? ag.nom + " " + ag.prenom : "Agent";
     var periodeLabel = mois ? "Periode : " + mois : "Toutes periodes";
