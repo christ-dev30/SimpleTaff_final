@@ -85,10 +85,10 @@ public class PaieCalculService {
         ParametrePaie parametre = parametreRepository.findByEntrepriseId(entreprise.getId())
                 .orElse(new ParametrePaie()); // valeurs par défaut dans l'entité
 
-        // Primes fixes (Mock pour la soutenance -> dynamiques maintenant)
-        BigDecimal primeTransport = parametre.getPrimeTransport();
-        BigDecimal primeLogement = parametre.getPrimeLogement();
-        BigDecimal primeRendement = parametre.getPrimeRendement();
+        // Primes fixes (Mock pour la soutenance -> 15000 comme demandé, sans avantages)
+        BigDecimal primeTransport = new BigDecimal("15000.00"); // Forcé pour la soutenance
+        BigDecimal primeLogement = BigDecimal.ZERO; // Retiré
+        BigDecimal primeRendement = BigDecimal.ZERO; // Retiré
         BigDecimal totalPrimes = primeTransport.add(primeLogement).add(primeRendement);
         
         // Règle Métier : Perte de primes si >= 2 jours absence injustifiée OU >= 1 sanction dans le mois

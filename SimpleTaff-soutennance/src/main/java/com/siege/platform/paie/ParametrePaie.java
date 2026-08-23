@@ -36,8 +36,8 @@ public class ParametrePaie {
     private BigDecimal primeTransport = new BigDecimal("15000.00");
 
     @Column(precision = 12, scale = 2)
-    private BigDecimal primeLogement = new BigDecimal("10000.00");
+    private BigDecimal primeLogement = new BigDecimal("0.00");
 
     @Column(precision = 12, scale = 2)
-    private BigDecimal primeRendement = new BigDecimal("5000.00");
+    private BigDecimal primeRendement = new BigDecimal("0.00");
 }
