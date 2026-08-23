@@ -6063,3 +6063,43 @@ window.chargerBulletins = async function() {
     tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-red-500">Erreur de chargement.</td></tr>';
   }
 };
+
+// ==================== PARAMETRES PAIE ====================
+window.loadParametresPaie = async function() {
+  try {
+    const params = await apiFetch("/paie/parametres");
+    if (params) {
+      document.getElementById("paramTauxCnps").value = params.tauxCnps || 0.063;
+      document.getElementById("paramTauxCnam").value = params.tauxCnam || 0.01;
+      document.getElementById("paramTauxImpot").value = params.tauxImpot || 0.02;
+      document.getElementById("paramPrimeTransport").value = params.primeTransport || 15000;
+      document.getElementById("paramPrimeLogement").value = params.primeLogement || 10000;
+      document.getElementById("paramPrimeRendement").value = params.primeRendement || 5000;
+    }
+  } catch(e) {
+    console.error("Erreur chargement parametres paie", e);
+  }
+};
+
+window.saveParametresPaie = async function() {
+  const payload = {
+    tauxCnps: parseFloat(document.getElementById("paramTauxCnps").value || 0),
+    tauxCnam: parseFloat(document.getElementById("paramTauxCnam").value || 0),
+    tauxImpot: parseFloat(document.getElementById("paramTauxImpot").value || 0),
+    primeTransport: parseFloat(document.getElementById("paramPrimeTransport").value || 0),
+    primeLogement: parseFloat(document.getElementById("paramPrimeLogement").value || 0),
+    primeRendement: parseFloat(document.getElementById("paramPrimeRendement").value || 0)
+  };
+  
+  try {
+    const res = await apiFetch("/paie/parametres", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    showToast("Paramètres de paie enregistrés avec succès !", 3000);
+  } catch(e) {
+    console.error("Erreur sauvegarde parametres paie", e);
+    alert("Erreur lors de l'enregistrement des paramètres.");
+  }
+};

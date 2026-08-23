@@ -29,12 +29,10 @@ public class PaieCalculService {
     private ContratAgentRepository contratRepository;
 
     @Autowired
-    private CurrentTenantService tenantService;
+    private ParametrePaieRepository parametreRepository;
 
-    // Taux de cotisations par défaut (soutenance)
-    private static final BigDecimal TAUX_CNPS = new BigDecimal("0.063"); // 6.3%
-    private static final BigDecimal TAUX_CNAM = new BigDecimal("0.01");  // 1%
-    private static final BigDecimal TAUX_IMPOT = new BigDecimal("0.02"); // 2% simplifié
+    @Autowired
+    private CurrentTenantService tenantService;
 
     @Transactional
     public BulletinDePaie calculerEtGenererBulletin(PaieRequest request) {
@@ -67,19 +65,23 @@ public class PaieCalculService {
              salaireBrutEffectif = salaireBrutEffectif.subtract(retenueAbsence);
         }
 
-        // Primes fixes (Mock pour la soutenance)
-        BigDecimal primeTransport = new BigDecimal("15000.00");
-        BigDecimal primeLogement = new BigDecimal("10000.00");
-        BigDecimal primeRendement = new BigDecimal("5000.00");
+        // Récupération des paramètres de paie
+        ParametrePaie parametre = parametreRepository.findByEntrepriseId(entreprise.getId())
+                .orElse(new ParametrePaie()); // valeurs par défaut dans l'entité
+
+        // Primes fixes (Mock pour la soutenance -> dynamiques maintenant)
+        BigDecimal primeTransport = parametre.getPrimeTransport();
+        BigDecimal primeLogement = parametre.getPrimeLogement();
+        BigDecimal primeRendement = parametre.getPrimeRendement();
         BigDecimal totalPrimes = primeTransport.add(primeLogement).add(primeRendement);
 
         // Assiette de cotisation = Brut + Primes imposables (on simplifie ici)
         BigDecimal assiette = salaireBrutEffectif.add(totalPrimes);
 
         // Calcul des cotisations et impôts
-        BigDecimal cnps = assiette.multiply(TAUX_CNPS).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal cnam = assiette.multiply(TAUX_CNAM).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal impot = assiette.multiply(TAUX_IMPOT).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal cnps = assiette.multiply(parametre.getTauxCnps()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal cnam = assiette.multiply(parametre.getTauxCnam()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal impot = assiette.multiply(parametre.getTauxImpot()).setScale(2, RoundingMode.HALF_UP);
 
         // Calcul final net
         BigDecimal totalDeductions = cnps.add(cnam).add(impot);
