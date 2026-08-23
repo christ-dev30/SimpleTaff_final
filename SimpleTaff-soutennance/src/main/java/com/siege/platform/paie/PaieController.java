@@ -72,6 +72,41 @@ public class PaieController {
         
         return ResponseEntity.ok(result);
     }
+    
+    @GetMapping("/agent/{agentId}")
+    public ResponseEntity<?> getBulletinsByAgent(@PathVariable UUID agentId) {
+        List<BulletinDePaie> bulletins = bulletinRepository.findByAgentIdOrderByPeriodeDesc(agentId);
+        
+        List<Map<String, Object>> result = bulletins.stream().map(b -> {
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", b.getId());
+            map.put("periode", b.getPeriode());
+            map.put("salaireBrutEffectif", b.getSalaireBrutEffectif());
+            map.put("totalPrimes", b.getTotalPrimes());
+            map.put("cotisationCnps", b.getCotisationCnps());
+            map.put("cotisationCnam", b.getCotisationCnam());
+            map.put("impotSurRevenu", b.getImpotSurRevenu());
+            map.put("salaireNetCalcule", b.getSalaireNetCalcule());
+            map.put("retenueAbsence", b.getRetenueAbsence());
+            
+            String metier = "Non défini";
+            if (b.getAffectation() != null && b.getAffectation().getPoste() != null && b.getAffectation().getPoste().getEmploi() != null) {
+                metier = b.getAffectation().getPoste().getEmploi().getLibelle();
+            }
+            map.put("metier", metier);
+            
+            Map<String, Object> agentInfo = new java.util.HashMap<>();
+            agentInfo.put("id", b.getAgent().getId());
+            agentInfo.put("nom", b.getAgent().getNom());
+            agentInfo.put("prenom", b.getAgent().getPrenom());
+            agentInfo.put("matricule", b.getAgent().getMatricule());
+            map.put("agent", agentInfo);
+            
+            return map;
+        }).collect(java.util.stream.Collectors.toList());
+        
+        return ResponseEntity.ok(result);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getBulletin(@PathVariable UUID id) {

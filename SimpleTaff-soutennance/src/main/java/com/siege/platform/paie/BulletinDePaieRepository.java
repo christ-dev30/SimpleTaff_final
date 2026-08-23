@@ -13,4 +13,6 @@ public interface BulletinDePaieRepository extends JpaRepository<BulletinDePaie, 
     List<BulletinDePaie> findByEntrepriseIdAndPeriode(UUID entrepriseId, String periode);
     
     Optional<BulletinDePaie> findByAgentIdAndPeriode(UUID agentId, String periode);
+    
+    List<BulletinDePaie> findByAgentIdOrderByPeriodeDesc(UUID agentId);
 }

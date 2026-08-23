@@ -5382,12 +5382,15 @@ window.loadRapportAgent = async function () {
       apiFetch("/disciplinaire/sanctions?agentId=" + agentId),
       apiFetch("/missions?agentId=" + agentId),
       apiFetch("/pointages?agentId=" + agentId + (mois ? "&mois=" + mois : "")),
+      apiFetch("/paie/agent/" + agentId),
     ]);
     var ag = results[0].status === "fulfilled" ? results[0].value : {};
     var cg = results[1].status === "fulfilled" ? results[1].value || [] : [];
     var sc = results[2].status === "fulfilled" ? results[2].value || [] : [];
     var ms = results[3].status === "fulfilled" ? results[3].value || [] : [];
     var pt = results[4].status === "fulfilled" ? results[4].value || [] : [];
+    var paie = results[5].status === "fulfilled" ? results[5].value || [] : [];
+    if (mois) { paie = paie.filter(p => p.periode === mois); }
     var nomAgent = ag.nom ? ag.nom + " " + ag.prenom : "Agent";
     var periodeLabel = mois ? "Periode : " + mois : "Toutes periodes";
     if (container) {
@@ -5448,6 +5451,22 @@ window.loadRapportAgent = async function () {
                   '">' +
                   (x.statut || "") +
                   "</span></div>"
+                );
+              })
+              .join("") +
+            "</div></div>"
+          : "") +
+        (paie.length > 0
+          ? '<div><h5 class="text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Derniers Bulletins de Paie</h5><div class="space-y-1.5">' +
+            paie
+              .slice(0, 5)
+              .map(function (x) {
+                return (
+                  '<div class="flex justify-between items-center bg-green-50 rounded-lg px-3 py-2 text-xs"><span class="font-semibold text-green-800">' +
+                  (x.periode || "-") +
+                  '</span><span class="text-slate-500 font-bold">' +
+                  (x.salaireNetCalcule || "0") +
+                  " F CFA</span></div>"
                 );
               })
               .join("") +
@@ -6035,6 +6054,7 @@ window.chargerBulletins = async function() {
   
   try {
     const bulletins = await apiFetch(`/paie/periode/${periode}`);
+    window.currentBulletins = bulletins; // Sauvegarde pour l'export PDF
     if(!bulletins || bulletins.length === 0) {
       tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">Aucun bulletin trouvé pour cette période.</td></tr>';
       return;
@@ -6057,7 +6077,7 @@ window.chargerBulletins = async function() {
         </td>
         <td class="p-3 text-[#12312E] font-bold text-sm bg-[#EAF4E3] rounded-lg">${b.salaireNetCalcule} F CFA</td>
         <td class="p-3">
-          <button class="text-xs bg-[#12312E] text-white px-3 py-1 rounded shadow-sm hover:bg-[#19403B]" onclick="alert('Simulation: Bulletin exporté au format PDF')">
+          <button class="text-xs bg-[#12312E] text-white px-3 py-1 rounded shadow-sm hover:bg-[#19403B]" onclick="window.exportBulletinPDF('${b.id}')">
             <i class="fa-solid fa-file-pdf"></i> PDF
           </button>
         </td>
@@ -6067,6 +6087,61 @@ window.chargerBulletins = async function() {
     console.error(e);
     tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-red-500">Erreur de chargement.</td></tr>';
   }
+};
+
+window.exportBulletinPDF = function(bulletinId) {
+  if (!window.currentBulletins) return;
+  const bulletin = window.currentBulletins.find(b => b.id === bulletinId);
+  if (!bulletin) {
+    alert("Bulletin introuvable en mémoire.");
+    return;
+  }
+
+  // Remplissage du template
+  document.getElementById("pdf-entreprise-nom").textContent = "SimpleTaff Entreprise";
+  document.getElementById("pdf-periode").textContent = "Période: " + bulletin.periode;
+  
+  document.getElementById("pdf-agent-nom").textContent = bulletin.agent.nom + " " + bulletin.agent.prenom;
+  document.getElementById("pdf-agent-matricule").textContent = bulletin.agent.matricule || bulletin.agent.id.substring(0,8);
+  document.getElementById("pdf-agent-metier").textContent = bulletin.metier || "Non défini";
+  
+  document.getElementById("pdf-salaire-base").textContent = (bulletin.salaireBrutEffectif || 0) + " F CFA";
+  
+  document.getElementById("pdf-gains-brut").textContent = (bulletin.salaireBrutEffectif || 0);
+  document.getElementById("pdf-gains-primes").textContent = (bulletin.totalPrimes || 0);
+  
+  document.getElementById("pdf-retenues-absences").textContent = (bulletin.retenueAbsence || 0);
+  document.getElementById("pdf-retenues-cnps").textContent = (bulletin.cotisationCnps || 0);
+  document.getElementById("pdf-retenues-cnam").textContent = (bulletin.cotisationCnam || 0);
+  
+  const totalGains = (bulletin.salaireBrutEffectif || 0) + (bulletin.totalPrimes || 0);
+  const totalRetenues = (bulletin.retenueAbsence || 0) + (bulletin.cotisationCnps || 0) + (bulletin.cotisationCnam || 0);
+  
+  document.getElementById("pdf-total-gains").textContent = totalGains.toFixed(2) + " F CFA";
+  document.getElementById("pdf-total-retenues").textContent = totalRetenues.toFixed(2) + " F CFA";
+  document.getElementById("pdf-net-payer").textContent = (bulletin.salaireNetCalcule || 0).toFixed(2) + " F CFA";
+  
+  document.getElementById("pdf-date-generation").textContent = new Date().toLocaleDateString("fr-FR");
+
+  const container = document.getElementById("pdf-template-container");
+  container.classList.remove("hidden");
+  container.style.position = "absolute";
+  container.style.top = "-9999px";
+
+  const element = document.getElementById("bulletin-pdf");
+  const opt = {
+    margin:       10,
+    filename:     `Bulletin_Paie_${bulletin.agent.matricule || bulletin.agent.nom}_${bulletin.periode}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(element).save().then(() => {
+    container.classList.add("hidden");
+    container.style.position = "";
+    container.style.top = "";
+  });
 };
 
 // ==================== PARAMETRES PAIE ====================

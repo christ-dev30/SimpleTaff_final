@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
       window.fallbackAvatar = function (img) {
         if (!img || img.dataset.fallbackDone) return;
@@ -2792,6 +2793,7 @@
                     </option>
                     <option value="disciplinaire">&#9878; Disciplinaire</option>
                     <option value="missions">&#128640; Missions</option>
+                    <option value="paie">&#128181; Paie (Bulletins)</option>
                   </select>
                 </div>
                 <div class="md:col-span-2 flex flex-col gap-2">
@@ -5270,5 +5272,110 @@
       </datalist>
     </div>
     <!-- /.app-layout -->
+
+    <!-- Template PDF caché pour le bulletin de paie -->
+    <div id="pdf-template-container" class="hidden">
+      <div id="bulletin-pdf" class="bg-white p-8 w-[800px] text-slate-800 font-sans" style="min-height: 1000px;">
+        <!-- Header -->
+        <div class="flex justify-between items-start border-b-2 border-[#12312E] pb-6 mb-6">
+          <div>
+            <h1 class="text-3xl font-black text-[#12312E]">SimpleTaff</h1>
+            <p class="text-sm font-medium text-slate-500 mt-1" id="pdf-entreprise-nom">Entreprise SA</p>
+          </div>
+          <div class="text-right">
+            <h2 class="text-2xl font-bold text-slate-800 uppercase tracking-wider">Bulletin de Paie</h2>
+            <p class="text-lg font-bold text-[#A3D977] mt-1" id="pdf-periode">Période: 2026-08</p>
+          </div>
+        </div>
+
+        <!-- Info Agent & Employeur -->
+        <div class="grid grid-cols-2 gap-8 mb-8">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Informations Agent</h3>
+            <div class="space-y-2 text-sm">
+              <p><span class="font-semibold text-slate-500 w-24 inline-block">Nom :</span> <span class="font-bold text-slate-800" id="pdf-agent-nom">Jean DUPONT</span></p>
+              <p><span class="font-semibold text-slate-500 w-24 inline-block">Matricule :</span> <span class="font-mono text-slate-800" id="pdf-agent-matricule">AGT-1234</span></p>
+              <p><span class="font-semibold text-slate-500 w-24 inline-block">Métier :</span> <span class="text-indigo-600 font-semibold" id="pdf-agent-metier">Agent de sécurité</span></p>
+            </div>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Détails Période</h3>
+            <div class="space-y-2 text-sm">
+              <p><span class="font-semibold text-slate-500 w-24 inline-block">Base Mensuelle :</span> <span class="font-bold text-slate-800" id="pdf-salaire-base">100000 F CFA</span></p>
+              <p><span class="font-semibold text-slate-500 w-24 inline-block">Paiement :</span> <span class="text-sky-600 font-semibold">Virement Bancaire</span></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tableau des rubriques -->
+        <table class="w-full text-sm text-left border-collapse mb-8">
+          <thead>
+            <tr class="bg-[#12312E] text-white">
+              <th class="p-3 rounded-tl-lg font-semibold w-1/2">Désignation</th>
+              <th class="p-3 font-semibold text-right">Base / Taux</th>
+              <th class="p-3 font-semibold text-right">Gains (+)</th>
+              <th class="p-3 rounded-tr-lg font-semibold text-right">Retenues (-)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 border-b border-slate-200">
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-medium text-slate-800">Salaire Brut</td>
+              <td class="p-3 text-right text-slate-500">Mois complet</td>
+              <td class="p-3 text-right font-bold text-[#12312E]" id="pdf-gains-brut">100000</td>
+              <td class="p-3 text-right text-slate-400">-</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-medium text-slate-800">Primes & Avantages</td>
+              <td class="p-3 text-right text-slate-500">Forfaitaire</td>
+              <td class="p-3 text-right font-bold text-[#A3D977]" id="pdf-gains-primes">15000</td>
+              <td class="p-3 text-right text-slate-400">-</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-medium text-slate-800">Absences Non Justifiées</td>
+              <td class="p-3 text-right text-slate-500">Jours perdus</td>
+              <td class="p-3 text-right text-slate-400">-</td>
+              <td class="p-3 text-right font-bold text-red-500" id="pdf-retenues-absences">0</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-medium text-slate-800">Cotisation CNPS</td>
+              <td class="p-3 text-right text-slate-500">6.3%</td>
+              <td class="p-3 text-right text-slate-400">-</td>
+              <td class="p-3 text-right font-bold text-red-500" id="pdf-retenues-cnps">6300</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-medium text-slate-800">Cotisation CNAM</td>
+              <td class="p-3 text-right text-slate-500">1.0%</td>
+              <td class="p-3 text-right text-slate-400">-</td>
+              <td class="p-3 text-right font-bold text-red-500" id="pdf-retenues-cnam">1000</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Totaux -->
+        <div class="flex justify-end mt-8">
+          <div class="w-1/2 bg-[#EAF4E3] rounded-2xl p-6 border border-[#A3D977]">
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-sm font-semibold text-slate-600">Total Gains</span>
+              <span class="text-base font-bold text-[#12312E]" id="pdf-total-gains">115000 F CFA</span>
+            </div>
+            <div class="flex justify-between items-center mb-4">
+              <span class="text-sm font-semibold text-slate-600">Total Retenues</span>
+              <span class="text-base font-bold text-red-500" id="pdf-total-retenues">7300 F CFA</span>
+            </div>
+            <div class="h-px w-full bg-[#A3D977] my-4"></div>
+            <div class="flex justify-between items-center">
+              <span class="text-lg font-black text-[#12312E] uppercase">Net à Payer</span>
+              <span class="text-2xl font-black text-[#12312E]" id="pdf-net-payer">107700 F CFA</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="mt-16 text-center text-xs text-slate-400">
+          <p>Pour faire valoir ce que de droit.</p>
+          <p class="mt-1 font-mono">Généré le <span id="pdf-date-generation">...</span> par SimpleTaff</p>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
