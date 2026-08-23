@@ -27,6 +27,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/")
+                .setCacheControl(org.springframework.http.CacheControl.noCache().mustRevalidate());
+
         java.io.File uploadDir = new java.io.File("uploads");
         if (!uploadDir.exists()) {
             uploadDir.mkdirs();
