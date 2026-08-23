@@ -11,6 +11,9 @@ import com.siege.platform.common.CurrentTenantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.siege.platform.disciplinaire.SanctionRepository;
+import java.time.YearMonth;
+import java.time.LocalDate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -38,6 +41,9 @@ public class PaieCalculService {
 
     @Autowired
     private CurrentTenantService tenantService;
+    
+    @Autowired
+    private SanctionRepository sanctionRepository;
 
     @Transactional
     public BulletinDePaie calculerEtGenererBulletin(PaieRequest request) {
@@ -84,6 +90,19 @@ public class PaieCalculService {
         BigDecimal primeLogement = parametre.getPrimeLogement();
         BigDecimal primeRendement = parametre.getPrimeRendement();
         BigDecimal totalPrimes = primeTransport.add(primeLogement).add(primeRendement);
+        
+        // Règle Métier : Perte de primes si >= 2 jours absence injustifiée OU >= 1 sanction dans le mois
+        YearMonth ym = YearMonth.parse(request.getPeriode());
+        LocalDate debutMois = ym.atDay(1);
+        LocalDate finMois = ym.atEndOfMonth();
+        
+        long nombreSanctions = sanctionRepository.countByAgentIdAndDateDecisionBetween(agent.getId(), debutMois, finMois);
+        
+        if (request.getJoursAbsenceNonJustifiee() >= 2 || nombreSanctions >= 1) {
+            totalPrimes = BigDecimal.ZERO; // Perte totale des primes
+            // Alternativement, on pourrait ne mettre à zéro que primeRendement. 
+            // Ici on annule tout selon la demande "les primes ne s'appliquent pas".
+        }
 
         // Assiette de cotisation = Brut + Primes imposables (on simplifie ici)
         BigDecimal assiette = salaireBrutEffectif.add(totalPrimes);

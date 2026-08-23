@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface SanctionRepository extends JpaRepository<Sanction, UUID> {
     List<Sanction> findByAgentIdOrderByDateDecisionDesc(UUID agentId);
     boolean existsByAgentIdAndStatut(UUID agentId, String statut);
+    long countByAgentIdAndDateDecisionBetween(UUID agentId, java.time.LocalDate debut, java.time.LocalDate fin);
 }
