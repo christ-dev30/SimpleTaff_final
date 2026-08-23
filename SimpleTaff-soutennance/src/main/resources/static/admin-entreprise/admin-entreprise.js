@@ -641,7 +641,7 @@ window.filterAgents = function () {
             !photoSrc.startsWith("/") &&
             !photoSrc.startsWith("data:")
           ) {
-            photoSrc = "/" + photoSrc;
+            photoSrc = "/uploads/" + photoSrc;
           }
           const initial = (a.nom || "A")[0].toUpperCase();
           const avatarHtml = photoSrc
@@ -1718,8 +1718,11 @@ window.openAgentFolder = async function (agentId) {
     return;
   }
 
-  document.getElementById("folderAgentPhoto").src =
-    a.photoUrl || "/shared/default-avatar.png";
+  let pUrl = a.photoUrl || "/shared/default-avatar.png";
+  if (pUrl && !pUrl.startsWith("http") && !pUrl.startsWith("/") && !pUrl.startsWith("data:")) {
+    pUrl = "/uploads/" + pUrl;
+  }
+  document.getElementById("folderAgentPhoto").src = pUrl;
   document.getElementById("folderAgentTitle").textContent =
     `${a.nom} ${a.prenom}`;
   document.getElementById("folderAgentSub").textContent =
