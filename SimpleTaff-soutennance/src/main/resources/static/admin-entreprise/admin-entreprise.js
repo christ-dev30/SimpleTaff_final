@@ -6071,7 +6071,6 @@ window.loadParametresPaie = async function() {
     if (params) {
       document.getElementById("paramTauxCnps").value = params.tauxCnps || 0.063;
       document.getElementById("paramTauxCnam").value = params.tauxCnam || 0.01;
-      document.getElementById("paramTauxImpot").value = params.tauxImpot || 0.02;
       document.getElementById("paramPrimeTransport").value = params.primeTransport || 15000;
       document.getElementById("paramPrimeLogement").value = params.primeLogement || 10000;
       document.getElementById("paramPrimeRendement").value = params.primeRendement || 5000;
@@ -6085,7 +6084,6 @@ window.saveParametresPaie = async function() {
   const payload = {
     tauxCnps: parseFloat(document.getElementById("paramTauxCnps").value || 0),
     tauxCnam: parseFloat(document.getElementById("paramTauxCnam").value || 0),
-    tauxImpot: parseFloat(document.getElementById("paramTauxImpot").value || 0),
     primeTransport: parseFloat(document.getElementById("paramPrimeTransport").value || 0),
     primeLogement: parseFloat(document.getElementById("paramPrimeLogement").value || 0),
     primeRendement: parseFloat(document.getElementById("paramPrimeRendement").value || 0)

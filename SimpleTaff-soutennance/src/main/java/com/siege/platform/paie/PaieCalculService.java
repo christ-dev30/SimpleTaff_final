@@ -88,10 +88,10 @@ public class PaieCalculService {
         // Assiette de cotisation = Brut + Primes imposables (on simplifie ici)
         BigDecimal assiette = salaireBrutEffectif.add(totalPrimes);
 
-        // Calcul des cotisations et impôts
+        // Calcul des cotisations (et impôts fixé à zéro)
         BigDecimal cnps = assiette.multiply(parametre.getTauxCnps()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal cnam = assiette.multiply(parametre.getTauxCnam()).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal impot = assiette.multiply(parametre.getTauxImpot()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal impot = BigDecimal.ZERO;
 
         // Calcul final net
         BigDecimal totalDeductions = cnps.add(cnam).add(impot);

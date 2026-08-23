@@ -26,14 +26,11 @@ public class ParametrePaie {
     @JoinColumn(name = "entreprise_id", nullable = false, unique = true)
     private Entreprise entreprise;
 
-    @Column(precision = 5, scale = 4)
-    private BigDecimal tauxCnps = new BigDecimal("0.0630");
+    @Column(precision = 10, scale = 4)
+    private BigDecimal tauxCnps = new BigDecimal("0.063");
 
-    @Column(precision = 5, scale = 4)
-    private BigDecimal tauxCnam = new BigDecimal("0.0100");
-
-    @Column(precision = 5, scale = 4)
-    private BigDecimal tauxImpot = new BigDecimal("0.0200");
+    @Column(precision = 10, scale = 4)
+    private BigDecimal tauxCnam = new BigDecimal("0.010");
 
     @Column(precision = 12, scale = 2)
     private BigDecimal primeTransport = new BigDecimal("15000.00");

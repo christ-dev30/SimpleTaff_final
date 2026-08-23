@@ -71,7 +71,6 @@ public class PaieController {
             parametre.setEntreprise(entreprise);
             if (parametreUpdates.getTauxCnps() != null) parametre.setTauxCnps(parametreUpdates.getTauxCnps());
             if (parametreUpdates.getTauxCnam() != null) parametre.setTauxCnam(parametreUpdates.getTauxCnam());
-            if (parametreUpdates.getTauxImpot() != null) parametre.setTauxImpot(parametreUpdates.getTauxImpot());
             if (parametreUpdates.getPrimeTransport() != null) parametre.setPrimeTransport(parametreUpdates.getPrimeTransport());
             if (parametreUpdates.getPrimeLogement() != null) parametre.setPrimeLogement(parametreUpdates.getPrimeLogement());
             if (parametreUpdates.getPrimeRendement() != null) parametre.setPrimeRendement(parametreUpdates.getPrimeRendement());
