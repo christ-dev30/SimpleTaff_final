@@ -1549,7 +1549,9 @@
             <div class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-5 space-y-4">
               <div class="flex flex-col md:flex-row gap-4">
                 <input type="month" id="paiePeriode" class="px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] outline-none text-sm bg-slate-50" value="2026-08">
-                <input type="text" id="paieAgentId" placeholder="ID Agent (UUID)" class="px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] outline-none text-sm bg-slate-50 flex-grow">
+                <select id="paieAgentId" class="px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] outline-none text-sm bg-slate-50 flex-grow">
+                  <option value="">-- Sélectionner un Agent --</option>
+                </select>
                 <button onclick="calculerPaie()" class="px-6 py-3 rounded-xl bg-[#12312E] text-white font-bold hover:bg-[#19403B] transition-all flex items-center justify-center gap-2">
                   <i class="fa-solid fa-calculator"></i> Lancer le calcul
                 </button>
@@ -1568,7 +1570,7 @@
                   <thead>
                     <tr class="bg-slate-100 font-bold">
                       <th class="p-2">Période</th>
-                      <th class="p-2">Agent (ID partiel)</th>
+                      <th class="p-2">Agent</th>
                       <th class="p-2">Brut Effectif</th>
                       <th class="p-2">Primes</th>
                       <th class="p-2">Déductions (CNPS/Impôts)</th>

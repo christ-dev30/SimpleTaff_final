@@ -5980,11 +5980,31 @@ if (searchInput) {
 }
 
 // ==================== MODULE PAIE ====================
+window.loadPaieAndConfig = async function() {
+  const select = document.getElementById("paieAgentId");
+  if(select && select.options.length <= 1) { 
+    try {
+      const agents = await apiCall("/api/agents", "GET");
+      if(agents) {
+        agents.forEach(a => {
+          const opt = document.createElement("option");
+          opt.value = a.id;
+          opt.textContent = `${a.nom} ${a.prenoms} - ${a.matricule || ''}`;
+          select.appendChild(opt);
+        });
+      }
+    } catch(e) {
+      console.error("Erreur chargement agents paie", e);
+    }
+  }
+  window.chargerBulletins();
+};
+
 window.calculerPaie = async function() {
   const agentId = document.getElementById("paieAgentId").value;
   const periode = document.getElementById("paiePeriode").value;
   if(!agentId || !periode) {
-    alert("Veuillez saisir l'ID d'un agent et sélectionner une période.");
+    alert("Veuillez sélectionner un agent et une période.");
     return;
   }
   
@@ -6019,7 +6039,10 @@ window.chargerBulletins = async function() {
     tbody.innerHTML = bulletins.map(b => `
       <tr class="hover:bg-slate-50 transition-colors">
         <td class="p-3 font-medium">${b.periode}</td>
-        <td class="p-3 font-mono text-slate-500" title="${b.agent.id}">${b.agent.id.substring(0,8)}...</td>
+        <td class="p-3">
+          <div class="font-medium text-slate-700">${b.agent.nom} ${b.agent.prenoms}</div>
+          <div class="text-[10px] font-mono text-slate-400">${b.agent.matricule || b.agent.id.substring(0,8)}</div>
+        </td>
         <td class="p-3 text-[#12312E] font-bold">${b.salaireBrutEffectif} F CFA</td>
         <td class="p-3 text-[#A3D977] font-bold">+${b.totalPrimes} F CFA</td>
         <td class="p-3 text-red-500 font-bold">-${(b.cotisationCnps + b.cotisationCnam + b.impotSurRevenu).toFixed(2)} F CFA</td>
