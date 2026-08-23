@@ -37,6 +37,10 @@ public class BulletinDePaie {
     private int joursValides;
     private int joursAbsenceNonJustifiee;
 
+    private int joursAbsenceJustifieeCourte = 0;
+    private int joursAbsenceJustifieeLongue = 0;
+    private int joursCongePaye = 0;
+
     @Column(precision = 12, scale = 2)
     private BigDecimal salaireDeBase;
 
@@ -62,16 +66,36 @@ public class BulletinDePaie {
     private BigDecimal primeLogement;
 
     @Column(precision = 12, scale = 2)
-    private BigDecimal primeRendement;
+    private BigDecimal primeRendement = BigDecimal.ZERO;
+    
+    @Column(precision = 12, scale = 2)
+    private BigDecimal primeTerrain = BigDecimal.ZERO;
 
     @Column(precision = 12, scale = 2)
-    private BigDecimal totalPrimes;
+    private BigDecimal primeCommunication = BigDecimal.ZERO;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal primePanier = BigDecimal.ZERO;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal primeAnciennete = BigDecimal.ZERO;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal primeExceptionnelle = BigDecimal.ZERO;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal totalPrimes = BigDecimal.ZERO;
 
     @Column(precision = 12, scale = 2)
     private BigDecimal retenueAbsence;
 
     private LocalDateTime creeLe;
     private LocalDateTime dateCloture;
+    
+    @Column(columnDefinition = "TEXT")
+    private String avantagesDiversCommentaire;
+
+    private String statutPaiement = "EN_ATTENTE";
     
     
     @PrePersist
