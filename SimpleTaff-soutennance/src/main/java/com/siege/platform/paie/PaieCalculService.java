@@ -44,7 +44,7 @@ public class PaieCalculService {
                 .orElseThrow(() -> new RuntimeException("Agent introuvable"));
 
         // Récupération du salaire de base via le contrat actif
-        List<ContratAgent> contrats = contratRepository.findByAgentId(agent.getId());
+        List<ContratAgent> contrats = contratRepository.findByAgentIdOrderByDateDebutDesc(agent.getId());
         BigDecimal salaireBase = contrats.stream()
                 .filter(c -> "ACTIF".equals(c.getStatut()))
                 .map(ContratAgent::getSalaireBase)
