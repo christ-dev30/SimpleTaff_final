@@ -5978,3 +5978,61 @@ if (searchInput) {
     }
   });
 }
+
+// ==================== MODULE PAIE ====================
+window.calculerPaie = async function() {
+  const agentId = document.getElementById("paieAgentId").value;
+  const periode = document.getElementById("paiePeriode").value;
+  if(!agentId || !periode) {
+    alert("Veuillez saisir l'ID d'un agent et sélectionner une période.");
+    return;
+  }
+  
+  try {
+    const res = await apiCall("/api/paie/calculer", "POST", {
+      agentId: agentId,
+      periode: periode,
+      joursPrevus: 30,
+      joursValides: 30, // Mocked for UI simplicity
+      joursAbsenceNonJustifiee: 0
+    });
+    alert("Paie calculée avec succès !");
+    window.chargerBulletins();
+  } catch(e) {
+    console.error(e);
+    alert("Erreur lors du calcul: " + e.message);
+  }
+};
+
+window.chargerBulletins = async function() {
+  const periode = document.getElementById("paiePeriode").value || "2026-08";
+  const tbody = document.getElementById("paieTableBody");
+  tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">Chargement des bulletins...</td></tr>';
+  
+  try {
+    const bulletins = await apiCall(`/api/paie/periode/${periode}`, "GET");
+    if(!bulletins || bulletins.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">Aucun bulletin trouvé pour cette période.</td></tr>';
+      return;
+    }
+    
+    tbody.innerHTML = bulletins.map(b => `
+      <tr class="hover:bg-slate-50 transition-colors">
+        <td class="p-3 font-medium">${b.periode}</td>
+        <td class="p-3 font-mono text-slate-500" title="${b.agent.id}">${b.agent.id.substring(0,8)}...</td>
+        <td class="p-3 text-[#12312E] font-bold">${b.salaireBrutEffectif} F CFA</td>
+        <td class="p-3 text-[#A3D977] font-bold">+${b.totalPrimes} F CFA</td>
+        <td class="p-3 text-red-500 font-bold">-${(b.cotisationCnps + b.cotisationCnam + b.impotSurRevenu).toFixed(2)} F CFA</td>
+        <td class="p-3 text-[#12312E] font-bold text-sm bg-[#EAF4E3] rounded-lg">${b.salaireNetCalcule} F CFA</td>
+        <td class="p-3">
+          <button class="text-xs bg-[#12312E] text-white px-3 py-1 rounded shadow-sm hover:bg-[#19403B]" onclick="alert('Simulation: Bulletin exporté au format PDF')">
+            <i class="fa-solid fa-file-pdf"></i> PDF
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  } catch(e) {
+    console.error(e);
+    tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-red-500">Erreur de chargement.</td></tr>';
+  }
+};
