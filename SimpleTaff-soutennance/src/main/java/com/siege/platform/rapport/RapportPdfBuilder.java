@@ -78,8 +78,8 @@ public class RapportPdfBuilder {
                 s = addMateriels(doc, (Map<String, Object>) report.get("materiels"), s);
             if (report.containsKey("disciplinaire"))
                 s = addDisciplinaire(doc, (Map<String, Object>) report.get("disciplinaire"), s);
-            if (report.containsKey("missions"))
-                s = addMissions(doc, (Map<String, Object>) report.get("missions"), s);
+            if (report.containsKey("paie"))
+                s = addPaie(doc, (Map<String, Object>) report.get("paie"), s);
 
             doc.close();
             return baos.toByteArray();
@@ -338,38 +338,6 @@ public class RapportPdfBuilder {
         return num + 1;
     }
 
-    // =========================================================================
-    //  SECTION 5 — MISSIONS
-    // =========================================================================
-    private static int addMissions(Document doc, Map<String, Object> sec, int num) throws Exception {
-        Color C_PURPLE = new Color(88, 28, 135);
-        addSectionHeader(doc, num, "MISSIONS & DÉPLACEMENTS", C_PURPLE);
-        addKpiRow(doc, new String[][]{
-            {str(sec.get("total_missions"), "0"), "Missions du mois"},
-            {str(sec.get("en_cours"),       "0"), "En cours"},
-            {str(sec.get("terminees"),      "0"), "Terminées"},
-            {str(sec.get("prevues"),        "0"), "Prévues"}
-        });
-
-        List<Map<String, Object>> list =
-            (List<Map<String, Object>>) sec.getOrDefault("liste", Collections.emptyList());
-        PdfPTable t = new PdfPTable(new float[]{30, 26, 16, 16, 12});
-        t.setWidthPercentage(100);
-        t.setSpacingAfter(12);
-        addHeaderRow(t, C_PURPLE, "Titre de la Mission", "Agent Assigné", "Début", "Fin", "Statut");
-
-        boolean alt = false;
-        for (Map<String, Object> m : list) {
-            addRow(t, alt ? C_ALT : C_WHITE, false,
-                str(m.get("titre"),  "—"), str(m.get("agent"),  "—"),
-                str(m.get("debut"),  "—"), str(m.get("fin"),    "—"),
-                str(m.get("statut"), "—"));
-            alt = !alt;
-        }
-        if (list.isEmpty()) addEmptyRow(t, 5);
-        doc.add(t);
-        return num + 1;
-    }
 
 
     // =========================================================================
@@ -463,6 +431,56 @@ public class RapportPdfBuilder {
         if (val == null) return def;
         String s = val.toString().trim();
         return s.isEmpty() ? def : s;
+    }
+
+    // =========================================================================
+    //  SECTION 5: PAIE
+    // =========================================================================
+    private static int addPaie(Document doc, Map<String, Object> data, int secNum) throws Exception {
+        addSectionTitle(doc, secNum + ". PAIE ET RÉMUNÉRATIONS");
+
+        // KPIs
+        PdfPTable grid = new PdfPTable(3);
+        grid.setWidthPercentage(100);
+        grid.setSpacingAfter(10);
+        grid.addCell(makeKpiCard("Bulletins émis", str(data.get("total_bulletins"), "0")));
+        java.math.BigDecimal masse = (java.math.BigDecimal) data.get("total_masse_salariale");
+        String masseStr = (masse != null ? masse.toString() : "0") + " FCFA";
+        grid.addCell(makeKpiCard("Masse Salariale Nette", masseStr));
+        grid.addCell(makeKpiCard("", "")); // empty
+        doc.add(grid);
+
+        // Table
+        List<Map<String, Object>> list = (List<Map<String, Object>>) data.get("liste");
+        if (list == null || list.isEmpty()) {
+            doc.add(new Paragraph("Aucune donnée de paie pour cette période.", fCell()));
+            return secNum + 1;
+        }
+
+        PdfPTable t = new PdfPTable(4);
+        t.setWidthPercentage(100);
+        t.setWidths(new float[]{25, 25, 25, 25});
+        t.setSpacingAfter(20);
+
+        addTh(t, "Agent");
+        addTh(t, "Métier");
+        addTh(t, "Brut Effectif");
+        addTh(t, "Net Calculé");
+
+        for (Map<String, Object> r : list) {
+            addTd(t, str(r.get("agent"), "—"));
+            addTd(t, str(r.get("metier"), "—"));
+            addTd(t, str(r.get("brut"), "0") + " FCFA");
+            
+            PdfPCell c = new PdfPCell(new Phrase(str(r.get("net"), "0") + " FCFA", fCellBold()));
+            c.setPadding(6);
+            c.setBorderColor(C_BORDER);
+            c.setBackgroundColor(new Color(234, 244, 227)); // light teal
+            c.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            t.addCell(c);
+        }
+        doc.add(t);
+        return secNum + 1;
     }
 
     // =========================================================================

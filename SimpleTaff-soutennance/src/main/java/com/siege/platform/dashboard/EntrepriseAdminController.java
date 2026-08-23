@@ -142,7 +142,6 @@ public class EntrepriseAdminController {
             map.put("zoneOperationnelle", a.getZoneOperationnelle());
             map.put("superviseur", a.getSuperviseur());
             map.put("client", a.getClient());
-            map.put("mission", a.getMission());
             map.put("projet", a.getProjet());
             map.put("heureArriveeSite", a.getHeureArriveeSite());
             map.put("heureDepartSite", a.getHeureDepartSite());

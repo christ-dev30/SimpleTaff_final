@@ -115,6 +115,17 @@ public class PaieController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{id}/export")
+    public ResponseEntity<byte[]> exportBulletinPdf(@PathVariable UUID id, @RequestParam(value = "format", defaultValue = "pdf") String format) {
+        return bulletinRepository.findById(id).map(b -> {
+            byte[] pdfBytes = BulletinPdfBuilder.build(b);
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.setContentType(org.springframework.http.MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "Bulletin_Paie_" + (b.getAgent().getMatricule() != null ? b.getAgent().getMatricule() : b.getAgent().getNom()) + "_" + b.getPeriode() + ".pdf");
+            return new ResponseEntity<>(pdfBytes, headers, org.springframework.http.HttpStatus.OK);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/parametres")
     public ResponseEntity<?> getParametres() {
         Entreprise entreprise = tenantService.entreprise();

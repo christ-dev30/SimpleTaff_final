@@ -482,7 +482,11 @@
               </p>
             </div>
             <div class="flex items-center gap-3">
-              <!-- Buttons removed -->
+              <input type="month" id="coordReportMonth" class="px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] outline-none text-sm bg-white" value="">
+              <button onclick="downloadCoordReport()" class="px-5 py-2.5 bg-[#A3D977] text-[#12312E] hover:bg-[#8bc95c] font-bold rounded-xl transition-all shadow-sm flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Télécharger Rapport Global
+              </button>
             </div>
           </div>
 
@@ -3176,6 +3180,36 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="signalerRemplacementModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+        <div class="bg-amber-600 px-6 py-4 flex items-center justify-between">
+          <h3 class="text-lg font-black text-white" id="signalerRemplacementModalTitle">Signaler un Remplacement</h3>
+          <button onclick="closeModalSignalerRemplacement()" class="text-amber-200 hover:text-white transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          </button>
+        </div>
+        <div class="p-6">
+          <form id="signalerRemplacementForm" class="space-y-4">
+            <input type="hidden" id="remplacementAgentId">
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-1">Agent concerné</label>
+              <input type="text" id="remplacementAgentNom" disabled class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-500 font-semibold">
+            </div>
+            <div>
+              <label class="block text-sm font-bold text-slate-700 mb-1">Motif du remplacement <span class="text-red-500">*</span></label>
+              <textarea id="remplacementMotif" required rows="4" class="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all placeholder:text-slate-400" placeholder="Ex: Absences répétées, incompétence, mutation..."></textarea>
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+              <button type="button" onclick="closeModalSignalerRemplacement()" class="px-5 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">Annuler</button>
+              <button type="submit" class="px-5 py-2.5 text-sm font-bold text-white bg-amber-600 hover:bg-amber-700 shadow-md shadow-amber-200 rounded-xl transition-all flex items-center gap-2">
+                Envoyer le signalement
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

@@ -44,7 +44,6 @@ public class RapportController {
             case "conges" -> rapportService.genererRapportConges(mois);
             case "materiels" -> rapportService.genererRapportMateriels();
             case "disciplinaire" -> rapportService.genererRapportDisciplinaire(mois);
-            case "missions" -> rapportService.genererRapportMissions(mois);
             default -> rapportService.genererRapportGlobal(mois);
         };
         return ResponseEntity.ok(rapport);
@@ -91,7 +90,6 @@ public class RapportController {
             case "conges" -> rapportService.genererRapportConges(mois);
             case "materiels" -> rapportService.genererRapportMateriels();
             case "disciplinaire" -> rapportService.genererRapportDisciplinaire(mois);
-            case "missions" -> rapportService.genererRapportMissions(mois);
             default -> rapportService.genererRapportGlobal(mois);
         };
 

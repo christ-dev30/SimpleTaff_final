@@ -304,8 +304,9 @@ window.filterAgents = function () {
                                 Voir Dossier
                             </button>
                         </td>
-                        <td class="p-2">
-                            <button onclick="deleteAgent('${a.id}')" class="text-red-500 hover:text-red-700 font-bold text-[10px] hover:underline transition-all">Supprimer</button>
+                        <td class="p-2 flex gap-2">
+                            <button onclick="openModalSignalerRemplacement('${a.id}', '${a.nom} ${a.prenom}')" class="bg-amber-50 text-amber-700 hover:bg-amber-100 font-bold px-2 py-1 rounded-lg text-[10px] border border-amber-200 transition-all">Remplacer</button>
+                            <button onclick="deleteAgent('${a.id}')" class="text-red-500 hover:text-red-700 font-bold text-[10px] hover:underline transition-all self-center">Supprimer</button>
                         </td>
                     </tr>
                 `;
@@ -2916,12 +2917,48 @@ window.deleteAgent = async function (id) {
     await apiFetch(`/agents/${id}`, { method: "DELETE" });
     alert("Agent et toutes ses dépendances supprimés avec succès !");
     loadAgents();
-  } catch (err) {
-    alert(err.message);
-  }
+// --- Remplacement ---
+window.openModalSignalerRemplacement = function (agentId, agentNom) {
+  document.getElementById("remplacementAgentId").value = agentId;
+  document.getElementById("remplacementAgentNom").value = agentNom;
+  document.getElementById("remplacementMotif").value = "";
+  document.getElementById("signalerRemplacementModal").classList.remove("hidden");
 };
 
-// ─── Badge Generation & Print PDF ────────────────────────────
+window.closeModalSignalerRemplacement = function () {
+  document.getElementById("signalerRemplacementModal").classList.add("hidden");
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("signalerRemplacementForm");
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const agentId = document.getElementById("remplacementAgentId").value;
+      const motif = document.getElementById("remplacementMotif").value;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const origText = submitBtn.innerHTML;
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = "Envoi...";
+      try {
+        await apiFetch("/remplacements", {
+          method: "POST",
+          body: JSON.stringify({ agentId, motif }),
+        });
+        alert("Signalement envoyé avec succès.");
+        closeModalSignalerRemplacement();
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origText;
+      }
+    });
+  }
+});
+
+// 🎨 Badge Generation & Print PDF 🎨────────────────────────────
 window.generateAdminBadgePdf = function (fullName, qrData, zone) {
   QRCode.toDataURL(
     qrData,
@@ -3295,3 +3332,24 @@ if (searchInput) {
     }
   });
 }
+
+// --- Rapports Coordonnateur ---
+window.downloadCoordReport = function () {
+  const mois = document.getElementById("coordReportMonth").value;
+  if (!mois) {
+    alert("Veuillez sélectionner un mois.");
+    return;
+  }
+  const token = localStorage.getItem("token");
+  window.open(`/api/rapports/global/export?format=pdf&mois=${mois}&token=${token}`, "_blank");
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  const monthInput = document.getElementById("coordReportMonth");
+  if (monthInput) {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    monthInput.value = `${y}-${m}`;
+  }
+});

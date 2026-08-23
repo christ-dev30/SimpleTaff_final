@@ -46,6 +46,11 @@ public class AgentTerrainService {
         if (user.getEntreprise() == null) {
             throw new IllegalArgumentException("Aucune entreprise associée à ce compte.");
         }
+        if (user instanceof com.siege.platform.utilisateur.Coordonnateur coord && coord.getZone() != null) {
+            return agentTerrainRepository.findByEntrepriseId(user.getEntreprise().getId()).stream()
+                    .filter(a -> a.getZone() != null && a.getZone().getId().equals(coord.getZone().getId()))
+                    .toList();
+        }
         return agentTerrainRepository.findByEntrepriseId(user.getEntreprise().getId());
     }
 

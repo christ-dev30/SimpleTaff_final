@@ -6096,52 +6096,7 @@ window.exportBulletinPDF = function(bulletinId) {
     alert("Bulletin introuvable en mémoire.");
     return;
   }
-
-  // Remplissage du template
-  document.getElementById("pdf-entreprise-nom").textContent = "SimpleTaff Entreprise";
-  document.getElementById("pdf-periode").textContent = "Période: " + bulletin.periode;
-  
-  document.getElementById("pdf-agent-nom").textContent = bulletin.agent.nom + " " + bulletin.agent.prenom;
-  document.getElementById("pdf-agent-matricule").textContent = bulletin.agent.matricule || bulletin.agent.id.substring(0,8);
-  document.getElementById("pdf-agent-metier").textContent = bulletin.metier || "Non défini";
-  
-  document.getElementById("pdf-salaire-base").textContent = (bulletin.salaireBrutEffectif || 0) + " F CFA";
-  
-  document.getElementById("pdf-gains-brut").textContent = (bulletin.salaireBrutEffectif || 0);
-  document.getElementById("pdf-gains-primes").textContent = (bulletin.totalPrimes || 0);
-  
-  document.getElementById("pdf-retenues-absences").textContent = (bulletin.retenueAbsence || 0);
-  document.getElementById("pdf-retenues-cnps").textContent = (bulletin.cotisationCnps || 0);
-  document.getElementById("pdf-retenues-cnam").textContent = (bulletin.cotisationCnam || 0);
-  
-  const totalGains = (bulletin.salaireBrutEffectif || 0) + (bulletin.totalPrimes || 0);
-  const totalRetenues = (bulletin.retenueAbsence || 0) + (bulletin.cotisationCnps || 0) + (bulletin.cotisationCnam || 0);
-  
-  document.getElementById("pdf-total-gains").textContent = totalGains.toFixed(2) + " F CFA";
-  document.getElementById("pdf-total-retenues").textContent = totalRetenues.toFixed(2) + " F CFA";
-  document.getElementById("pdf-net-payer").textContent = (bulletin.salaireNetCalcule || 0).toFixed(2) + " F CFA";
-  
-  document.getElementById("pdf-date-generation").textContent = new Date().toLocaleDateString("fr-FR");
-
-  const container = document.getElementById("pdf-template-container");
-  container.classList.remove("hidden");
-  container.style.position = "absolute";
-  container.style.top = "-9999px";
-
-  const element = document.getElementById("bulletin-pdf");
-  const opt = {
-    margin:       10,
-    filename:     `Bulletin_Paie_${bulletin.agent.matricule || bulletin.agent.nom}_${bulletin.periode}.pdf`,
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true },
-    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  };
-
-  html2pdf().set(opt).from(element).save().then(() => {
-    container.classList.add("hidden");
-    container.style.position = "";
-    container.style.top = "";
-  });
+  window.open('/api/paie/' + bulletinId + '/export?format=pdf', '_blank');
 };
 
 // ==================== PARAMETRES PAIE ====================

@@ -63,7 +63,6 @@ public class Affectation {
     private String ville;
     private String superviseur;
     private String client;
-    private String mission;
     private String projet;
     private String heureArriveeSite;
     private String heureDepartSite;

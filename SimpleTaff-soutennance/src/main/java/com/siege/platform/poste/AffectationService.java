@@ -60,7 +60,6 @@ public class AffectationService {
             affectation.setZoneOperationnelle(payload.get("zoneOperationnelle"));
             affectation.setSuperviseur(payload.get("superviseur"));
             affectation.setClient(payload.get("client"));
-            affectation.setMission(payload.get("mission"));
             affectation.setProjet(payload.get("projet"));
             affectation.setHeureArriveeSite(payload.get("heureArriveeSite"));
             affectation.setHeureDepartSite(payload.get("heureDepartSite"));
@@ -95,7 +94,6 @@ public class AffectationService {
         payload.put("zoneOperationnelle", ancienneAffectation.getZoneOperationnelle());
         payload.put("superviseur", ancienneAffectation.getSuperviseur());
         payload.put("client", ancienneAffectation.getClient());
-        payload.put("mission", ancienneAffectation.getMission());
         payload.put("projet", ancienneAffectation.getProjet());
         payload.put("heureArriveeSite", ancienneAffectation.getHeureArriveeSite());
         payload.put("heureDepartSite", ancienneAffectation.getHeureDepartSite());

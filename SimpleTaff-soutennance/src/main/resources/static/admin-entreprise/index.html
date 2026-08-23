@@ -79,6 +79,8 @@
             window.loadPostesAndAff();
           if (name === "paie" && typeof window.loadPaieAndConfig === "function")
             window.loadPaieAndConfig();
+          if (name === "remplacements" && typeof window.loadAdminRemplacements === "function")
+            window.loadAdminRemplacements();
           if (
             name === "parametres" &&
             typeof window.loadCatalog === "function"
@@ -355,6 +357,13 @@
                 />
               </svg>
               Configuration & Paie
+            </div>
+            <div class="sidebar-link" onclick="showTab('remplacements')">
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+              </svg>
+              Remplacements
+              <span id="remplacementsBadge" class="ml-auto bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full hidden">0</span>
             </div>
             <div
               class="sidebar-link text-slate-700 hover:text-slate-900 flex items-center"
@@ -1914,6 +1923,62 @@
             </div>
           </div>
 
+          <!-- ================= TAB: Remplacements ================= -->
+          <div id="tab-remplacements" class="tab-content space-y-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-bold text-slate-900">Gestion des Remplacements</h2>
+                <p class="text-slate-500 text-sm mt-1">Traitez les demandes de remplacement signalées par les coordonnateurs.</p>
+              </div>
+            </div>
+            
+            <!-- Cards stat -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                  <div class="text-slate-500 text-sm font-medium mb-1">En attente</div>
+                  <div class="text-3xl font-black text-amber-500" id="statRemplacementsAttente">0</div>
+                </div>
+                <div class="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-amber-500 text-xl">⏳</div>
+              </div>
+              <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                  <div class="text-slate-500 text-sm font-medium mb-1">Acceptées</div>
+                  <div class="text-3xl font-black text-emerald-500" id="statRemplacementsAccepte">0</div>
+                </div>
+                <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-500 text-xl">✅</div>
+              </div>
+              <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div>
+                  <div class="text-slate-500 text-sm font-medium mb-1">Rejetées</div>
+                  <div class="text-3xl font-black text-rose-500" id="statRemplacementsRejete">0</div>
+                </div>
+                <div class="w-12 h-12 bg-rose-50 rounded-full flex items-center justify-center text-rose-500 text-xl">❌</div>
+              </div>
+            </div>
+
+            <!-- Liste des demandes -->
+            <div class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm whitespace-nowrap">
+                  <thead class="bg-slate-50/50 text-slate-500 font-medium">
+                    <tr>
+                      <th class="px-6 py-4">Date</th>
+                      <th class="px-6 py-4">Agent (Poste)</th>
+                      <th class="px-6 py-4">Demandeur</th>
+                      <th class="px-6 py-4">Motif</th>
+                      <th class="px-6 py-4">Statut</th>
+                      <th class="px-6 py-4">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="remplacementsTableBody" class="divide-y divide-slate-100">
+                    <!-- Généré dynamiquement -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
           <!-- ================= TAB: Paramètres ================= -->
           <div id="tab-parametres" class="tab-content space-y-6">
             <div class="flex justify-between items-center">
@@ -2792,7 +2857,6 @@
                       &#127796; Cong&eacute;s &amp; Absences
                     </option>
                     <option value="disciplinaire">&#9878; Disciplinaire</option>
-                    <option value="missions">&#128640; Missions</option>
                     <option value="paie">&#128181; Paie (Bulletins)</option>
                   </select>
                 </div>
@@ -2869,9 +2933,6 @@
                     </option>
                     <option value="disciplinaire">
                       &#9878; Disciplinaire &amp; Sanctions
-                    </option>
-                    <option value="missions">
-                      &#128640; Missions &amp; D&eacute;placements
                     </option>
                     <option value="facturation">&#128179; Facturation</option>
                   </select>

@@ -7,8 +7,8 @@ import com.siege.platform.disciplinaire.Sanction;
 import com.siege.platform.disciplinaire.SanctionRepository;
 import com.siege.platform.materiel.Materiel;
 import com.siege.platform.materiel.MaterielRepository;
-import com.siege.platform.mission.Mission;
-import com.siege.platform.mission.MissionRepository;
+import com.siege.platform.utilisateur.Utilisateur;
+
 import com.siege.platform.pointage.Pointage;
 import com.siege.platform.pointage.PointageRepository;
 import com.siege.platform.poste.Affectation;
@@ -44,24 +44,40 @@ public class RapportService {
     private final DemandeCongeRepository demandeCongeRepository;
     private final MaterielRepository materielRepository;
     private final SanctionRepository sanctionRepository;
-    private final MissionRepository missionRepository;
+    private final com.siege.platform.paie.BulletinDePaieRepository bulletinDePaieRepository;
+
     private final com.siege.platform.utilisateur.UtilisateurRepository utilisateurRepository;
 
     public RapportService(PointageRepository pointageRepository,
                           DemandeCongeRepository demandeCongeRepository,
                           MaterielRepository materielRepository,
                           SanctionRepository sanctionRepository,
-                          MissionRepository missionRepository,
+                          com.siege.platform.paie.BulletinDePaieRepository bulletinDePaieRepository,
                           com.siege.platform.utilisateur.UtilisateurRepository utilisateurRepository) {
         this.pointageRepository = pointageRepository;
         this.demandeCongeRepository = demandeCongeRepository;
         this.materielRepository = materielRepository;
         this.sanctionRepository = sanctionRepository;
-        this.missionRepository = missionRepository;
+        this.bulletinDePaieRepository = bulletinDePaieRepository;
         this.utilisateurRepository = utilisateurRepository;
     }
 
+    private Utilisateur getCurrentUser() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return utilisateurRepository.findByEmail(email).orElse(null);
+    }
+    
+    private boolean agentIsInUserZone(AgentTerrain agent, Utilisateur current) {
+        if (agent == null) return false;
+        if (current instanceof com.siege.platform.utilisateur.Coordonnateur coord) {
+            if (coord.getZone() == null) return false;
+            return agent.getZone() != null && agent.getZone().getId().equals(coord.getZone().getId());
+        }
+        return true; // Si pas coordonnateur, ou admin, on accepte tout
+    }
+
     public Map<String, Object> genererRapportGlobal(String mois) {
+        Utilisateur current = getCurrentUser();
         YearMonth ym = YearMonth.parse(mois);
         LocalDate debutMois = ym.atDay(1);
         LocalDate finMois = ym.atEndOfMonth();
@@ -73,8 +89,8 @@ public class RapportService {
         report.put("dateGeneration", LocalDate.now());
         report.put("period", mois);
 
-        // 1. Présences & Pointages
-        List<Pointage> pointages = pointageRepository.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(debutDateTime, finDateTime);
+        List<Pointage> pointages = pointageRepository.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(debutDateTime, finDateTime)
+                .stream().filter(p -> agentIsInUserZone(p.getAffectation() != null ? p.getAffectation().getAgent() : null, current)).toList();
         Map<String, Object> secPresences = new LinkedHashMap<>();
         secPresences.put("nombre_entrees", pointages.size());
         secPresences.put("duree_totale_minutes", calculateTotalDuration(pointages));
@@ -91,6 +107,7 @@ public class RapportService {
         List<DemandeConge> allConges = demandeCongeRepository.findAll();
         List<DemandeConge> congesMois = allConges.stream()
                 .filter(c -> c.getDateDebut() != null && !c.getDateDebut().isBefore(debutMois) && !c.getDateDebut().isAfter(finMois))
+                .filter(c -> agentIsInUserZone(c.getAgent(), current))
                 .toList();
         Map<String, Object> secConges = new LinkedHashMap<>();
         secConges.put("total_demandes", congesMois.size());
@@ -133,6 +150,7 @@ public class RapportService {
         List<Sanction> allSanctions = sanctionRepository.findAll();
         List<Sanction> sanctionsMois = allSanctions.stream()
                 .filter(s -> s.getDateDecision() != null && !s.getDateDecision().isBefore(debutMois) && !s.getDateDecision().isAfter(finMois))
+                .filter(s -> agentIsInUserZone(s.getAgent(), current))
                 .toList();
         Map<String, Object> secDisciplinaire = new LinkedHashMap<>();
         secDisciplinaire.put("total_sanctions", sanctionsMois.size());
@@ -147,36 +165,39 @@ public class RapportService {
         }).toList());
         report.put("disciplinaire", secDisciplinaire);
 
-        // 5. Missions
-        List<Mission> allMissions = missionRepository.findAll();
-        List<Mission> missionsMois = allMissions.stream()
-                .filter(ms -> ms.getPlanningDebut() != null && !ms.getPlanningDebut().isBefore(debutMois) && !ms.getPlanningDebut().isAfter(finMois))
+        // 5. Paie
+        List<com.siege.platform.paie.BulletinDePaie> bulletins = bulletinDePaieRepository.findByEntrepriseIdAndPeriode(current.getEntreprise().getId(), mois)
+                .stream()
+                .filter(b -> agentIsInUserZone(b.getAgent(), current))
                 .toList();
-        Map<String, Object> secMissions = new LinkedHashMap<>();
-        secMissions.put("total_missions", missionsMois.size());
-        secMissions.put("prevues", missionsMois.stream().filter(m -> "PREVUE".equalsIgnoreCase(m.getStatut())).count());
-        secMissions.put("en_cours", missionsMois.stream().filter(m -> "EN_COURS".equalsIgnoreCase(m.getStatut())).count());
-        secMissions.put("terminees", missionsMois.stream().filter(m -> "TERMINEE".equalsIgnoreCase(m.getStatut())).count());
-        secMissions.put("liste", missionsMois.stream().map(m -> {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("titre", m.getTitre() != null ? m.getTitre() : "Mission sans titre");
-            map.put("agent", getAgentNomComplet(m.getAgent()));
-            map.put("debut", m.getPlanningDebut() != null ? m.getPlanningDebut().toString() : "—");
-            map.put("fin", m.getPlanningFin() != null ? m.getPlanningFin().toString() : "—");
-            map.put("statut", m.getStatut() != null ? m.getStatut() : "PREVUE");
-            return map;
+        Map<String, Object> secPaie = new LinkedHashMap<>();
+        secPaie.put("total_bulletins", bulletins.size());
+        java.math.BigDecimal totalBrut = bulletins.stream().map(b -> b.getSalaireBrutEffectif() != null ? b.getSalaireBrutEffectif() : java.math.BigDecimal.ZERO).reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+        java.math.BigDecimal totalNet = bulletins.stream().map(b -> b.getSalaireNetCalcule() != null ? b.getSalaireNetCalcule() : java.math.BigDecimal.ZERO).reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+        secPaie.put("total_masse_salariale", totalNet);
+        secPaie.put("liste", bulletins.stream().map(b -> {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("agent", getAgentNomComplet(b.getAgent()));
+            String metier = b.getAffectation() != null && b.getAffectation().getPoste() != null && b.getAffectation().getPoste().getEmploi() != null 
+                            ? b.getAffectation().getPoste().getEmploi().getLibelle() : "—";
+            m.put("metier", metier);
+            m.put("brut", b.getSalaireBrutEffectif() != null ? b.getSalaireBrutEffectif().toString() : "0");
+            m.put("net", b.getSalaireNetCalcule() != null ? b.getSalaireNetCalcule().toString() : "0");
+            return m;
         }).toList());
-        report.put("missions", secMissions);
+        report.put("paie", secPaie);
 
         return report;
     }
 
     public Map<String, Object> genererRapportPointages(String mois, String format) {
+        Utilisateur current = getCurrentUser();
         YearMonth ym = YearMonth.parse(mois);
         LocalDateTime debut = ym.atDay(1).atStartOfDay();
         LocalDateTime fin = ym.plusMonths(1).atDay(1).atStartOfDay();
 
-        List<Pointage> pointages = pointageRepository.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(debut, fin);
+        List<Pointage> pointages = pointageRepository.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(debut, fin)
+                .stream().filter(p -> agentIsInUserZone(p.getAffectation() != null ? p.getAffectation().getAgent() : null, current)).toList();
 
         Map<String, Object> report = new LinkedHashMap<>();
         report.put("titre", "Rapport de Pointages - " + mois);
@@ -200,11 +221,13 @@ public class RapportService {
     }
 
     public Map<String, Object> genererRapportPresences(String mois) {
+        Utilisateur current = getCurrentUser();
         YearMonth ym = YearMonth.parse(mois);
         LocalDateTime debut = ym.atDay(1).atStartOfDay();
         LocalDateTime fin = ym.plusMonths(1).atDay(1).atStartOfDay();
 
-        List<Pointage> pointages = pointageRepository.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(debut, fin);
+        List<Pointage> pointages = pointageRepository.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(debut, fin)
+                .stream().filter(p -> agentIsInUserZone(p.getAffectation() != null ? p.getAffectation().getAgent() : null, current)).toList();
 
         Map<String, Object> report = new LinkedHashMap<>();
         report.put("titre", "Rapport de Présences - " + mois);
@@ -228,6 +251,7 @@ public class RapportService {
     }
 
     public Map<String, Object> genererRapportConges(String mois) {
+        Utilisateur current = getCurrentUser();
         YearMonth ym = YearMonth.parse(mois);
         LocalDate debutMois = ym.atDay(1);
         LocalDate finMois = ym.atEndOfMonth();
@@ -235,6 +259,7 @@ public class RapportService {
         List<DemandeConge> allConges = demandeCongeRepository.findAll();
         List<DemandeConge> congesMois = allConges.stream()
                 .filter(c -> c.getDateDebut() != null && !c.getDateDebut().isBefore(debutMois) && !c.getDateDebut().isAfter(finMois))
+                .filter(c -> agentIsInUserZone(c.getAgent(), current))
                 .toList();
 
         Map<String, Object> report = new LinkedHashMap<>();
@@ -289,6 +314,7 @@ public class RapportService {
     }
 
     public Map<String, Object> genererRapportDisciplinaire(String mois) {
+        Utilisateur current = getCurrentUser();
         YearMonth ym = YearMonth.parse(mois);
         LocalDate debutMois = ym.atDay(1);
         LocalDate finMois = ym.atEndOfMonth();
@@ -296,6 +322,7 @@ public class RapportService {
         List<Sanction> allSanctions = sanctionRepository.findAll();
         List<Sanction> sanctionsMois = allSanctions.stream()
                 .filter(s -> s.getDateDecision() != null && !s.getDateDecision().isBefore(debutMois) && !s.getDateDecision().isAfter(finMois))
+                .filter(s -> agentIsInUserZone(s.getAgent(), current))
                 .toList();
 
         Map<String, Object> report = new LinkedHashMap<>();
@@ -318,36 +345,6 @@ public class RapportService {
         return report;
     }
 
-    public Map<String, Object> genererRapportMissions(String mois) {
-        YearMonth ym = YearMonth.parse(mois);
-        LocalDate debutMois = ym.atDay(1);
-        LocalDate finMois = ym.atEndOfMonth();
-
-        List<Mission> allMissions = missionRepository.findAll();
-        List<Mission> missionsMois = allMissions.stream()
-                .filter(ms -> ms.getPlanningDebut() != null && !ms.getPlanningDebut().isBefore(debutMois) && !ms.getPlanningDebut().isAfter(finMois))
-                .toList();
-
-        Map<String, Object> report = new LinkedHashMap<>();
-        report.put("titre", "Rapport des Missions - " + mois);
-        report.put("dateGeneration", LocalDate.now());
-        report.put("period", mois);
-
-        Map<String, Object> secMissions = new LinkedHashMap<>();
-        secMissions.put("total_missions", missionsMois.size());
-        secMissions.put("liste", missionsMois.stream().map(m -> {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("titre", m.getTitre() != null ? m.getTitre() : "Mission sans titre");
-            map.put("agent", getAgentNomComplet(m.getAgent()));
-            map.put("debut", m.getPlanningDebut() != null ? m.getPlanningDebut().toString() : "—");
-            map.put("fin", m.getPlanningFin() != null ? m.getPlanningFin().toString() : "—");
-            map.put("statut", m.getStatut() != null ? m.getStatut() : "PREVUE");
-            return map;
-        }).toList());
-        report.put("missions", secMissions);
-        return report;
-    }
-
 
     /**
      * Generates a structured PDF presence report with one page per agent per week,
@@ -360,15 +357,15 @@ public class RapportService {
             PdfWriter.getInstance(document, baos);
             document.open();
 
-            Font titleFont   = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13, Color.DARK_GRAY);
+            Font titleFont   = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13, new Color(18, 49, 46));
             Font headerFont  = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7,  Color.WHITE);
-            Font normalFont  = FontFactory.getFont(FontFactory.HELVETICA,      7,  Color.BLACK);
-            Font boldFont    = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7,  Color.BLACK);
-            Font smallFont   = FontFactory.getFont(FontFactory.HELVETICA,      6,  new Color(80,80,80));
-            Font dayFont     = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7,  new Color(30,30,30));
+            Font normalFont  = FontFactory.getFont(FontFactory.HELVETICA,      7,  new Color(18, 49, 46));
+            Font boldFont    = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7,  new Color(18, 49, 46));
+            Font smallFont   = FontFactory.getFont(FontFactory.HELVETICA,      6,  new Color(100,116,139));
+            Font dayFont     = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7,  new Color(18, 49, 46));
 
-            Color headerBg   = new Color(30, 41, 59);
-            Color altRowBg   = new Color(200, 200, 200);
+            Color headerBg   = new Color(18, 49, 46); // #12312E
+            Color altRowBg   = new Color(241, 245, 249); // C_ALT
             Color lightGray  = new Color(235, 235, 235);
             Color white      = Color.WHITE;
 
@@ -710,28 +707,6 @@ public class RapportService {
             sb.append("\n");
         }
 
-        if (report.containsKey("missions")) {
-            Map<String, Object> sec = (Map<String, Object>) report.get("missions");
-            sb.append(borderLine).append("\n");
-            sb.append("MODULE 5 : MISSIONS & DÉPLACEMENTS\n");
-            sb.append("Total Missions Planifiées;").append(sec.getOrDefault("total_missions", 0)).append("\n");
-            sb.append("Missions Prévues;").append(sec.getOrDefault("prevues", 0)).append("\n");
-            sb.append("Missions En Cours;").append(sec.getOrDefault("en_cours", 0)).append("\n");
-            sb.append("Missions Terminées;").append(sec.getOrDefault("terminees", 0)).append("\n");
-            sb.append(borderLine).append("\n");
-            sb.append("Titre de la Mission;Agent Assigné;Date Début Prévue;Date Fin Prévue;Statut de la Mission\n");
-
-            List<Map<String, Object>> list = (List<Map<String, Object>>) sec.getOrDefault("liste", Collections.emptyList());
-            for (Map<String, Object> ms : list) {
-                sb.append(escapeCsv(ms.get("titre"))).append(";")
-                  .append(escapeCsv(ms.get("agent"))).append(";")
-                  .append(escapeCsv(ms.get("debut"))).append(";")
-                  .append(escapeCsv(ms.get("fin"))).append(";")
-                  .append(escapeCsv(ms.get("statut"))).append("\n");
-            }
-            sb.append("\n");
-        }
-
         sb.append(borderLine).append("\n");
         sb.append("FIN DU RAPPORT - SIMPLETAFF SAAS PLATFORM\n");
 
@@ -749,192 +724,8 @@ public class RapportService {
 
     @SuppressWarnings("unchecked")
     public byte[] exportToPdf(Map<String, Object> report) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            Document document = new Document(PageSize.A4, 36, 36, 54, 36);
-            PdfWriter.getInstance(document, baos);
-            
-            document.open();
-            
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, Color.DARK_GRAY);
-            Font sectionTitleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, new Color(15, 23, 42));
-            Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 7, Color.BLACK);
-            Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7, Color.BLACK);
-            Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7, Color.WHITE);
-            Color headerBg = new Color(30, 41, 59);
-            
-            Paragraph title = new Paragraph((String) report.getOrDefault("titre", "RAPPORT DE SYNTHÈSE OPERATIONNELLE"), titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            title.setSpacingAfter(4);
-            document.add(title);
-            
-            Paragraph meta = new Paragraph();
-            meta.add(new Chunk("Date de Génération : ", boldFont));
-            meta.add(new Chunk(report.getOrDefault("dateGeneration", LocalDate.now()).toString() + "  |  ", normalFont));
-            meta.add(new Chunk("Période : ", boldFont));
-            meta.add(new Chunk(report.getOrDefault("period", "Global").toString() + "\n", normalFont));
-            meta.setSpacingAfter(6);
-            document.add(meta);
-
-            if (report.containsKey("presences")) {
-                Map<String, Object> sec = (Map<String, Object>) report.get("presences");
-                document.add(new Paragraph("1. PRÉSENCES & POINTAGES", sectionTitleFont));
-                Paragraph sub = new Paragraph("Entrées totales : " + sec.getOrDefault("nombre_entrees", 0) + "  |  Journées de présence : " + sec.getOrDefault("journees_presentes", 0), normalFont);
-                sub.setSpacingAfter(3);
-                document.add(sub);
-
-                PdfPTable table = new PdfPTable(5);
-                table.setWidthPercentage(100);
-                table.setWidths(new float[]{25, 20, 15, 15, 25});
-                
-                addTableCell(table, "Agent", headerFont, headerBg, true);
-                addTableCell(table, "Date", headerFont, headerBg, true);
-                addTableCell(table, "Entrée", headerFont, headerBg, true);
-                addTableCell(table, "Sortie", headerFont, headerBg, true);
-                addTableCell(table, "Durée", headerFont, headerBg, true);
-
-                List<Map<String, Object>> list = (List<Map<String, Object>>) sec.getOrDefault("liste", Collections.emptyList());
-                for (Map<String, Object> p : list) {
-                    addTableCell(table, p.get("agentNom") != null ? p.get("agentNom").toString() : "—", normalFont, null, false);
-                    addTableCell(table, p.get("date") != null ? p.get("date").toString() : "—", normalFont, null, false);
-                    addTableCell(table, p.get("heureArrivee") != null ? p.get("heureArrivee").toString() : "—", normalFont, null, false);
-                    addTableCell(table, p.get("heureDepart") != null ? p.get("heureDepart").toString() : "—", normalFont, null, false);
-                    addTableCell(table, (p.get("dureeMinutes") != null ? p.get("dureeMinutes").toString() : "0") + " min", normalFont, null, false);
-                }
-                table.setSpacingAfter(6);
-                document.add(table);
-            }
-
-            if (report.containsKey("conges")) {
-                Map<String, Object> sec = (Map<String, Object>) report.get("conges");
-                document.add(new Paragraph("2. CONGÉS & ABSENCES", sectionTitleFont));
-                Paragraph sub = new Paragraph("Demandes : " + sec.getOrDefault("total_demandes", 0) + "  |  Approuvés : " + sec.getOrDefault("approuves", 0) + "  |  En attente : " + sec.getOrDefault("en_attente", 0), normalFont);
-                sub.setSpacingAfter(3);
-                document.add(sub);
-
-                PdfPTable table = new PdfPTable(6);
-                table.setWidthPercentage(100);
-                table.setWidths(new float[]{25, 15, 15, 15, 12, 18});
-
-                addTableCell(table, "Agent", headerFont, headerBg, true);
-                addTableCell(table, "Type", headerFont, headerBg, true);
-                addTableCell(table, "Début", headerFont, headerBg, true);
-                addTableCell(table, "Fin", headerFont, headerBg, true);
-                addTableCell(table, "Jours", headerFont, headerBg, true);
-                addTableCell(table, "Statut", headerFont, headerBg, true);
-
-                List<Map<String, Object>> list = (List<Map<String, Object>>) sec.getOrDefault("liste", Collections.emptyList());
-                for (Map<String, Object> c : list) {
-                    addTableCell(table, c.get("agent") != null ? c.get("agent").toString() : "—", normalFont, null, false);
-                    addTableCell(table, c.get("type") != null ? c.get("type").toString() : "—", normalFont, null, false);
-                    addTableCell(table, c.get("debut") != null ? c.get("debut").toString() : "—", normalFont, null, false);
-                    addTableCell(table, c.get("fin") != null ? c.get("fin").toString() : "—", normalFont, null, false);
-                    addTableCell(table, c.get("jours") != null ? c.get("jours").toString() : "—", normalFont, null, false);
-                    addTableCell(table, c.get("statut") != null ? c.get("statut").toString() : "—", normalFont, null, false);
-                }
-                table.setSpacingAfter(6);
-                document.add(table);
-            }
-
-            if (report.containsKey("materiels")) {
-                Map<String, Object> sec = (Map<String, Object>) report.get("materiels");
-                document.add(new Paragraph("3. PARC MATÉRIEL & ÉQUIPEMENTS", sectionTitleFont));
-                Paragraph sub = new Paragraph("Total Équipements : " + sec.getOrDefault("total_equipements", 0) + 
-                        "  |  Disponibles : " + sec.getOrDefault("disponibles", 0) + 
-                        "  |  Défaut/Panne : " + sec.getOrDefault("en_panne", 0) +
-                        "  |  Perdu/HS : " + sec.getOrDefault("perdu_ou_inutilisable", 0), normalFont);
-                sub.setSpacingAfter(3);
-                document.add(sub);
-
-                PdfPTable table = new PdfPTable(5);
-                table.setWidthPercentage(100);
-                table.setWidths(new float[]{30, 20, 20, 15, 15});
-
-                addTableCell(table, "Libellé", headerFont, headerBg, true);
-                addTableCell(table, "Catégorie", headerFont, headerBg, true);
-                addTableCell(table, "N° Série", headerFont, headerBg, true);
-                addTableCell(table, "Valeur", headerFont, headerBg, true);
-                addTableCell(table, "Statut", headerFont, headerBg, true);
-
-                List<Map<String, Object>> list = (List<Map<String, Object>>) sec.getOrDefault("liste", Collections.emptyList());
-                for (Map<String, Object> m : list) {
-                    addTableCell(table, m.get("libelle") != null ? m.get("libelle").toString() : "—", normalFont, null, false);
-                    addTableCell(table, m.get("categorie") != null ? m.get("categorie").toString() : "—", normalFont, null, false);
-                    addTableCell(table, m.get("numero_serie") != null ? m.get("numero_serie").toString() : "—", normalFont, null, false);
-                    addTableCell(table, m.get("valeur") != null ? m.get("valeur").toString() : "—", normalFont, null, false);
-                    addTableCell(table, m.get("statut") != null ? m.get("statut").toString() : "—", normalFont, null, false);
-                }
-                table.setSpacingAfter(6);
-                document.add(table);
-            }
-
-            if (report.containsKey("disciplinaire")) {
-                Map<String, Object> sec = (Map<String, Object>) report.get("disciplinaire");
-                document.add(new Paragraph("4. DISCIPLINAIRE & SANCTIONS", sectionTitleFont));
-                Paragraph sub = new Paragraph("Total Sanctions du mois : " + sec.getOrDefault("total_sanctions", 0), normalFont);
-                sub.setSpacingAfter(3);
-                document.add(sub);
-
-                PdfPTable table = new PdfPTable(5);
-                table.setWidthPercentage(100);
-                table.setWidths(new float[]{25, 20, 30, 15, 10});
-
-                addTableCell(table, "Agent", headerFont, headerBg, true);
-                addTableCell(table, "Sanction", headerFont, headerBg, true);
-                addTableCell(table, "Motif", headerFont, headerBg, true);
-                addTableCell(table, "Date", headerFont, headerBg, true);
-                addTableCell(table, "Statut", headerFont, headerBg, true);
-
-                List<Map<String, Object>> list = (List<Map<String, Object>>) sec.getOrDefault("liste", Collections.emptyList());
-                for (Map<String, Object> s : list) {
-                    addTableCell(table, s.get("agent") != null ? s.get("agent").toString() : "—", normalFont, null, false);
-                    addTableCell(table, s.get("type") != null ? s.get("type").toString() : "—", normalFont, null, false);
-                    addTableCell(table, s.get("motif") != null ? s.get("motif").toString() : "—", normalFont, null, false);
-                    addTableCell(table, s.get("date") != null ? s.get("date").toString() : "—", normalFont, null, false);
-                    addTableCell(table, s.get("statut") != null ? s.get("statut").toString() : "—", normalFont, null, false);
-                }
-                table.setSpacingAfter(6);
-                document.add(table);
-            }
-
-            if (report.containsKey("missions")) {
-                Map<String, Object> sec = (Map<String, Object>) report.get("missions");
-                document.add(new Paragraph("5. MISSIONS & DÉPLACEMENTS", sectionTitleFont));
-                Paragraph sub = new Paragraph("Missions du mois : " + sec.getOrDefault("total_missions", 0) + "  |  En cours : " + sec.getOrDefault("en_cours", 0) + "  |  Terminées : " + sec.getOrDefault("terminees", 0), normalFont);
-                sub.setSpacingAfter(3);
-                document.add(sub);
-
-                PdfPTable table = new PdfPTable(5);
-                table.setWidthPercentage(100);
-                table.setWidths(new float[]{30, 25, 15, 15, 15});
-
-                addTableCell(table, "Titre", headerFont, headerBg, true);
-                addTableCell(table, "Agent", headerFont, headerBg, true);
-                addTableCell(table, "Début", headerFont, headerBg, true);
-                addTableCell(table, "Fin", headerFont, headerBg, true);
-                addTableCell(table, "Statut", headerFont, headerBg, true);
-
-                List<Map<String, Object>> list = (List<Map<String, Object>>) sec.getOrDefault("liste", Collections.emptyList());
-                for (Map<String, Object> ms : list) {
-                    addTableCell(table, ms.get("titre") != null ? ms.get("titre").toString() : "—", normalFont, null, false);
-                    addTableCell(table, ms.get("agent") != null ? ms.get("agent").toString() : "—", normalFont, null, false);
-                    addTableCell(table, ms.get("debut") != null ? ms.get("debut").toString() : "—", normalFont, null, false);
-                    addTableCell(table, ms.get("fin") != null ? ms.get("fin").toString() : "—", normalFont, null, false);
-                    addTableCell(table, ms.get("statut") != null ? ms.get("statut").toString() : "—", normalFont, null, false);
-                }
-                table.setSpacingAfter(6);
-                document.add(table);
-            }
-
-            Paragraph footer = new Paragraph("\nSimpleTaff Platform - Généré automatiquement le " + LocalDate.now(), normalFont);
-            footer.setAlignment(Element.ALIGN_CENTER);
-            document.add(footer);
-            
-            document.close();
-            return baos.toByteArray();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ("Error generating PDF: " + e.getMessage()).getBytes(java.nio.charset.StandardCharsets.UTF_8);
-        }
+        String period = (String) report.getOrDefault("period", LocalDate.now().toString());
+        return RapportPdfBuilder.build(report, period);
     }
 
     private void addTableCell(PdfPTable table, String text, Font font, Color bgColor, boolean isHeader) {

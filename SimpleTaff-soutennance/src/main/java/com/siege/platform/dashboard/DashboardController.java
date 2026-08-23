@@ -50,7 +50,7 @@ public class DashboardController {
         stats.put("totalPostes", posteRepository.count());
         stats.put("totalAffectationsActives", affectationRepository.count());
         stats.put("agentsActifs", agentTerrainRepository.count());
-        stats.put("agentsEnMission", affectationRepository.count());
+        stats.put("agentsEnPoste", affectationRepository.count());
         stats.put("materielsAffectes", materielRepository.countByStatut("AFFECTE"));
         stats.put("materielsEnPanne", materielRepository.countByStatut("CASSE"));
         stats.put("contratsExpirant", contratRepository.findByDateFinBetweenAndStatut(today, today.plusDays(30), "ACTIF").size());
