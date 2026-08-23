@@ -302,54 +302,66 @@ async function loadOverview() {
   }
 }
 
-// Load Organisation (Zones & Coordonnateurs)
+// Load Organisation
 async function loadOrg() {
   try {
     // Get Zones
     const zones = await apiFetch("/organisation/zones");
     const zoneTbody = document.getElementById("zonesTableBody");
-    zoneTbody.innerHTML =
-      zones
-        .map((z) => {
-          const villesStr =
-            Array.isArray(z.villes) && z.villes.length > 0
-              ? z.villes.join(", ")
-              : z.perimetre || "—";
-          return `
-                    <tr class="hover:bg-slate-50/50 transition-colors">
-                        <td class="p-2 font-bold">${z.nom}</td>
-                        <td class="p-2 text-slate-700 font-medium">${villesStr}</td>
-                        <td class="p-2 text-slate-500">${z.description || "—"}</td>
-                        <td class="p-2"><button onclick="deleteZone('${z.id}')" class="text-red-500 hover:underline">Supprimer</button></td>
-                    </tr>`;
-        })
-        .join("") ||
-      '<tr><td colspan="4" class="p-3 text-center text-slate-400">Aucune zone.</td></tr>';
+    const safeZones = Array.isArray(zones) ? zones : [];
+    if (zoneTbody) {
+      zoneTbody.innerHTML =
+        safeZones
+          .map((z) => {
+            const villesStr =
+              Array.isArray(z.villes) && z.villes.length > 0
+                ? z.villes.join(", ")
+                : z.perimetre || "—";
+            return `
+                      <tr class="hover:bg-slate-50/50 transition-colors">
+                          <td class="p-2 font-bold">${z.nom}</td>
+                          <td class="p-2 text-slate-700 font-medium">${villesStr}</td>
+                          <td class="p-2 text-slate-500">${z.description || "—"}</td>
+                          <td class="p-2"><button onclick="deleteZone('${z.id}')" class="text-red-500 hover:underline">Supprimer</button></td>
+                      </tr>`;
+          })
+          .join("") ||
+        '<tr><td colspan="4" class="p-3 text-center text-slate-400">Aucune zone.</td></tr>';
+    }
 
     // Populate Dropdown for Coordonnateurs
     const coordZoneSelect = document.getElementById("coordZoneSelect");
-    coordZoneSelect.innerHTML =
-      '<option value="">Associer à une zone (Optionnel)</option>' +
-      zones.map((z) => `<option value="${z.id}">${z.nom}</option>`).join("");
+    if (coordZoneSelect) {
+      coordZoneSelect.innerHTML =
+        '<option value="">Associer à une zone (Optionnel)</option>' +
+        safeZones.map((z) => `<option value="${z.id}">${z.nom}</option>`).join("");
+    }
 
     // Get Coordonnateurs
     const coords = await apiFetch("/organisation/coordonnateurs");
+    const safeCoords = Array.isArray(coords) ? coords : [];
     const coordTbody = document.getElementById("coordsTableBody");
-    coordTbody.innerHTML =
-      coords
-        .map(
-          (c) => `
-                    <tr class="hover:bg-slate-50/50 transition-colors">
-                        <td class="p-2 font-bold">${c.nom} ${c.prenom}</td>
-                        <td class="p-2 text-slate-500">${c.email}</td>
-                        <td class="p-2"><span class="badge bg-slate-100 text-slate-600">${c.zoneNom || "Non assigné"}</span></td>
-                        <td class="p-2 flex gap-2"><button onclick="resetCoordPassword('${c.id}')" class="text-sky-500 hover:underline">Réinit. MDP</button><button onclick="deleteCoord('${c.id}')" class="text-red-500 hover:underline">Supprimer</button></td>
-                    </tr>`,
-        )
-        .join("") ||
-      '<tr><td colspan="4" class="p-3 text-center text-slate-400">Aucun coordonnateur.</td></tr>';
+    if (coordTbody) {
+      coordTbody.innerHTML =
+        safeCoords
+          .map(
+            (c) => `
+                      <tr class="hover:bg-slate-50/50 transition-colors">
+                          <td class="p-2 font-bold">${c.nom} ${c.prenom}</td>
+                          <td class="p-2 text-slate-500">${c.email}</td>
+                          <td class="p-2"><span class="badge bg-slate-100 text-slate-600">${c.zoneNom || "Non assigné"}</span></td>
+                          <td class="p-2 flex gap-2"><button onclick="resetCoordPassword('${c.id}')" class="text-sky-500 hover:underline">Réinit. MDP</button><button onclick="deleteCoord('${c.id}')" class="text-red-500 hover:underline">Supprimer</button></td>
+                      </tr>`,
+          )
+          .join("") ||
+        '<tr><td colspan="4" class="p-3 text-center text-slate-400">Aucun coordonnateur.</td></tr>';
+    }
   } catch (e) {
-    console.error(e);
+    console.error("Erreur loadOrg:", e);
+    const zoneTbody = document.getElementById("zonesTableBody");
+    if (zoneTbody) zoneTbody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-red-400">Erreur de chargement des zones.</td></tr>';
+    const coordTbody = document.getElementById("coordsTableBody");
+    if (coordTbody) coordTbody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-red-400">Erreur de chargement des coordonnateurs.</td></tr>';
   }
 }
 
@@ -6084,5 +6096,96 @@ window.saveParametresPaie = async function() {
   } catch(e) {
     console.error("Erreur sauvegarde parametres paie", e);
     alert("Erreur lors de l'enregistrement des paramètres.");
+  }
+};
+
+// ==================== MODULE REMPLACEMENTS (Admin Entreprise) ====================
+window.loadAdminRemplacements = async function() {
+  try {
+    const demandes = await apiFetch("/remplacements") || [];
+    const safeDemandes = Array.isArray(demandes) ? demandes : [];
+
+    // Mise à jour des compteurs stat
+    const attente = safeDemandes.filter(d => d.statut === "EN_ATTENTE").length;
+    const accepte = safeDemandes.filter(d => d.statut === "ACCEPTE" || d.statut === "APPROUVE").length;
+    const rejete = safeDemandes.filter(d => d.statut === "REFUSE" || d.statut === "REJETE").length;
+
+    const elAttente = document.getElementById("statRemplacementsAttente");
+    const elAccepte = document.getElementById("statRemplacementsAccepte");
+    const elRejete = document.getElementById("statRemplacementsRejete");
+    if (elAttente) elAttente.textContent = attente;
+    if (elAccepte) elAccepte.textContent = accepte;
+    if (elRejete) elRejete.textContent = rejete;
+
+    const tbody = document.getElementById("remplacementsTableBody");
+    if (!tbody) return;
+
+    if (safeDemandes.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">Aucune demande de remplacement.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = safeDemandes.map(d => {
+      const date = d.dateDemande ? new Date(d.dateDemande).toLocaleDateString("fr-FR") : "—";
+      const agentNom = d.agentNom || (d.agent ? `${d.agent.nom || ""} ${d.agent.prenom || ""}` : "—");
+      const poste = d.posteNom || d.poste || "—";
+      const demandeurNom = d.coordonateurNom || d.coordonnateurNom || d.demandeurNom || "—";
+      const motif = d.motif || "—";
+
+      let statutBadge = "";
+      let actionBtns = "";
+      if (d.statut === "EN_ATTENTE") {
+        statutBadge = '<span class="px-2 py-1 bg-amber-100 text-amber-700 font-bold rounded text-xs">En attente</span>';
+        actionBtns = `
+          <div class="flex gap-2">
+            <button onclick="traiterRemplacement('${d.id}','ACCEPTE')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1 px-2.5 rounded-lg text-xs transition-colors">
+              <i class="fa-solid fa-check mr-1"></i>Accepter
+            </button>
+            <button onclick="traiterRemplacement('${d.id}','REFUSE')" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-1 px-2.5 rounded-lg text-xs transition-colors">
+              <i class="fa-solid fa-xmark mr-1"></i>Refuser
+            </button>
+          </div>`;
+      } else if (d.statut === "ACCEPTE" || d.statut === "APPROUVE") {
+        statutBadge = '<span class="px-2 py-1 bg-emerald-100 text-emerald-700 font-bold rounded text-xs">Acceptée</span>';
+        actionBtns = '<span class="text-xs text-slate-400">—</span>';
+      } else {
+        statutBadge = '<span class="px-2 py-1 bg-rose-100 text-rose-700 font-bold rounded text-xs">Refusée</span>';
+        actionBtns = '<span class="text-xs text-slate-400">—</span>';
+      }
+
+      return `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="px-6 py-4 text-sm text-slate-600">${date}</td>
+          <td class="px-6 py-4">
+            <div class="font-semibold text-slate-800">${agentNom}</div>
+            <div class="text-xs text-slate-400">${poste}</div>
+          </td>
+          <td class="px-6 py-4 text-sm text-slate-600">${demandeurNom}</td>
+          <td class="px-6 py-4 text-sm text-slate-500 max-w-xs truncate" title="${motif}">${motif}</td>
+          <td class="px-6 py-4">${statutBadge}</td>
+          <td class="px-6 py-4">${actionBtns}</td>
+        </tr>`;
+    }).join("");
+  } catch(e) {
+    console.error("Erreur loadAdminRemplacements:", e);
+    const tbody = document.getElementById("remplacementsTableBody");
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-red-400">Erreur de chargement des remplacements.</td></tr>';
+  }
+};
+
+window.traiterRemplacement = async function(id, decision) {
+  try {
+    await apiFetch(`/remplacements/${id}/traiter`, {
+      method: "PUT",
+      body: JSON.stringify({ decision })
+    });
+    window.showToast && window.showToast(
+      decision === "ACCEPTE" ? "Remplacement accepté." : "Remplacement refusé.",
+      decision === "ACCEPTE" ? "success" : "error"
+    );
+    window.loadAdminRemplacements();
+  } catch(e) {
+    console.error(e);
+    alert("Erreur lors du traitement : " + e.message);
   }
 };
