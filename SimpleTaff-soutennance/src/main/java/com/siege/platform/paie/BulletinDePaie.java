@@ -2,6 +2,7 @@ package com.siege.platform.paie;
 
 import com.siege.platform.agent.AgentTerrain;
 import com.siege.platform.entreprise.Entreprise;
+import com.siege.platform.poste.Affectation;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,10 @@ public class BulletinDePaie {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agent_id", nullable = false)
     private AgentTerrain agent;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "affectation_id", nullable = false)
+    private Affectation affectation;
 
     @Column(nullable = false)
     private String periode; // Format: YYYY-MM

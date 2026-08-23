@@ -5,6 +5,8 @@ import com.siege.platform.agent.AgentTerrainRepository;
 import com.siege.platform.contrat.ContratAgent;
 import com.siege.platform.contrat.ContratAgentRepository;
 import com.siege.platform.entreprise.Entreprise;
+import com.siege.platform.poste.Affectation;
+import com.siege.platform.poste.AffectationRepository;
 import com.siege.platform.common.CurrentTenantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,9 @@ public class PaieCalculService {
     private ContratAgentRepository contratRepository;
 
     @Autowired
+    private AffectationRepository affectationRepository;
+
+    @Autowired
     private ParametrePaieRepository parametreRepository;
 
     @Autowired
@@ -40,6 +45,11 @@ public class PaieCalculService {
         
         AgentTerrain agent = agentRepository.findById(request.getAgentId())
                 .orElseThrow(() -> new RuntimeException("Agent introuvable"));
+
+        // Récupération de l'affectation active (ou la dernière)
+        Affectation affectation = affectationRepository.findByAgentIdOrderByDateDebutOccupationDesc(agent.getId())
+                .stream().findFirst()
+                .orElseThrow(() -> new RuntimeException("L'agent n'a aucune affectation."));
 
         // Récupération du salaire de base via le contrat actif
         List<ContratAgent> contrats = contratRepository.findByAgentIdOrderByDateDebutDesc(agent.getId());
@@ -91,6 +101,7 @@ public class PaieCalculService {
         BulletinDePaie bulletin = new BulletinDePaie();
         bulletin.setEntreprise(entreprise);
         bulletin.setAgent(agent);
+        bulletin.setAffectation(affectation);
         bulletin.setPeriode(request.getPeriode());
         bulletin.setJoursPrevus(request.getJoursPrevus());
         bulletin.setJoursValides(request.getJoursValides());
