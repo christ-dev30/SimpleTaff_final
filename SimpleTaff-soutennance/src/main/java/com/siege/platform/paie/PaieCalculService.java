@@ -104,10 +104,15 @@ public class PaieCalculService {
         bulletin.setCotisationCnam(cnam);
         bulletin.setImpotSurRevenu(impot);
         bulletin.setSalaireNetCalcule(salaireNet);
+        bulletin.setCreeLe(java.time.LocalDateTime.now());
+        bulletin.setDateCloture(java.time.LocalDateTime.now());
 
         // Si un bulletin existe déjà pour cette période, on le remplace
         Optional<BulletinDePaie> existant = bulletinRepository.findByAgentIdAndPeriode(agent.getId(), request.getPeriode());
-        existant.ifPresent(b -> bulletin.setId(b.getId()));
+        existant.ifPresent(b -> {
+            bulletin.setId(b.getId());
+            bulletin.setCreeLe(b.getCreeLe() != null ? b.getCreeLe() : java.time.LocalDateTime.now());
+        });
 
         return bulletinRepository.save(bulletin);
     }
