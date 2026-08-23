@@ -6058,7 +6058,8 @@ window.exportBulletinPDF = function(bulletinId) {
     alert("Bulletin introuvable en mémoire.");
     return;
   }
-  window.open('/api/paie/' + bulletinId + '/export?format=pdf', '_blank');
+  const token = localStorage.getItem("token");
+  window.open('/api/paie/' + bulletinId + '/export?format=pdf&token=' + token, '_blank');
 };
 
 // ==================== PARAMETRES PAIE ====================
