@@ -118,7 +118,7 @@ L'enrôlement d'un agent suit un workflow strict empêchant la création de doss
 
 * **Onglet 4 : Génération Contractuelle & Carte Badge QR/NFC**
   * Choix du type de contrat (CDD, CDI, Prestation, Intérim).
-  * Calcul automatique du salaire brut négocié selon l'emploi sélectionné.
+  * Calcul automatique du salaire brut fixé selon la grille de l'emploi sélectionné.
   * Génération de la fiche synthétique au format PDF.
   * Création automatique d'une entité `CarteAgent` associée.
 
