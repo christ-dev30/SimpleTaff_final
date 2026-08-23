@@ -28,9 +28,9 @@ import java.util.Map;
 public class RapportPdfBuilder {
 
     // ── Colors ────────────────────────────────────────────────────────────────
-    private static final Color C_NAVY   = new Color(15,  23,  42);
-    private static final Color C_BLUE   = new Color(30,  58, 138);
-    private static final Color C_TEAL   = new Color(17,  94,  89);
+    private static final Color C_NAVY   = new Color(18,  49,  46);   // #12312E
+    private static final Color C_BLUE   = new Color(18,  49,  46);   // #12312E
+    private static final Color C_TEAL   = new Color(163, 217, 119);  // #A3D977
     private static final Color C_AMBER  = new Color(146, 64,  14);
     private static final Color C_RED    = new Color(127, 29,  29);
     private static final Color C_SILVER = new Color(248, 250, 252);
@@ -38,8 +38,8 @@ public class RapportPdfBuilder {
     private static final Color C_WHITE  = Color.WHITE;
     private static final Color C_ALT    = new Color(241, 245, 249);
     private static final Color C_LGRAY  = new Color(235, 235, 235);
-    private static final Color C_LBLUE  = new Color(219, 234, 254);
-    private static final Color C_TOTROW = new Color(203, 213, 225);
+    private static final Color C_LBLUE  = new Color(234, 244, 227);  // Light green tint
+    private static final Color C_TOTROW = new Color(163, 217, 119);
 
     // ── Fonts ─────────────────────────────────────────────────────────────────
     private static Font fTitle()   { return FontFactory.getFont(FontFactory.HELVETICA_BOLD,   18, C_WHITE); }
@@ -58,7 +58,7 @@ public class RapportPdfBuilder {
     // =========================================================================
     public static byte[] build(Map<String, Object> report, String mois) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            Document doc = new Document(PageSize.A3.rotate(), 36, 36, 36, 50);
+            Document doc = new Document(PageSize.A4.rotate(), 36, 36, 36, 50);
             PdfWriter writer = PdfWriter.getInstance(doc, baos);
             writer.setPageEvent(new FooterEvent());
             doc.open();
