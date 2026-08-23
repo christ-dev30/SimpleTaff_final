@@ -6045,11 +6045,16 @@ window.chargerBulletins = async function() {
         <td class="p-3 font-medium">${b.periode}</td>
         <td class="p-3">
           <div class="font-medium text-slate-700">${b.agent.nom || ''} ${b.agent.prenom || ''}</div>
-          <div class="text-[10px] font-mono text-slate-400">${b.agent.matricule || b.agent.id.substring(0,8)}</div>
+          <div class="text-[10px] font-mono text-slate-400">${b.agent.matricule || b.agent.id.substring(0,8)} - <span class="text-indigo-500 font-semibold">${b.metier || 'Métier non défini'}</span></div>
         </td>
-        <td class="p-3 text-[#12312E] font-bold">${b.salaireBrutEffectif} F CFA</td>
-        <td class="p-3 text-[#A3D977] font-bold">+${b.totalPrimes} F CFA</td>
-        <td class="p-3 text-red-500 font-bold">-${(b.cotisationCnps + b.cotisationCnam + b.impotSurRevenu).toFixed(2)} F CFA</td>
+        <td class="p-3 text-[#12312E] font-bold">${b.salaireBrutEffectif || 0} F CFA</td>
+        <td class="p-3 text-[#A3D977] font-bold">+${b.totalPrimes || 0} F CFA</td>
+        <td class="p-3 text-red-500">
+          <div class="font-bold">- ${( (b.cotisationCnps || 0) + (b.cotisationCnam || 0) + (b.retenueAbsence || 0) ).toFixed(2)} F CFA</div>
+          <div class="text-[10px] text-red-400">
+            ${b.retenueAbsence > 0 ? `Abs: ${b.retenueAbsence.toFixed(2)} | ` : ''}CNPS: ${(b.cotisationCnps||0).toFixed(2)} | CNAM: ${(b.cotisationCnam||0).toFixed(2)}
+          </div>
+        </td>
         <td class="p-3 text-[#12312E] font-bold text-sm bg-[#EAF4E3] rounded-lg">${b.salaireNetCalcule} F CFA</td>
         <td class="p-3">
           <button class="text-xs bg-[#12312E] text-white px-3 py-1 rounded shadow-sm hover:bg-[#19403B]" onclick="alert('Simulation: Bulletin exporté au format PDF')">

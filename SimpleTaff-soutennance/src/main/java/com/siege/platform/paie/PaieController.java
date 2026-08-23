@@ -52,6 +52,14 @@ public class PaieController {
             map.put("impotSurRevenu", b.getImpotSurRevenu());
             map.put("salaireNetCalcule", b.getSalaireNetCalcule());
             
+            map.put("retenueAbsence", b.getRetenueAbsence());
+            
+            String metier = "Non défini";
+            if (b.getAffectation() != null && b.getAffectation().getPoste() != null && b.getAffectation().getPoste().getEmploi() != null) {
+                metier = b.getAffectation().getPoste().getEmploi().getLibelle();
+            }
+            map.put("metier", metier);
+            
             Map<String, Object> agentInfo = new java.util.HashMap<>();
             agentInfo.put("id", b.getAgent().getId());
             agentInfo.put("nom", b.getAgent().getNom());
