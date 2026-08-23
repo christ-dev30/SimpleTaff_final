@@ -437,23 +437,18 @@ public class RapportPdfBuilder {
     //  SECTION 5: PAIE
     // =========================================================================
     private static int addPaie(Document doc, Map<String, Object> data, int secNum) throws Exception {
-        addSectionTitle(doc, secNum + ". PAIE ET RÉMUNÉRATIONS");
+        addSectionHeader(doc, secNum, "PAIE ET RÉMUNÉRATIONS", C_NAVY);
 
-        // KPIs
-        PdfPTable grid = new PdfPTable(3);
-        grid.setWidthPercentage(100);
-        grid.setSpacingAfter(10);
-        grid.addCell(makeKpiCard("Bulletins émis", str(data.get("total_bulletins"), "0")));
         java.math.BigDecimal masse = (java.math.BigDecimal) data.get("total_masse_salariale");
         String masseStr = (masse != null ? masse.toString() : "0") + " FCFA";
-        grid.addCell(makeKpiCard("Masse Salariale Nette", masseStr));
-        grid.addCell(makeKpiCard("", "")); // empty
-        doc.add(grid);
+        addKpiRow(doc, new String[][]{
+            {str(data.get("total_bulletins"), "0"), "Bulletins émis"},
+            {masseStr, "Masse Salariale Nette"}
+        });
 
-        // Table
         List<Map<String, Object>> list = (List<Map<String, Object>>) data.get("liste");
         if (list == null || list.isEmpty()) {
-            doc.add(new Paragraph("Aucune donnée de paie pour cette période.", fCell()));
+            addOneColEmpty(doc);
             return secNum + 1;
         }
 
@@ -462,20 +457,18 @@ public class RapportPdfBuilder {
         t.setWidths(new float[]{25, 25, 25, 25});
         t.setSpacingAfter(20);
 
-        addTh(t, "Agent");
-        addTh(t, "Métier");
-        addTh(t, "Brut Effectif");
-        addTh(t, "Net Calculé");
+        addHeaderRow(t, C_NAVY, "Agent", "Métier", "Brut Effectif", "Net Calculé");
 
         for (Map<String, Object> r : list) {
-            addTd(t, str(r.get("agent"), "—"));
-            addTd(t, str(r.get("metier"), "—"));
-            addTd(t, str(r.get("brut"), "0") + " FCFA");
-            
-            PdfPCell c = new PdfPCell(new Phrase(str(r.get("net"), "0") + " FCFA", fCellBold()));
-            c.setPadding(6);
+            addRow(t, null, false,
+                str(r.get("agent"), "—"),
+                str(r.get("metier"), "—"),
+                str(r.get("brut"), "0") + " FCFA");
+
+            PdfPCell c = new PdfPCell(new Phrase(str(r.get("net"), "0") + " FCFA", fCellB()));
+            c.setPadding(4);
             c.setBorderColor(C_BORDER);
-            c.setBackgroundColor(new Color(234, 244, 227)); // light teal
+            c.setBackgroundColor(C_LBLUE);
             c.setHorizontalAlignment(Element.ALIGN_RIGHT);
             t.addCell(c);
         }

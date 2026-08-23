@@ -57,7 +57,7 @@ public class DemandeRemplacementController {
         Utilisateur current = getCurrentUser();
         if (current == null) return ResponseEntity.status(401).build();
 
-        Entreprise ent = entrepriseRepository.findById(TenantContext.getCurrentTenant()).orElseThrow();
+        Entreprise ent = entrepriseRepository.findById(TenantContext.getTenantId()).orElseThrow();
         AgentTerrain agent = agentRepository.findById(UUID.fromString(payload.get("agentId"))).orElseThrow();
 
         DemandeRemplacement demande = new DemandeRemplacement();
