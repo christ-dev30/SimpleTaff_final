@@ -330,7 +330,7 @@ public class CoordonnateurController {
         List<Map<String, Object>> postesVacants = new ArrayList<>();
         List<Poste> allPostes = posteRepo.findAll();
         for (Poste poste : allPostes) {
-            if ("VACANT".equalsIgnoreCase(poste.getStatut()) && poste.getSite() != null && poste.getSite().getZone() != null) {
+            if (("VACANT".equalsIgnoreCase(poste.getStatut()) || "OUVERT".equalsIgnoreCase(poste.getStatut())) && poste.getSite() != null && poste.getSite().getZone() != null) {
                 // Filtrer par la zone du coordonnateur
                 if (coordZoneId == null || coordZoneId.equals(poste.getSite().getZone().getId())) {
                     Map<String, Object> pMap = new HashMap<>();

@@ -454,7 +454,7 @@ async function loadFormulaireAffectation() {
     const postes = await apiFetch("/coordonnateur/postes-vacants");
     const posteSelect = document.getElementById("newAffectPoste");
     if (posteSelect) {
-      posteSelect.innerHTML = '<option value="">-- Sélectionner un poste --</option>' + 
+      posteSelect.innerHTML = '<option value="">-- Sélectionner un site --</option>' + 
         (postes || []).map(p => `<option value="${p.id}">${p.siteNom} (${p.clientNom})</option>`).join("");
     }
 
