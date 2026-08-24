@@ -2917,6 +2917,10 @@ window.deleteAgent = async function (id) {
     await apiFetch(`/agents/${id}`, { method: "DELETE" });
     alert("Agent et toutes ses dépendances supprimés avec succès !");
     loadAgents();
+  } catch (err) {
+    alert(err.message);
+  }
+};
 // --- Remplacement ---
 window.openModalSignalerRemplacement = function (agentId, agentNom) {
   document.getElementById("remplacementAgentId").value = agentId;
