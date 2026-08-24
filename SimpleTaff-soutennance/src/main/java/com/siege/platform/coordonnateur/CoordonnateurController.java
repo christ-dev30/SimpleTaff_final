@@ -383,7 +383,7 @@ public class CoordonnateurController {
                 }
             }
 
-            Affectation affectation = affectationService.creerAffectation(posteId, agentId, LocalDate.now(), stringPayload);
+            Affectation affectation = affectationService.creerAffectation(poste.getId(), agentId, LocalDate.now(), stringPayload);
             return ResponseEntity.ok(affectation);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
