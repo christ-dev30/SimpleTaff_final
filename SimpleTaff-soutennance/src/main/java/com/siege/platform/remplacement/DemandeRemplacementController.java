@@ -9,6 +9,7 @@ import com.siege.platform.poste.Affectation;
 import com.siege.platform.poste.AffectationRepository;
 import com.siege.platform.utilisateur.Utilisateur;
 import com.siege.platform.utilisateur.UtilisateurRepository;
+import com.siege.platform.common.enums.Role;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -76,7 +77,7 @@ public class DemandeRemplacementController {
         Utilisateur current = getCurrentUser();
         if (current == null) return ResponseEntity.status(401).build();
 
-        if ("ADMIN_ENTREPRISE".equals(current.getRole())) {
+        if (Role.ADMIN_ENTREPRISE.equals(current.getRole())) {
             return ResponseEntity.ok(demandeRepository.findAllByOrderByDateDemandeDesc());
         } else {
             return ResponseEntity.ok(demandeRepository.findByDemandeurId(current.getId()));
@@ -87,7 +88,7 @@ public class DemandeRemplacementController {
     @Transactional
     public ResponseEntity<?> traiterDemande(@PathVariable UUID id, @RequestBody Map<String, String> payload) {
         Utilisateur current = getCurrentUser();
-        if (current == null || !"ADMIN_ENTREPRISE".equals(current.getRole())) return ResponseEntity.status(403).build();
+        if (current == null || !Role.ADMIN_ENTREPRISE.equals(current.getRole())) return ResponseEntity.status(403).build();
 
         DemandeRemplacement demande = demandeRepository.findById(id).orElseThrow();
         String action = payload.get("action"); // "ACCEPTEE" ou "REJETEE"
