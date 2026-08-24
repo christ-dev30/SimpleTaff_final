@@ -76,7 +76,7 @@ public class DemandeRemplacementController {
         Utilisateur current = getCurrentUser();
         if (current == null) return ResponseEntity.status(401).build();
 
-        if ("ADMIN".equals(current.getRole())) {
+        if ("ADMIN_ENTREPRISE".equals(current.getRole())) {
             return ResponseEntity.ok(demandeRepository.findAllByOrderByDateDemandeDesc());
         } else {
             return ResponseEntity.ok(demandeRepository.findByDemandeurId(current.getId()));
@@ -87,7 +87,7 @@ public class DemandeRemplacementController {
     @Transactional
     public ResponseEntity<?> traiterDemande(@PathVariable UUID id, @RequestBody Map<String, String> payload) {
         Utilisateur current = getCurrentUser();
-        if (current == null || !"ADMIN".equals(current.getRole())) return ResponseEntity.status(403).build();
+        if (current == null || !"ADMIN_ENTREPRISE".equals(current.getRole())) return ResponseEntity.status(403).build();
 
         DemandeRemplacement demande = demandeRepository.findById(id).orElseThrow();
         String action = payload.get("action"); // "ACCEPTEE" ou "REJETEE"

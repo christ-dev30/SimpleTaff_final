@@ -455,7 +455,7 @@ async function loadFormulaireAffectation() {
     const posteSelect = document.getElementById("newAffectPoste");
     if (posteSelect) {
       posteSelect.innerHTML = '<option value="">-- Sélectionner un poste --</option>' + 
-        (postes || []).map(p => `<option value="${p.id}">${p.titre} - ${p.siteNom} (${p.clientNom})</option>`).join("");
+        (postes || []).map(p => `<option value="${p.id}">${p.siteNom} (${p.clientNom})</option>`).join("");
     }
 
     // Charger les agents de la zone du coordonnateur
@@ -2924,10 +2924,36 @@ window.deleteAgent = async function (id) {
   }
 };
 // --- Remplacement ---
-window.openModalSignalerRemplacement = function (agentId, agentNom) {
-  document.getElementById("remplacementAgentId").value = agentId;
-  document.getElementById("remplacementAgentNom").value = agentNom;
+window.openModalSignalerRemplacement = async function (agentId, agentNom) {
   document.getElementById("remplacementMotif").value = "";
+  
+  const select = document.getElementById("remplacementAgentId");
+  select.innerHTML = '<option value="">Chargement des agents...</option>';
+  
+  try {
+    const agents = await apiFetch("/coordonnateur/agents-disponibles");
+    let optionsHtml = '<option value="">-- Sélectionner un agent --</option>';
+    if (agents && agents.length > 0) {
+      optionsHtml += agents.map(a => `<option value="${a.id}">${a.nom} ${a.prenom}</option>`).join("");
+    }
+    select.innerHTML = optionsHtml;
+    
+    if (agentId) {
+      // S'assurer que l'agent passé en paramètre existe dans la liste, sinon l'ajouter
+      let exists = agents && agents.some(a => String(a.id) === String(agentId));
+      if (!exists && agentNom) {
+         select.innerHTML += `<option value="${agentId}">${agentNom}</option>`;
+      }
+      select.value = agentId;
+      select.disabled = true;
+    } else {
+      select.value = "";
+      select.disabled = false;
+    }
+  } catch (e) {
+    select.innerHTML = '<option value="">Erreur de chargement</option>';
+  }
+
   document.getElementById("signalerRemplacementModal").classList.remove("hidden");
 };
 
