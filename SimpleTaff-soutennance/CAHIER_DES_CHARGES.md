@@ -115,3 +115,21 @@ L'application repose sur une architecture moderne de type client-serveur, sépar
 
 ---
 *Ce document fait office de référence technique et fonctionnelle pour la plateforme SimpleTaff. Toute nouvelle implémentation devra s'y conformer et mettre à jour les sections concernées.*
+
+
+## 7. HISTORIQUE DES MISES À JOUR (CHANGELOG)
+
+### Version Actuelle (Mise à jour post-première version)
+* **Restriction Par Zone (Coordonnateur) :**
+  * Le Coordonnateur ne voit désormais **que** les postes vacants et les agents disponibles de sa zone géographique d'affectation.
+  * La route API /api/coordonnateur/agents-disponibles filtre spécifiquement les agents selon l'ID de la zone du coordonnateur connecté.
+* **Module Remplacements (Congés Longue Durée) :**
+  * Ajout d'un système de gestion des alertes de remplacement directement dans le tableau de bord du Coordonnateur.
+  * Ajout d'un onglet complet dédié aux remplacements pour signaler et suivre le statut des agents défaillants ou en congé longue durée.
+* **Rapports Globaux :**
+  * Le rapport analytique téléchargé par le coordonnateur reflète désormais les statistiques globales et détaillées de son périmètre d'action.
+* **Refonte Documentaire (Bulletin de Paie) :**
+  * Le design du PDF de la fiche de paie a été intégralement revu (design premium, header structuré, alignement strict, clarté des totaux).
+* **Mise en cache Frontend :**
+  * Mise en place stricte de versioning (Cache Busting ?v=X) sur les imports JavaScript (ex: coordonnateur.js) pour prévenir les problèmes d'affichage lors de mises à jour des modules ES6.
+
