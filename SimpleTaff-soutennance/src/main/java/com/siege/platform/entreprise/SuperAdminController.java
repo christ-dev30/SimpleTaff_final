@@ -192,6 +192,9 @@ public class SuperAdminController {
             // JdbcTemplate ne fait pas la conversion automatique, on passe donc un byte[].
             byte[] idBytes = uuidToBytes(id);
             
+            // 0. Notifications
+            jdbcTemplate.update("DELETE FROM notification_evenement WHERE entreprise_id = ?", idBytes);
+            
             // 1. Pointages de l'entreprise
             jdbcTemplate.update("DELETE FROM pointage WHERE entreprise_id = ?", idBytes);
             
