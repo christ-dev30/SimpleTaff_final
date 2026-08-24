@@ -328,16 +328,16 @@ public class CoordonnateurController {
         UUID coordZoneId = (user instanceof Coordonnateur coord && coord.getZone() != null) ? coord.getZone().getId() : null;
 
         List<Map<String, Object>> postesVacants = new ArrayList<>();
-        List<Poste> allPostes = posteRepo.findAll();
-        for (Poste poste : allPostes) {
-            if (("VACANT".equalsIgnoreCase(poste.getStatut()) || "OUVERT".equalsIgnoreCase(poste.getStatut())) && poste.getSite() != null && poste.getSite().getZone() != null) {
+        List<com.siege.platform.structuredemandeuse.Site> allSites = siteRepo.findAll();
+        for (com.siege.platform.structuredemandeuse.Site site : allSites) {
+            if (site.getZone() != null) {
                 // Filtrer par la zone du coordonnateur
-                if (coordZoneId == null || coordZoneId.equals(poste.getSite().getZone().getId())) {
+                if (coordZoneId == null || coordZoneId.equals(site.getZone().getId())) {
                     Map<String, Object> pMap = new HashMap<>();
-                    pMap.put("id", poste.getId());
-                    pMap.put("titre", poste.getEmploi() != null ? poste.getEmploi().getLibelle() : "Poste");
-                    pMap.put("siteNom", poste.getSite().getNom());
-                    pMap.put("clientNom", poste.getSite().getStructureDemandeuse() != null ? poste.getSite().getStructureDemandeuse().getRaisonSociale() : "");
+                    pMap.put("id", site.getId());
+                    pMap.put("titre", "Poste");
+                    pMap.put("siteNom", site.getNom());
+                    pMap.put("clientNom", site.getStructureDemandeuse() != null ? site.getStructureDemandeuse().getRaisonSociale() : "");
                     postesVacants.add(pMap);
                 }
             }
@@ -349,11 +349,22 @@ public class CoordonnateurController {
     public ResponseEntity<?> creerAffectation(@RequestBody Map<String, Object> payload, java.security.Principal principal) {
         try {
             String coordonnateurEmail = principal.getName();
-            UUID posteId = UUID.fromString(payload.get("posteId").toString());
+            UUID siteId = UUID.fromString(payload.get("posteId").toString());
             UUID agentId = UUID.fromString(payload.get("agentId").toString());
             
-            Poste poste = posteRepo.findById(posteId)
-                    .orElseThrow(() -> new IllegalArgumentException("Poste introuvable"));
+            com.siege.platform.structuredemandeuse.Site site = siteRepo.findById(siteId)
+                    .orElseThrow(() -> new IllegalArgumentException("Site introuvable"));
+                    
+            Poste poste = posteRepo.findAll().stream()
+                    .filter(p -> p.getSite() != null && p.getSite().getId().equals(siteId) && ("VACANT".equalsIgnoreCase(p.getStatut()) || "OUVERT".equalsIgnoreCase(p.getStatut())))
+                    .findFirst()
+                    .orElseGet(() -> {
+                        Poste newPoste = new Poste();
+                        newPoste.setSite(site);
+                        newPoste.setEntreprise(site.getEntreprise());
+                        newPoste.setStatut("VACANT");
+                        return posteRepo.save(newPoste);
+                    });
                     
             // Vérification relâchée pour le MVP
             boolean authorized = true;
