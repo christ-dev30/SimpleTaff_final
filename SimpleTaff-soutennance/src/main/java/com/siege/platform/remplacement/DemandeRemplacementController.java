@@ -117,7 +117,17 @@ public class DemandeRemplacementController {
         if (current == null || !Role.ADMIN_ENTREPRISE.equals(current.getRole())) return ResponseEntity.status(403).build();
 
         DemandeRemplacement demande = demandeRepository.findById(id).orElseThrow();
-        String action = payload.get("action"); // "ACCEPTEE" ou "REJETEE"
+        String action = payload.get("action");
+        if (action == null) {
+            action = payload.get("decision");
+        }
+        
+        // Convert "ACCEPTE" to "ACCEPTEE" if necessary
+        if ("ACCEPTE".equals(action)) {
+            action = "ACCEPTEE";
+        } else if ("REFUSE".equals(action)) {
+            action = "REJETEE";
+        }
         
         demande.setStatut(action);
         demande.setReponse(payload.get("reponse"));
