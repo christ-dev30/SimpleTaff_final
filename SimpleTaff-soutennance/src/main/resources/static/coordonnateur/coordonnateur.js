@@ -3407,7 +3407,7 @@ window.loadRemplacements = async function() {
         
         return `
           <tr>
-            <td class="px-6 py-4 font-bold text-slate-700">${r.agent ? r.agent.nom + " " + r.agent.prenom : "Agent inconnu"}</td>
+            <td class="px-6 py-4 font-bold text-slate-700">${r.agentNom || "Agent inconnu"}</td>
             <td class="px-6 py-4 text-slate-600">${r.motif}</td>
             <td class="px-6 py-4 text-slate-500">${new Date(r.dateDemande).toLocaleDateString("fr-FR")}</td>
             <td class="px-6 py-4">${statusBadge}</td>
@@ -3423,7 +3423,7 @@ window.loadRemplacements = async function() {
         
         return `
           <tr>
-            <td class="py-3 font-bold text-slate-700">${r.agent ? r.agent.nom + " " + r.agent.prenom : "Agent inconnu"}</td>
+            <td class="py-3 font-bold text-slate-700">${r.agentNom || "Agent inconnu"}</td>
             <td class="py-3 text-slate-600">${r.motif}</td>
             <td class="py-3 text-right">${statusBadge}</td>
           </tr>
