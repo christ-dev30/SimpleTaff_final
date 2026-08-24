@@ -71,7 +71,7 @@ public class DemandeRemplacementController {
         demande.setStatut("EN_ATTENTE");
 
         demandeRepository.save(demande);
-        return ResponseEntity.ok(demande);
+        return ResponseEntity.ok(Map.of("message", "Demande créée avec succès"));
     }
 
     @GetMapping
@@ -151,6 +151,6 @@ public class DemandeRemplacementController {
         }
 
         demandeRepository.save(demande);
-        return ResponseEntity.ok(demande);
+        return ResponseEntity.ok(Map.of("message", "Demande traitée avec succès"));
     }
 }
