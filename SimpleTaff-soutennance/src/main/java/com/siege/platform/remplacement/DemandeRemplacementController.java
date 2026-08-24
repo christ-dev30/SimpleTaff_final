@@ -73,15 +73,39 @@ public class DemandeRemplacementController {
     }
 
     @GetMapping
-    public ResponseEntity<List<DemandeRemplacement>> listerDemandes() {
+    public ResponseEntity<List<Map<String, Object>>> listerDemandes() {
         Utilisateur current = getCurrentUser();
         if (current == null) return ResponseEntity.status(401).build();
 
+        List<DemandeRemplacement> demandes;
         if (Role.ADMIN_ENTREPRISE.equals(current.getRole())) {
-            return ResponseEntity.ok(demandeRepository.findAllByOrderByDateDemandeDesc());
+            demandes = demandeRepository.findAllByOrderByDateDemandeDesc();
         } else {
-            return ResponseEntity.ok(demandeRepository.findByDemandeurId(current.getId()));
+            demandes = demandeRepository.findByDemandeurId(current.getId());
         }
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (DemandeRemplacement d : demandes) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("id", d.getId());
+            map.put("dateDemande", d.getDateDemande() != null ? d.getDateDemande().toString() : "");
+            map.put("motif", d.getMotif());
+            map.put("statut", d.getStatut());
+            
+            if (d.getAgent() != null) {
+                String nom = d.getAgent().getNom() != null ? d.getAgent().getNom() : "";
+                String prenom = d.getAgent().getPrenom() != null ? d.getAgent().getPrenom() : "";
+                map.put("agentNom", (nom + " " + prenom).trim());
+            }
+            if (d.getDemandeur() != null) {
+                String nom = d.getDemandeur().getNom() != null ? d.getDemandeur().getNom() : "";
+                String prenom = d.getDemandeur().getPrenom() != null ? d.getDemandeur().getPrenom() : "";
+                map.put("demandeurNom", (nom + " " + prenom).trim());
+            }
+            result.add(map);
+        }
+        
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}/traiter")
