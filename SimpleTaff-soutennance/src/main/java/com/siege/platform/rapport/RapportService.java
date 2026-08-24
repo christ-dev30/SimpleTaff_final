@@ -190,6 +190,103 @@ public class RapportService {
         return report;
     }
 
+    public Map<String, Object> genererRapportAgent(String mois, java.util.UUID agentId) {
+        Utilisateur current = getCurrentUser();
+        YearMonth ym = YearMonth.parse(mois);
+        LocalDate debutMois = ym.atDay(1);
+        LocalDate finMois = ym.atEndOfMonth();
+        LocalDateTime debutDateTime = debutMois.atStartOfDay();
+        LocalDateTime finDateTime = ym.plusMonths(1).atDay(1).atStartOfDay();
+
+        Map<String, Object> report = new LinkedHashMap<>();
+        report.put("titre", "RAPPORT AGENT - " + mois);
+        report.put("dateGeneration", LocalDate.now());
+        report.put("period", mois);
+
+        List<Pointage> pointages = pointageRepository.findByDateHeureEntreeBetweenOrderByDateHeureEntreeDesc(debutDateTime, finDateTime)
+                .stream().filter(p -> p.getAffectation() != null && p.getAffectation().getAgent() != null && p.getAffectation().getAgent().getId().equals(agentId)).toList();
+        Map<String, Object> secPresences = new LinkedHashMap<>();
+        secPresences.put("nombre_entrees", pointages.size());
+        secPresences.put("duree_totale_minutes", calculateTotalDuration(pointages));
+        long journeesPresentes = pointages.stream()
+                .filter(p -> p.getDateHeureEntree() != null)
+                .map(p -> p.getDateHeureEntree().toLocalDate())
+                .distinct()
+                .count();
+        secPresences.put("journees_presentes", journeesPresentes);
+        secPresences.put("liste", pointages.stream().map(this::pointageToMap).toList());
+        report.put("presences", secPresences);
+
+        // 2. Congés & Absences
+        List<DemandeConge> allConges = demandeCongeRepository.findAll();
+        List<DemandeConge> congesMois = allConges.stream()
+                .filter(c -> c.getDateDebut() != null && !c.getDateDebut().isBefore(debutMois) && !c.getDateDebut().isAfter(finMois))
+                .filter(c -> c.getAgent() != null && c.getAgent().getId().equals(agentId))
+                .toList();
+        Map<String, Object> secConges = new LinkedHashMap<>();
+        secConges.put("total_demandes", congesMois.size());
+        secConges.put("approuves", congesMois.stream().filter(c -> "APPROUVEE".equalsIgnoreCase(c.getStatut()) || "ACCORDE".equalsIgnoreCase(c.getStatut())).count());
+        secConges.put("en_attente", congesMois.stream().filter(c -> c.getStatut() == null || c.getStatut().contains("EN_ATTENTE") || "PENDING".equalsIgnoreCase(c.getStatut())).count());
+        secConges.put("refuses", congesMois.stream().filter(c -> "REFUSEE".equalsIgnoreCase(c.getStatut())).count());
+        secConges.put("liste", congesMois.stream().map(c -> {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("agent", getAgentNomComplet(c.getAgent()));
+            m.put("type", c.getType() != null ? c.getType() : "CONGE");
+            m.put("debut", c.getDateDebut() != null ? c.getDateDebut().toString() : "—");
+            m.put("fin", c.getDateFin() != null ? c.getDateFin().toString() : "—");
+            long nbJours = (c.getDateDebut() != null && c.getDateFin() != null) ? (ChronoUnit.DAYS.between(c.getDateDebut(), c.getDateFin()) + 1) : 0;
+            m.put("jours", nbJours);
+            m.put("statut", c.getStatut() != null ? c.getStatut() : "EN_ATTENTE");
+            return m;
+        }).toList());
+        report.put("conges", secConges);
+
+        report.put("materiels", new LinkedHashMap<>());
+
+        // 4. Disciplinaire & Sanctions
+        List<Sanction> allSanctions = sanctionRepository.findAll();
+        List<Sanction> sanctionsMois = allSanctions.stream()
+                .filter(s -> s.getDateDecision() != null && !s.getDateDecision().isBefore(debutMois) && !s.getDateDecision().isAfter(finMois))
+                .filter(s -> s.getAgent() != null && s.getAgent().getId().equals(agentId))
+                .toList();
+        Map<String, Object> secDisciplinaire = new LinkedHashMap<>();
+        secDisciplinaire.put("total_sanctions", sanctionsMois.size());
+        secDisciplinaire.put("liste", sanctionsMois.stream().map(s -> {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("agent", getAgentNomComplet(s.getAgent()));
+            m.put("type", s.getType() != null ? s.getType() : "AVERTISSEMENT");
+            m.put("motif", s.getMotif() != null ? s.getMotif() : "—");
+            m.put("date", s.getDateDecision() != null ? s.getDateDecision().toString() : "—");
+            m.put("statut", s.getStatut() != null ? s.getStatut() : "ACTIVE");
+            return m;
+        }).toList());
+        report.put("disciplinaire", secDisciplinaire);
+
+        // 5. Paie
+        List<com.siege.platform.paie.BulletinDePaie> bulletins = bulletinDePaieRepository.findByEntrepriseIdAndPeriode(current.getEntreprise().getId(), mois)
+                .stream()
+                .filter(b -> b.getAgent() != null && b.getAgent().getId().equals(agentId))
+                .toList();
+        Map<String, Object> secPaie = new LinkedHashMap<>();
+        secPaie.put("total_bulletins", bulletins.size());
+        java.math.BigDecimal totalBrut = bulletins.stream().map(b -> b.getSalaireBrutEffectif() != null ? b.getSalaireBrutEffectif() : java.math.BigDecimal.ZERO).reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+        java.math.BigDecimal totalNet = bulletins.stream().map(b -> b.getSalaireNetCalcule() != null ? b.getSalaireNetCalcule() : java.math.BigDecimal.ZERO).reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+        secPaie.put("total_masse_salariale", totalNet);
+        secPaie.put("liste", bulletins.stream().map(b -> {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("agent", getAgentNomComplet(b.getAgent()));
+            String metier = b.getAffectation() != null && b.getAffectation().getPoste() != null && b.getAffectation().getPoste().getEmploi() != null 
+                            ? b.getAffectation().getPoste().getEmploi().getLibelle() : "—";
+            m.put("metier", metier);
+            m.put("brut", b.getSalaireBrutEffectif() != null ? b.getSalaireBrutEffectif().toString() : "0");
+            m.put("net", b.getSalaireNetCalcule() != null ? b.getSalaireNetCalcule().toString() : "0");
+            return m;
+        }).toList());
+        report.put("paie", secPaie);
+
+        return report;
+    }
+
     public Map<String, Object> genererRapportPointages(String mois, String format) {
         Utilisateur current = getCurrentUser();
         YearMonth ym = YearMonth.parse(mois);
