@@ -124,7 +124,7 @@ public class EntrepriseAdminController {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("id", a.getId());
             map.put("agentNom", a.getAgent() != null ? a.getAgent().getNom() + " " + a.getAgent().getPrenom() : "—");
-            map.put("posteLibelle", a.getPoste() != null && a.getPoste().getEmploi() != null ? a.getPoste().getEmploi().getLibelle() : "—");
+            map.put("posteLibelle", a.getPoste() != null && a.getPoste().getEmploi() != null ? a.getPoste().getEmploi().getLibelle() : "Agent Terrain");
             map.put("siteNom", a.getPoste() != null && a.getPoste().getSite() != null ? a.getPoste().getSite().getNom() : "—");
             map.put("dateDebut", a.getDateDebutOccupation() != null ? a.getDateDebutOccupation().toString() : "—");
             map.put("dateFin", a.getDateFinOccupation() != null ? a.getDateFinOccupation().toString() : "—");

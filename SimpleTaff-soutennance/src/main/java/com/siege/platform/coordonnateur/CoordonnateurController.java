@@ -211,7 +211,7 @@ public class CoordonnateurController {
             map.put("agentNom", af.getAgent() != null
                     ? af.getAgent().getNom() + " " + af.getAgent().getPrenom() : "—");
             map.put("posteLibelle", af.getPoste() != null && af.getPoste().getEmploi() != null
-                    ? af.getPoste().getEmploi().getLibelle() : "—");
+                    ? af.getPoste().getEmploi().getLibelle() : "Agent Terrain");
             map.put("siteNom", af.getPoste() != null && af.getPoste().getSite() != null ? af.getPoste().getSite().getNom() : "—");
             map.put("zoneNom", af.getPoste() != null && af.getPoste().getSite() != null && af.getPoste().getSite().getZone() != null ? af.getPoste().getSite().getZone().getNom() : "—");
             map.put("structureCliente", af.getPoste() != null && af.getPoste().getSite() != null && af.getPoste().getSite().getStructureDemandeuse() != null ? af.getPoste().getSite().getStructureDemandeuse().getRaisonSociale() : "—");

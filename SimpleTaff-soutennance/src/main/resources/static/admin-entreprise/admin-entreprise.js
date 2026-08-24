@@ -6108,8 +6108,8 @@ window.loadAdminRemplacements = async function() {
 
     // Mise à jour des compteurs stat
     const attente = safeDemandes.filter(d => d.statut === "EN_ATTENTE").length;
-    const accepte = safeDemandes.filter(d => d.statut === "ACCEPTE" || d.statut === "APPROUVE").length;
-    const rejete = safeDemandes.filter(d => d.statut === "REFUSE" || d.statut === "REJETE").length;
+    const accepte = safeDemandes.filter(d => d.statut === "ACCEPTE" || d.statut === "ACCEPTEE" || d.statut === "APPROUVE").length;
+    const rejete = safeDemandes.filter(d => d.statut === "REFUSE" || d.statut === "REJETE" || d.statut === "REJETEE").length;
 
     const elAttente = document.getElementById("statRemplacementsAttente");
     const elAccepte = document.getElementById("statRemplacementsAccepte");
@@ -6146,7 +6146,7 @@ window.loadAdminRemplacements = async function() {
               <i class="fa-solid fa-xmark mr-1"></i>Refuser
             </button>
           </div>`;
-      } else if (d.statut === "ACCEPTE" || d.statut === "APPROUVE") {
+      } else if (d.statut === "ACCEPTE" || d.statut === "ACCEPTEE" || d.statut === "APPROUVE") {
         statutBadge = '<span class="px-2 py-1 bg-emerald-100 text-emerald-700 font-bold rounded text-xs">Acceptée</span>';
         actionBtns = '<span class="text-xs text-slate-400">—</span>';
       } else {

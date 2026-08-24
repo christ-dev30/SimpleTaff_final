@@ -137,7 +137,7 @@ public class DemandeRemplacementController {
             // Terminer l'affectation actuelle de l'agent
             List<Affectation> affectations = affectationRepository.findByAgentIdOrderByDateDebutOccupationDesc(demande.getAgent().getId());
             for (Affectation aff : affectations) {
-                if ("EN_COURS".equals(aff.getStatut())) {
+                if ("EN_COURS".equals(aff.getStatut()) || "ACTIVE".equals(aff.getStatut())) {
                     aff.setStatut("CLOTUREE");
                     aff.setMotifFin("REMPLACEMENT: " + demande.getMotif());
                     aff.setDateFinOccupation(LocalDate.now());
