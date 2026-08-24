@@ -9,6 +9,9 @@ import com.siege.platform.poste.AffectationRepository;
 import com.siege.platform.poste.Poste;
 import com.siege.platform.zone.Zone;
 import com.siege.platform.zone.ZoneRepository;
+import com.siege.platform.utilisateur.Utilisateur;
+import com.siege.platform.utilisateur.UtilisateurRepository;
+import com.siege.platform.utilisateur.Coordonnateur;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +36,7 @@ public class CoordonnateurController {
     private final com.siege.platform.structuredemandeuse.SiteRepository siteRepo;
     private final com.siege.platform.poste.PosteRepository posteRepo;
     private final com.siege.platform.poste.AffectationService affectationService;
+    private final UtilisateurRepository utilisateurRepo;
 
     public CoordonnateurController(AgentTerrainRepository agentRepo,
                                     AffectationRepository affectationRepo,
@@ -44,7 +48,8 @@ public class CoordonnateurController {
                                     com.siege.platform.evaluation.EvaluationAgentRepository evaluationAgentRepo,
                                     com.siege.platform.structuredemandeuse.SiteRepository siteRepo,
                                     com.siege.platform.poste.PosteRepository posteRepo,
-                                    com.siege.platform.poste.AffectationService affectationService) {
+                                    com.siege.platform.poste.AffectationService affectationService,
+                                    UtilisateurRepository utilisateurRepo) {
         this.agentRepo = agentRepo;
         this.affectationRepo = affectationRepo;
         this.zoneRepo = zoneRepo;
@@ -56,6 +61,7 @@ public class CoordonnateurController {
         this.siteRepo = siteRepo;
         this.posteRepo = posteRepo;
         this.affectationService = affectationService;
+        this.utilisateurRepo = utilisateurRepo;
     }
 
     @GetMapping("/stats")
@@ -289,18 +295,44 @@ public class CoordonnateurController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/agents-disponibles")
+    public ResponseEntity<List<Map<String, Object>>> getAgentsDisponibles(java.security.Principal principal) {
+        Utilisateur user = utilisateurRepo.findByEmail(principal.getName()).orElse(null);
+        UUID coordZoneId = (user instanceof Coordonnateur coord && coord.getZone() != null) ? coord.getZone().getId() : null;
+
+        List<AgentTerrain> agents = agentRepo.findAll().stream()
+                .filter(a -> {
+                    // Si le coordonnateur a une zone, on filtre les agents par cette zone
+                    if (coordZoneId != null) {
+                        return a.getZone() != null && a.getZone().getId().equals(coordZoneId);
+                    }
+                    return true;
+                }).toList();
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (AgentTerrain a : agents) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", a.getId());
+            map.put("matricule", a.getMatricule());
+            map.put("nom", a.getNom());
+            map.put("prenom", a.getPrenom());
+            map.put("zoneNom", a.getZone() != null ? a.getZone().getNom() : "—");
+            result.add(map);
+        }
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/postes-vacants")
     public ResponseEntity<List<Map<String, Object>>> getPostesVacants(java.security.Principal principal) {
-        // Pour la soutenance, on retourne tous les postes vacants car UtilisateurRepository n'est pas injecté
-        List<Zone> zones = zoneRepo.findAll();
-        Set<UUID> zoneIds = new HashSet<>();
-        for (Zone z : zones) { zoneIds.add(z.getId()); }
+        Utilisateur user = utilisateurRepo.findByEmail(principal.getName()).orElse(null);
+        UUID coordZoneId = (user instanceof Coordonnateur coord && coord.getZone() != null) ? coord.getZone().getId() : null;
 
         List<Map<String, Object>> postesVacants = new ArrayList<>();
         List<Poste> allPostes = posteRepo.findAll();
         for (Poste poste : allPostes) {
             if ("VACANT".equalsIgnoreCase(poste.getStatut()) && poste.getSite() != null && poste.getSite().getZone() != null) {
-                if (zoneIds.contains(poste.getSite().getZone().getId())) {
+                // Filtrer par la zone du coordonnateur
+                if (coordZoneId == null || coordZoneId.equals(poste.getSite().getZone().getId())) {
                     Map<String, Object> pMap = new HashMap<>();
                     pMap.put("id", poste.getId());
                     pMap.put("titre", poste.getEmploi() != null ? poste.getEmploi().getLibelle() : "Poste");

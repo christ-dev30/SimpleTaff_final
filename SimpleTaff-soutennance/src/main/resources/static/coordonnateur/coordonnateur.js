@@ -18,6 +18,7 @@ function showTab(name) {
   });
   if (name === "agents") loadAgents();
   if (name === "affectations") loadAffectations();
+  if (name === "remplacements") loadRemplacements();
   if (name === "pointages") {
     loadPointageDates();
     loadPointages();
@@ -457,8 +458,8 @@ async function loadFormulaireAffectation() {
         (postes || []).map(p => `<option value="${p.id}">${p.titre} - ${p.siteNom} (${p.clientNom})</option>`).join("");
     }
 
-    // Charger les agents (Pour l'instant, on prend tous les agents via l'API)
-    const agents = await apiFetch("/agents");
+    // Charger les agents de la zone du coordonnateur
+    const agents = await apiFetch("/coordonnateur/agents-disponibles");
     const agentSelect = document.getElementById("newAffectAgent");
     if (agentSelect) {
       agentSelect.innerHTML = '<option value="">-- Sélectionner un agent --</option>' + 
@@ -1309,6 +1310,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   if (typeof initAgentModernModules === "function") initAgentModernModules();
   loadOverview();
+  loadRemplacements();
 });
 
 // ── Évaluations (read-only) ────────────────────────────────────
@@ -3357,3 +3359,58 @@ document.addEventListener("DOMContentLoaded", () => {
     monthInput.value = `${y}-${m}`;
   }
 });
+
+// --- Chargement Remplacements (Tab & Dashboard) ---
+window.loadRemplacements = async function() {
+  const tbodyTab = document.getElementById("remplacementsTableBody");
+  const tbodyDash = document.getElementById("dashboardRemplacementsTable");
+  try {
+    const remplacements = await apiFetch("/remplacements");
+    
+    let tabHtml = "";
+    let dashHtml = "";
+
+    if (!remplacements || remplacements.length === 0) {
+      tabHtml = '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Aucun remplacement signalé.</td></tr>';
+      dashHtml = '<tr><td class="py-4 text-slate-400 text-center italic">Aucune alerte de remplacement récente.</td></tr>';
+    } else {
+      tabHtml = remplacements.map(r => {
+        let statusBadge = r.statut === "EN_ATTENTE" 
+          ? '<span class="px-2 py-1 bg-amber-50 text-amber-600 rounded-lg text-xs font-bold">En attente</span>'
+          : '<span class="px-2 py-1 bg-green-50 text-green-600 rounded-lg text-xs font-bold">' + r.statut + '</span>';
+        
+        return `
+          <tr>
+            <td class="px-6 py-4 font-bold text-slate-700">${r.agent ? r.agent.nom + " " + r.agent.prenom : "Agent inconnu"}</td>
+            <td class="px-6 py-4 text-slate-600">${r.motif}</td>
+            <td class="px-6 py-4 text-slate-500">${new Date(r.dateDemande).toLocaleDateString("fr-FR")}</td>
+            <td class="px-6 py-4">${statusBadge}</td>
+          </tr>
+        `;
+      }).join("");
+
+      // Take top 5 for dashboard
+      dashHtml = remplacements.slice(0, 5).map(r => {
+        let statusBadge = r.statut === "EN_ATTENTE" 
+          ? '<span class="px-2 py-1 bg-amber-50 text-amber-600 rounded-lg text-[10px] font-bold">En attente</span>'
+          : '<span class="px-2 py-1 bg-green-50 text-green-600 rounded-lg text-[10px] font-bold">' + r.statut + '</span>';
+        
+        return `
+          <tr>
+            <td class="py-3 font-bold text-slate-700">${r.agent ? r.agent.nom + " " + r.agent.prenom : "Agent inconnu"}</td>
+            <td class="py-3 text-slate-600">${r.motif}</td>
+            <td class="py-3 text-right">${statusBadge}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    if (tbodyTab) tbodyTab.innerHTML = tabHtml;
+    if (tbodyDash) tbodyDash.innerHTML = dashHtml;
+
+  } catch (e) {
+    console.error("Erreur loadRemplacements", e);
+    if (tbodyTab) tbodyTab.innerHTML = '<tr><td colspan="4" class="px-6 py-6 text-center text-red-500">Erreur de chargement</td></tr>';
+  }
+};
+

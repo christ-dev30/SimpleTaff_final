@@ -199,6 +199,21 @@
           </div>
           <div
             class="sidebar-link"
+            data-tab="remplacements"
+            onclick="showTab('remplacements')"
+          >
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Remplacements
+          </div>
+          <div
+            class="sidebar-link"
             data-tab="pointages"
             onclick="showTab('pointages')"
           >
@@ -800,6 +815,27 @@
               </div>
             </div>
           </div>
+
+          <!-- ROW 4 : ALERTES REMPLACEMENTS -->
+          <div class="bg-white border border-rose-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col mb-6">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-bell text-rose-500"></i> Alertes / Remplacements
+              </h3>
+              <button onclick="openModalSignalerRemplacement()" class="text-xs px-3 py-1.5 bg-rose-50 text-rose-600 rounded-lg font-bold hover:bg-rose-100 transition-colors">
+                + Signaler un remplacement
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left">
+                <tbody id="dashboardRemplacementsTable" class="divide-y divide-slate-100 text-xs">
+                  <tr>
+                    <td class="py-4 text-slate-400 text-center italic">Aucune alerte de remplacement récente.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
         <!-- ═══════════════ TAB: Agents ═══════════════ -->
@@ -1019,6 +1055,43 @@
                 <tr>
                   <td colspan="4" class="px-6 py-6 text-center text-slate-400">
                     Chargement…
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ═══════════════ TAB: Remplacements ═══════════════ -->
+        <div id="tab-remplacements" class="tab-content space-y-4">
+          <div class="flex justify-between items-center">
+            <h2 class="text-lg font-bold text-slate-900">Remplacements / Congés Longue Durée</h2>
+            <button
+              onclick="loadRemplacements()"
+              class="text-xs text-violet-600 font-bold hover:underline"
+            >
+              ↻ Actualiser
+            </button>
+          </div>
+          <div class="flex justify-end">
+            <button onclick="openModalSignalerRemplacement()" class="px-4 py-2 bg-rose-50 text-rose-600 rounded-xl font-bold hover:bg-rose-100 flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation"></i> Signaler un remplacement
+            </button>
+          </div>
+          <div class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="bg-slate-50/80 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                  <th class="px-6 py-3">Agent Concerné</th>
+                  <th class="px-6 py-3">Motif</th>
+                  <th class="px-6 py-3">Date</th>
+                  <th class="px-6 py-3">Statut</th>
+                </tr>
+              </thead>
+              <tbody id="remplacementsTableBody" class="divide-y divide-slate-100 text-sm">
+                <tr>
+                  <td colspan="4" class="px-6 py-6 text-center text-slate-400">
+                    Chargement...
                   </td>
                 </tr>
               </tbody>
@@ -1791,7 +1864,7 @@
       </div>
     </main>
 
-    <script type="module" src="/coordonnateur/coordonnateur.js?v=7"></script>
+    <script type="module" src="/coordonnateur/coordonnateur.js?v=8"></script>
 
     <!-- ================= INJECTED MODALS & DATALISTS ================= -->
     <div

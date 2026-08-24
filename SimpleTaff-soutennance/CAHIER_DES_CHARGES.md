@@ -1,79 +1,117 @@
-# CAHIER DES CHARGES - PROJET SIMPLETAFF
+# CAHIER DES CHARGES COMPLET - PROJET SIMPLETAFF
 
-## 1. PRÉSENTATION DU PROJET
-**SimpleTaff** est une plateforme SaaS (Software as a Service) centralisée de gestion des ressources humaines, de planification et de suivi des agents de terrain. Elle est conçue pour optimiser la gestion administrative (contrats, paies, congés, sanctions), logistique (affectations, matériel) et opérationnelle (pointage, remplacements) au sein d'une entreprise employant de nombreux collaborateurs déployés sur site.
+## 1. INTRODUCTION ET CONTEXTE
 
----
+### 1.1. Présentation du Projet
+**SimpleTaff** est une plateforme SaaS (Software as a Service) centralisée dédiée à la gestion des ressources humaines, de la planification et du suivi des agents de terrain. Elle est conçue pour optimiser les processus administratifs, logistiques et opérationnels au sein d'une entreprise employant de nombreux collaborateurs déployés sur des sites distincts (comme des agents de sécurité, techniciens de surface, ouvriers, etc.).
 
-## 2. ARCHITECTURE TECHNIQUE ET STACK
-Le projet repose sur une architecture moderne séparant la logique métier et la présentation via une API REST sécurisée.
-- **Backend (Logique Serveur & API) :** Java / Spring Boot.
-- **Sécurité :** Spring Security avec authentification par Token JWT (JSON Web Token), incluant le support de passage par paramètre d'URL (pour les exports PDF).
-- **Frontend (Interface Utilisateur) :** HTML5, CSS3, Vanilla JavaScript (ES Modules), et **Tailwind CSS** pour le design. Architecture en Single Page Application (SPA) modulée par espaces.
-- **Génération Documentaire (PDF) :** Intégration côté serveur (iText / OpenPDF) pour la génération de rapports analytiques et de bulletins de paie sur mesure, et côté client (jsPDF, QRCode.js) pour la génération de badges.
-
----
-
-## 3. LES ACTEURS ET PROFILS (RÔLES)
-Le système gère le contrôle d'accès basé sur les rôles (RBAC). Chaque acteur possède un espace dédié (`/super-admin`, `/admin-entreprise`, `/coordonnateur`, `/agent`).
-
-### 3.1. Super Administrateur (SUPER_ADMIN)
-Garant du bon fonctionnement global de la plateforme, il gère les entités abonnées.
-- Création, modification et suspension des entreprises clientes.
-- Gestion des abonnements et facturations des clients.
-- Supervision technique et métriques de performance.
-
-### 3.2. Administrateur Entreprise / Employeur (ADMIN_ENTREPRISE)
-Le dirigeant ou responsable RH de l'entreprise cliente.
-- **Gestion du Personnel :** Embauche, gestion des dossiers administratifs.
-- **Gestion de la Paie :** Génération des bulletins de paie avec un design structuré (Informations Agent, Détails Période, Rubriques, Net à payer).
-- **Rapports et Analytiques :** Tableau de bord global, taux de présence, téléchargement de rapports (Globaux ou par Agent filtré).
-- **Gestion Logistique :** Sites, zones d'affectation et validation des demandes de matériel.
-
-### 3.3. Coordonnateur (COORDONNATEUR)
-Superviseur opérationnel, il gère le terrain au quotidien.
-- **Affectations :** Assigne les agents sur différents sites et postes vacants (avec gestion des horaires d'arrivée et départ).
-- **Suivi des Présences :** Visualise en temps réel les agents sur site, gère les absences et les retards.
-- **Remplacements :** Signale et organise le remplacement d'un agent défaillant ou absent.
-- **Évaluations et Sanctions :** Évalue le personnel sur le terrain et soumet les rapports disciplinaires.
-
-### 3.4. Agent de Terrain (AGENT)
-Employé déployé sur les sites de l'entreprise.
-- **Pointage :** Validation de prise et fin de service (potentiellement via scan de badge QR Code).
-- **Demandes :** Soumission des demandes de congés ou de matériel (EPI).
-- **Documents :** Accès à ses propres bulletins de paie, contrats et emplois du temps.
+### 1.2. Objectifs Principaux
+- **Centraliser** la gestion administrative (contrats, paies, sanctions, congés).
+- **Tracer et suivre** le déploiement opérationnel des équipes (pointage, affectations).
+- **Fluidifier la communication** entre les différents échelons hiérarchiques (Employeur, Coordonnateur, Agent).
+- **Dématérialiser** les documents clés (Bulletins de paie, rapports, badges professionnels).
 
 ---
 
-## 4. FONCTIONNALITÉS PRINCIPALES (FEATURES)
+## 2. PÉRIMÈTRE FONCTIONNEL ET RÔLES (RBAC)
 
-1. **Tableaux de bord dynamiques (Dashboards) :** Statistiques en temps réel (Taux de présence, couverture des zones, requêtes en attente).
-2. **Génération de PDF (Export) :** 
-   - Bulletins de paie chartés (Colonnes, rubriques financières, Net à Payer mis en évidence).
-   - Rapports de performance analytiques complets.
-   - Badges professionnels avec QR Code d'identification.
-3. **Module de Pointage et Affectations :** Suivi strict des heures travaillées contre les heures attendues.
-4. **Gestion Documentaire et Dépendances :** Suppression en cascade (Cascade Delete) lors du retrait d'un employé (supprime affectations, contrats, pointages liés).
-5. **Système de Notification et Validation :** Workflow d'approbation entre le Coordonnateur et l'Employeur pour les équipements et absences.
+Le système intègre un contrôle d'accès basé sur les rôles (RBAC - Role-Based Access Control) garantissant que chaque acteur n'accède qu'aux informations et fonctionnalités qui lui incombent.
+
+### 2.1. Super Administrateur (`SUPER_ADMIN`)
+Garant du bon fonctionnement global de la plateforme, ce profil gère le volet SaaS.
+- **Gestion des Clients :** Création, modification, suspension ou suppression des entreprises abonnées.
+- **Facturation et Abonnements :** Suivi des licences et de la facturation des entreprises clientes.
+- **Supervision :** Accès aux métriques globales de performance de la plateforme.
+
+### 2.2. Administrateur Entreprise / Employeur (`ADMIN_ENTREPRISE`)
+Le dirigeant ou le responsable des ressources humaines de l'entreprise cliente.
+- **Ressources Humaines :** Enregistrement des employés (Agents, Coordonnateurs), gestion des dossiers administratifs et des contrats.
+- **Gestion Logistique :** Configuration de l'organigramme opérationnel (Structures Demandeuses, Sites, Zones).
+- **Gestion de la Paie :** Configuration des paramètres de paie, édition et génération en masse ou individuelle des bulletins de paie au format PDF.
+- **Suivi et Analytique :** Tableaux de bord globaux (taux de présence, effectifs), consultation des rapports d'activité.
+
+### 2.3. Coordonnateur (`COORDONNATEUR`)
+Le superviseur de terrain ou chef d'équipe, chargé de l'opérationnel au quotidien.
+- **Planification :** Affectation des agents sur les postes vacants et définition des horaires d'intervention.
+- **Suivi Temps Réel :** Contrôle des présences et des pointages sur les sites.
+- **Remplacements :** Gestion des absences (signalement rapide d'un agent défaillant et déclenchement d'une demande de remplacement).
+- **Évaluation :** Rédaction des rapports de performance ou disciplinaires sur les agents.
+- **Validation :** Traitement en première instance des requêtes des agents (ex: demandes d'EPI).
+
+### 2.4. Agent de Terrain (`AGENT`)
+L'employé déployé sur le terrain.
+- **Identité Numérique :** Carte Agent avec QR Code pour l'identification sur site.
+- **Pointage :** Déclaration de prise et de fin de service.
+- **Requêtes :** Soumission de demandes de matériel, de congés ou signalements d'incidents.
+- **Documents :** Accès sécurisé à ses bulletins de paie, plannings et contrats.
 
 ---
 
-## 5. HISTORIQUE DES MISES À JOUR ET CORRECTIFS RÉCENTS
+## 3. MODULES ET FONCTIONNALITÉS DÉTAILLÉES
 
-Cette section trace les dernières résolutions techniques majeures apportées au code source :
+### 3.1. Module Utilisateurs et Sécurité
+- Authentification centralisée avec gestion de mots de passe cryptés (BCrypt).
+- Suppression en cascade (Cascade Delete) : la suppression d'un agent entraîne automatiquement l'archivage/suppression de ses données associées (affectations, pointages) pour maintenir l'intégrité de la base.
+- Gestion des invitations et de l'onboarding (Invitations Entreprise).
 
-### 5.1. Résolutions de Bugs (Bug Fixes)
-- **Erreur de Syntaxe JavaScript (Ecran figé) :** Correction d'un bug majeur (accolade fermante manquante) dans `coordonnateur.js` suite à l'ajout des remplacements, qui empêchait le chargement de l'interface des coordonnateurs, employeurs et super-admins.
-- **Problème de Cache Navigateur (Ecran Blanc / Figer) :** Implémentation du *Cache Busting* (ajout du paramètre de versioning `?v=X` sur l'appel des scripts JS) et correction massive des balises `<div>` HTML mal formées.
-- **Erreur de Téléchargement 403 (Forbidden) sur les PDF :** Modification de l'architecture d'authentification pour tolérer les requêtes de téléchargement de type `window.open` via un paramètre d'URL `?token=...`, intercepté par le `AuthTokenFilter`.
-- **Rapports Agents Inexacts :** Développement de la fonction de filtrage strict côté serveur (`genererRapportAgent`) empêchant les données globales de l'entreprise d'apparaître sur le rapport individuel d'un agent.
+### 3.2. Module Opérationnel (Déploiement)
+- **Structures et Sites :** Création de l'arborescence du lieu de travail.
+- **Affectations :** Assignation dynamique d'un Agent à un Poste sur un Site précis.
+- **Pointage :** Enregistrement des heures d'arrivée et de départ (potentiellement géolocalisé ou scanné).
 
-### 5.2. Nouvelles Implémentations (Features)
-- **Design Bulletin de Paie :** Création d'une nouvelle identité visuelle pour les bulletins (Header structuré, double colonne, emphase sur le net).
-- **Module de Remplacement :** Ajout de la fonctionnalité de signalement de remplacement rapide par le Coordonnateur (`openModalSignalerRemplacement`).
-- **Gestion des Dépendances (Delete) :** Sécurisation de la méthode de suppression d'agent pour effacer proprement la base de données.
-- **Imports Sécurisés :** Remplacement des imports absolus par des imports relatifs sécurisés (`../shared/api.js`) pour garantir l'intégrité de l'application sur le serveur de production Railway.
+### 3.3. Module Paie et Finance
+- Moteur de calcul de paie intégré (`PaieCalculService`).
+- Paramétrage personnalisé (Taux horaire, primes, déductions, cotisations).
+- Générateur PDF de fiches de paie professionnelles (Header structuré, colonnes claires, Net à payer en évidence).
+
+### 3.4. Module Logistique (Matériel)
+- Catalogue de matériel et Équipements de Protection Individuelle (EPI).
+- Workflow de demande de matériel depuis l'Agent, avec approbation par le Coordonnateur puis l'Employeur.
+
+### 3.5. Module Notification et Workflow
+- Alertes en temps réel pour les événements critiques (absences, demandes en attente).
+- Workflows d'approbation standardisés pour toutes les requêtes RH et matérielles.
+
+### 3.6. Module Génération Documentaire et Exports
+- **Cartes Agents :** Génération de badges d'entreprise avec QR Codes via JS client (jsPDF).
+- **Rapports Analytiques :** Génération de rapports PDF complets incluant les métriques de présence et de performance.
 
 ---
 
-> **Validation Technique** : Le système est stable. Les règles d'import, l'intégrité de compilation (`mvn clean compile`), l'authentification et l'UI ont été auditées et certifiées fonctionnelles. Le code a été versionné et déployé (Continuous Deployment / Git Push).
+## 4. ARCHITECTURE TECHNIQUE ET STACK
+
+L'application repose sur une architecture moderne de type client-serveur, séparant strictement la logique métier (Backend) de l'interface utilisateur (Frontend).
+
+### 4.1. Backend (Serveur et API)
+- **Langage / Framework :** Java avec Spring Boot.
+- **Sécurité :** Spring Security, authentification Stateless par JSON Web Token (JWT). Les requêtes de téléchargement de fichiers autorisent le passage du token en paramètre d'URL (`?token=`).
+- **ORM / Base de données :** Spring Data JPA / Hibernate (compatible PostgreSQL / MySQL).
+- **Génération PDF :** iText / OpenPDF pour la création de documents côté serveur.
+- **Tâches asynchrones :** Schedulers intégrés (`ExpirationScheduler`) pour purger ou mettre à jour des statuts temporels.
+
+### 4.2. Frontend (Interface Utilisateur)
+- **Technologies web :** HTML5, CSS3, JavaScript Vanilla (ES6 Modules).
+- **Architecture :** Approche SPA (Single Page Application) ou multi-SPA par type de rôle (fichiers `index.html` séparés par espace).
+- **Design et Intégration :** Utilisation intensive de **Tailwind CSS** pour des interfaces responsives, modernes et esthétiques.
+- **Gestion du Cache :** Stratégie de *Cache Busting* (versioning `?v=X` sur l'appel des scripts) pour forcer la mise à jour chez le client.
+- **Structure des imports :** Imports relatifs stricts pour la compatibilité avec les serveurs de production.
+
+### 4.3. Intégrité et Déploiement
+- Le code source est structuré pour une compilation sans erreur via Maven (`mvn clean compile`).
+- Déploiement Cloud (ex: Railway, Heroku, AWS).
+
+---
+
+## 5. ERGONOMIE ET DESIGN (UI/UX)
+- **Approche "Mobile First" et Responsive :** L'interface doit être parfaitement lisible sur mobile pour les Agents et Coordonnateurs sur le terrain, et sur Desktop pour les administrateurs.
+- **Composants Dynamiques :** Utilisation de modals, de notifications toast et de tableaux interactifs pour limiter le rechargement complet des pages.
+- **Design du Bulletin de Paie :** Esthétique premium, garantissant la lisibilité des informations financières pour l'employé.
+
+---
+
+## 6. CONTRAINTES DE SÉCURITÉ ET DE PERFORMANCE
+- **Isolement des Données :** Un employeur (ou coordonnateur) ne peut visualiser que les données rattachées à son entreprise. Les requêtes Backend intègrent ce filtrage strict pour prévenir la fuite de données d'un client à l'autre.
+- **Robustesse des API :** Gestion globale des exceptions (Global Exception Handling) pour retourner des messages clairs sans exposer le stack trace au client.
+
+---
+*Ce document fait office de référence technique et fonctionnelle pour la plateforme SimpleTaff. Toute nouvelle implémentation devra s'y conformer et mettre à jour les sections concernées.*
