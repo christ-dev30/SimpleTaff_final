@@ -1,46 +1,79 @@
-# Cahier des Charges - Suivi des Mises à Jour (SimpleTaff)
+# CAHIER DES CHARGES - PROJET SIMPLETAFF
 
-Ce document recense l'ensemble des corrections (bugs fix) et des nouvelles fonctionnalités ajoutées à la version actuelle par rapport à l'ancienne version. Ces modifications visent à stabiliser l'application, améliorer l'expérience utilisateur et corriger les dysfonctionnements bloquants.
+## 1. PRÉSENTATION DU PROJET
+**SimpleTaff** est une plateforme SaaS (Software as a Service) centralisée de gestion des ressources humaines, de planification et de suivi des agents de terrain. Elle est conçue pour optimiser la gestion administrative (contrats, paies, congés, sanctions), logistique (affectations, matériel) et opérationnelle (pointage, remplacements) au sein d'une entreprise employant de nombreux collaborateurs déployés sur site.
+
+---
+
+## 2. ARCHITECTURE TECHNIQUE ET STACK
+Le projet repose sur une architecture moderne séparant la logique métier et la présentation via une API REST sécurisée.
+- **Backend (Logique Serveur & API) :** Java / Spring Boot.
+- **Sécurité :** Spring Security avec authentification par Token JWT (JSON Web Token), incluant le support de passage par paramètre d'URL (pour les exports PDF).
+- **Frontend (Interface Utilisateur) :** HTML5, CSS3, Vanilla JavaScript (ES Modules), et **Tailwind CSS** pour le design. Architecture en Single Page Application (SPA) modulée par espaces.
+- **Génération Documentaire (PDF) :** Intégration côté serveur (iText / OpenPDF) pour la génération de rapports analytiques et de bulletins de paie sur mesure, et côté client (jsPDF, QRCode.js) pour la génération de badges.
 
 ---
 
-## 1. Module Export & Téléchargement PDF
-**Problème initial :** Les utilisateurs obtenaient une erreur "Whitelabel Error Page" (403 Forbidden ou 401 Unauthorized) lors de la tentative de téléchargement des rapports et des bulletins de paie.
-**Modifications apportées :**
-- Modification de la logique Frontend (`admin-entreprise.js`) pour que le téléchargement via `window.open` inclue automatiquement le Token d'authentification JWT en paramètre d'URL (`?token=...`).
-- Mise à jour du filtre de sécurité Backend (`AuthTokenFilter.java`) pour qu'il soit capable d'intercepter et de lire ce Token d'authentification JWT depuis les paramètres de l'URL, en plus de l'en-tête (Header) traditionnel.
+## 3. LES ACTEURS ET PROFILS (RÔLES)
+Le système gère le contrôle d'accès basé sur les rôles (RBAC). Chaque acteur possède un espace dédié (`/super-admin`, `/admin-entreprise`, `/coordonnateur`, `/agent`).
 
-## 2. Refonte du Design du Bulletin de Paie (PDF)
-**Problème initial :** L'ancien design du PDF ne correspondait plus aux exigences graphiques (absence de modernité).
-**Modifications apportées :**
-- Réécriture complète de la classe `BulletinPdfBuilder.java`.
-- Ajout d'une mise en page structurée en deux colonnes principales : "INFORMATIONS AGENT" et "DÉTAILS PÉRIODE" avec des fonds gris clair.
-- Création d'un tableau des rubriques de paie avec des en-têtes colorés (Bleu nuit / Vert très foncé) conformes à la charte graphique.
-- Intégration d'un bloc distinctif en vert clair avec une bordure verte pour mettre en évidence la section "NET À PAYER".
-- Amélioration de la typographie, des espacements et de l'alignement général.
+### 3.1. Super Administrateur (SUPER_ADMIN)
+Garant du bon fonctionnement global de la plateforme, il gère les entités abonnées.
+- Création, modification et suspension des entreprises clientes.
+- Gestion des abonnements et facturations des clients.
+- Supervision technique et métriques de performance.
 
-## 3. Rapport Individuel par Agent
-**Problème initial :** Lorsqu'un administrateur téléchargeait le "Rapport de l'Agent", le fichier généré affichait les données globales de toute l'entreprise au lieu des données spécifiques à cet agent.
-**Modifications apportées :**
-- Création de la méthode spécifique `genererRapportAgent()` dans le backend (`RapportService.java`).
-- Cette méthode parcourt la base de données mais applique désormais un filtre strict sur l'ID de l'agent concerné pour : 
-    - Ses présences et pointages
-    - Ses congés et absences
-    - Ses sanctions disciplinaires
-    - Ses bulletins de paie
-- Mise à jour du contrôleur (`RapportController.java`) pour s'assurer qu'il appelle bien cette nouvelle logique de filtrage lors de l'appel à la route `/agent/{agentId}/export`.
+### 3.2. Administrateur Entreprise / Employeur (ADMIN_ENTREPRISE)
+Le dirigeant ou responsable RH de l'entreprise cliente.
+- **Gestion du Personnel :** Embauche, gestion des dossiers administratifs.
+- **Gestion de la Paie :** Génération des bulletins de paie avec un design structuré (Informations Agent, Détails Période, Rubriques, Net à payer).
+- **Rapports et Analytiques :** Tableau de bord global, taux de présence, téléchargement de rapports (Globaux ou par Agent filtré).
+- **Gestion Logistique :** Sites, zones d'affectation et validation des demandes de matériel.
 
-## 4. Stabilité de l'Interface Utilisateur (Écrans Blancs)
-**Problème initial :** Les utilisateurs se plaignaient d'écrans blancs ou d'onglets (tabs) qui disparaissaient ou s'affichaient mal lors de la navigation dans le panneau administrateur.
-**Modifications apportées :**
-- **Structure HTML** : Un audit complet de `index.html` a permis d'identifier et de réparer plusieurs erreurs de balises `<div>` mal fermées (notamment dans les sections *tab-overview*, *tab-presences* et *tab-audit*), qui "avalaient" le reste de la page.
-- **Gestion du Cache** : Le navigateur conservait d'anciens fichiers Javascript en mémoire. Une logique d'invalidation du cache (cache-busting) a été mise en place avec le renommage dynamique/incrémental des fichiers `.js` (ajout de `?v=X`) lors du chargement. 
-- Configuration Spring Boot ajoutée pour forcer les navigateurs à ne pas mettre en cache le HTML et forcer le téléchargement des nouvelles versions de l'UI.
+### 3.3. Coordonnateur (COORDONNATEUR)
+Superviseur opérationnel, il gère le terrain au quotidien.
+- **Affectations :** Assigne les agents sur différents sites et postes vacants (avec gestion des horaires d'arrivée et départ).
+- **Suivi des Présences :** Visualise en temps réel les agents sur site, gère les absences et les retards.
+- **Remplacements :** Signale et organise le remplacement d'un agent défaillant ou absent.
+- **Évaluations et Sanctions :** Évalue le personnel sur le terrain et soumet les rapports disciplinaires.
 
-## 5. Mises à Jour Diverses (Technique)
-- Correction des importations de fichiers (imports absolus vs relatifs dans `/shared/api.js`) pour assurer le bon fonctionnement de l'API sur le serveur de production (Railway).
-- Ajout de mécanismes de robustesse (sécurité "null-safe") dans l'UI (méthodes `loadOrg`, `loadAdminRemplacements`, `traiterRemplacement`) pour éviter que des données manquantes ne fassent planter le JavaScript.
-- Automatisation : Mise en place d'un processus interne où toute modification de code entraîne automatiquement un push sur le dépôt de contrôle de version pour fluidifier les livraisons (déploiements continus).
+### 3.4. Agent de Terrain (AGENT)
+Employé déployé sur les sites de l'entreprise.
+- **Pointage :** Validation de prise et fin de service (potentiellement via scan de badge QR Code).
+- **Demandes :** Soumission des demandes de congés ou de matériel (EPI).
+- **Documents :** Accès à ses propres bulletins de paie, contrats et emplois du temps.
 
 ---
-> **Statut actuel :** L'ensemble de ces modifications a été validé, compilé avec succès (`BUILD SUCCESS` sur Maven) et poussé en production. Toutes les fonctionnalités susmentionnées sont 100% opérationnelles.
+
+## 4. FONCTIONNALITÉS PRINCIPALES (FEATURES)
+
+1. **Tableaux de bord dynamiques (Dashboards) :** Statistiques en temps réel (Taux de présence, couverture des zones, requêtes en attente).
+2. **Génération de PDF (Export) :** 
+   - Bulletins de paie chartés (Colonnes, rubriques financières, Net à Payer mis en évidence).
+   - Rapports de performance analytiques complets.
+   - Badges professionnels avec QR Code d'identification.
+3. **Module de Pointage et Affectations :** Suivi strict des heures travaillées contre les heures attendues.
+4. **Gestion Documentaire et Dépendances :** Suppression en cascade (Cascade Delete) lors du retrait d'un employé (supprime affectations, contrats, pointages liés).
+5. **Système de Notification et Validation :** Workflow d'approbation entre le Coordonnateur et l'Employeur pour les équipements et absences.
+
+---
+
+## 5. HISTORIQUE DES MISES À JOUR ET CORRECTIFS RÉCENTS
+
+Cette section trace les dernières résolutions techniques majeures apportées au code source :
+
+### 5.1. Résolutions de Bugs (Bug Fixes)
+- **Erreur de Syntaxe JavaScript (Ecran figé) :** Correction d'un bug majeur (accolade fermante manquante) dans `coordonnateur.js` suite à l'ajout des remplacements, qui empêchait le chargement de l'interface des coordonnateurs, employeurs et super-admins.
+- **Problème de Cache Navigateur (Ecran Blanc / Figer) :** Implémentation du *Cache Busting* (ajout du paramètre de versioning `?v=X` sur l'appel des scripts JS) et correction massive des balises `<div>` HTML mal formées.
+- **Erreur de Téléchargement 403 (Forbidden) sur les PDF :** Modification de l'architecture d'authentification pour tolérer les requêtes de téléchargement de type `window.open` via un paramètre d'URL `?token=...`, intercepté par le `AuthTokenFilter`.
+- **Rapports Agents Inexacts :** Développement de la fonction de filtrage strict côté serveur (`genererRapportAgent`) empêchant les données globales de l'entreprise d'apparaître sur le rapport individuel d'un agent.
+
+### 5.2. Nouvelles Implémentations (Features)
+- **Design Bulletin de Paie :** Création d'une nouvelle identité visuelle pour les bulletins (Header structuré, double colonne, emphase sur le net).
+- **Module de Remplacement :** Ajout de la fonctionnalité de signalement de remplacement rapide par le Coordonnateur (`openModalSignalerRemplacement`).
+- **Gestion des Dépendances (Delete) :** Sécurisation de la méthode de suppression d'agent pour effacer proprement la base de données.
+- **Imports Sécurisés :** Remplacement des imports absolus par des imports relatifs sécurisés (`../shared/api.js`) pour garantir l'intégrité de l'application sur le serveur de production Railway.
+
+---
+
+> **Validation Technique** : Le système est stable. Les règles d'import, l'intégrité de compilation (`mvn clean compile`), l'authentification et l'UI ont été auditées et certifiées fonctionnelles. Le code a été versionné et déployé (Continuous Deployment / Git Push).
