@@ -42,6 +42,13 @@
       [class*="text-neutral-"] {
         color: #000000 !important;
       }
+      /* Sauf sur fond sombre (Tarifs, Pied de page) : texte blanc pour rester lisible */
+      #pricing [class*="text-slate-"],
+      #pricing [class*="text-gray-"],
+      footer [class*="text-slate-"],
+      footer [class*="text-gray-"] {
+        color: #ffffff !important;
+      }
     </style>
   </head>
   <body
