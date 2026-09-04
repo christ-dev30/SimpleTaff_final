@@ -432,7 +432,7 @@ async function loadOverview() {
             if (h > 0) {
               bar.className =
                 "w-full rounded-full transition-all duration-1000 ease-out relative group " +
-                (h >= 8 ? "bg-[#12312E]" : "bg-[#A3D977]");
+                (h >= 8 ? "bg-[#12312E]" : "bg-[#8BC34A]");
               // Add tooltip
               const hInt = Math.floor(h);
               const mInt = Math.round((h - hInt) * 60);
@@ -842,13 +842,13 @@ window.printFiche = function (nom, poste, site, statut) {
   .header h1{color:#fff;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
   .body{padding:24px}
   .field{margin-bottom:16px}
-  .field label{font-size:10px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+  .field label{font-size:10px;font-weight:800;color:#000000;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
   .field p{font-size:14px;font-weight:600;color:#0f172a}
   .statut{display:inline-block;padding:4px 14px;border-radius:999px;color:#fff;font-weight:800;font-size:12px}
   .divider{border:none;border-top:1.5px solid #e0f2fe;margin:16px 0}
   .note{background:#eff6ff;border-radius:10px;padding:10px;font-size:10px;color:#3b82f6;font-weight:600;text-align:center;margin-top:12px}
   .footer{background:#0ea5e9;color:#fff;text-align:center;padding:10px;font-size:10px}
-  .date{font-size:10px;color:#94a3b8;text-align:center;margin-top:10px}
+  .date{font-size:10px;color:#000000;text-align:center;margin-top:10px}
   @media print{body{background:#fff}.card{box-shadow:none;border:1px solid #e0f2fe}}
 </style></head><body>
 <div class="card">

@@ -226,7 +226,7 @@ async function loadOverview() {
                 Math.round((d.revenue / maxRev) * 100),
               );
               const isCurrent = index === res.chartData.length - 1;
-              const colorClass = isCurrent ? "bg-[#12312E]" : "bg-[#A3D977]";
+              const colorClass = isCurrent ? "bg-[#12312E]" : "bg-[#8BC34A]";
               const tooltipText =
                 new Intl.NumberFormat("fr-FR").format(d.revenue) + " FCFA";
 

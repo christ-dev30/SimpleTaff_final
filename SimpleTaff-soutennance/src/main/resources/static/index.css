@@ -10,37 +10,37 @@ h3,
 
 /* Custom colors based on the design */
 .bg-brand-dark {
-  background-color: #12312e;
-} /* Dark green */
+  background-color: #8bc34a;
+} /* Light green (brand) */
 .text-brand-dark {
-  color: #12312e;
+  color: #000000;
 }
 .bg-brand-black {
   background-color: #111111;
 }
 .bg-brand-card {
-  background-color: #19403b;
-} /* Slightly lighter dark green for cards */
+  background-color: #7cb342;
+} /* Secondary light green for cards */
 .bg-brand-card-hover {
-  background-color: #1e4c46;
+  background-color: #7cb342;
 }
 .text-brand-light {
-  color: #a3d977;
+  color: #8bc34a;
 } /* Accent green */
 
 .btn-primary {
-  background-color: #12312e;
-  color: white;
+  background-color: #8bc34a;
+  color: #000000;
   border-radius: 9999px; /* Pill shape */
   transition: all 0.2s ease;
 }
 .btn-primary:hover {
-  background-color: #0d2421;
+  background-color: #7cb342;
 }
 
 .btn-secondary {
   background-color: white;
-  color: #12312e;
+  color: #000000;
   border: 1px solid #e5e7eb;
   border-radius: 9999px;
   transition: all 0.2s ease;

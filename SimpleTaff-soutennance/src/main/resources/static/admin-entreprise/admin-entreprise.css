@@ -10,7 +10,7 @@ html,
 body {
   font-family: "Plus Jakarta Sans", sans-serif;
   background: #f8fafc;
-  color: #1e293b;
+  color: #000000;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -18,7 +18,7 @@ body {
 body {
   font-family: "Plus Jakarta Sans", sans-serif;
   background: #f8fafc;
-  color: #1e293b;
+  color: #000000;
 }
 h1,
 h2,
@@ -55,15 +55,15 @@ h4 {
   background: rgba(255, 255, 255, 0.85);
   font-size: 14px;
   font-family: inherit;
-  color: #1e293b;
+  color: #000000;
   outline: none;
   transition:
     border-color 150ms,
     box-shadow 150ms;
 }
 .input-field:focus {
-  border-color: #12312e;
-  box-shadow: 0 0 0 3px rgba(163, 217, 119, 0.2);
+  border-color: #8bc34a;
+  box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.2);
   background: #fff;
 }
 .btn-brand {
@@ -72,19 +72,20 @@ h4 {
   justify-content: center;
   padding: 10px 20px;
   border-radius: 12px;
-  background: #12312e;
-  color: #fff;
+  background: #8bc34a;
+  color: #000000;
   font-weight: 700;
   font-size: 13px;
   font-family: inherit;
   border: none;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 12px -4px rgba(18, 49, 46, 0.3);
+  box-shadow: 0 4px 12px -4px rgba(139, 195, 74, 0.4);
 }
 .btn-brand:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.4);
+  box-shadow: 0 10px 25px -5px rgba(124, 179, 66, 0.5);
+  background: #7cb342;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -133,7 +134,7 @@ h4 {
   font-weight: 600;
   font-size: 13px;
   line-height: 1.4;
-  color: #64748b;
+  color: #000000;
   cursor: pointer;
   transition:
     background 150ms,
@@ -144,12 +145,12 @@ h4 {
 }
 .sidebar-link:hover {
   background: #f1f5f9;
-  color: #1e293b;
+  color: #000000;
 }
 .sidebar-link.active {
-  background: #a3d97720;
-  color: #12312e;
-  border-left: 4px solid #a3d977;
+  background: #8bc34a20;
+  color: #000000;
+  border-left: 4px solid #8bc34a;
   border-radius: 0 0.75rem 0.75rem 0;
   font-weight: 700;
 }
@@ -226,7 +227,7 @@ h4 {
   display: block;
   width: 20px;
   height: 2px;
-  background: #334155;
+  background: #000000;
   border-radius: 2px;
   transition: all 0.25s ease;
 }

@@ -22,7 +22,7 @@
             colors: {
               brand: {
                 dark: "#12312E",
-                light: "#A3D977",
+                light: "#8BC34A",
                 card: "#19403B",
                 gray: "#F8FAFC",
               },
@@ -104,23 +104,70 @@
     >
       <div>
         <div class="h-20 flex items-center px-6 border-b border-slate-100">
-          <div
-            class="w-8 h-8 rounded-lg bg-[#A3D977] text-[#12312E] shadow-md flex items-center justify-center mr-3"
-          >
-            <svg
-              class="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2.5"
-                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 100" width="100%" height="100%" class="h-20 w-auto">
+  <defs>
+    <!-- DǸgradǸ doux utilisant le vert pastel #eaf4e3 -->
+    <linearGradient id="stLightGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4FBF0" />
+      <stop offset="100%" stop-color="#EAF4E3" />
+    </linearGradient>
+
+    <!-- Ombre douce adaptǸe aux tons naturels -->
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#1B4332" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Groupe Icne -->
+  <g transform="translate(10, 10)">
+    <!-- Fond conteneur arrondi utilisant #eaf4e3 -->
+    <rect x="0" y="0" width="80" height="80" rx="22" 
+          fill="url(#stLightGreen)" 
+          stroke="#D4E6CA" 
+          stroke-width="1.5" 
+          filter="url(#subtleGlow)" />
+    
+    <!-- TracǸ du S en vert profond pour un contraste net (normes WCAG) -->
+    <path d="M 52 26 
+             C 42 22, 28 26, 28 36 
+             C 28 46, 52 46, 52 56 
+             C 52 66, 36 68, 28 62" 
+          fill="none" 
+          stroke="#1B4332" 
+          stroke-width="7" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+          
+    <!-- N"uds de connexion -->
+    <circle cx="56" cy="24" r="4.5" fill="#2D6A4F" />
+    <circle cx="24" cy="64" r="4.5" fill="#2D6A4F" />
+  </g>
+
+  <!-- Typographie SimpleTaff -->
+  <!-- "Simple" en ardoise sombre -->
+  <text x="110" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="400" 
+        letter-spacing="-0.8px" 
+        fill="#0F172A">Simple</text>
+
+  <!-- "Taff" en vert profond harmonisǸ avec #eaf4e3 -->
+  <text x="245" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="800" 
+        letter-spacing="-0.5px" 
+        fill="#1B4332">Taff</text>
+
+  <!-- Tagline descriptive en ton sauge -->
+  <text x="112" y="77" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="11" 
+        font-weight="600" 
+        letter-spacing="2.8px" 
+        fill="#52796F">GESTION &amp; RECRUTEMENT</text>
+</svg>
           <span class="font-extrabold text-lg text-slate-900"
             >SimpleTaff SAAS</span
           >
@@ -241,7 +288,7 @@
           <input
             type="text"
             id="globalSearchInput"
-            class="w-full bg-white rounded-[1.5rem] pl-12 pr-12 py-3.5 text-sm font-medium border-0 shadow-sm focus:ring-2 focus:ring-[#A3D977] placeholder-slate-400 text-slate-900 transition-all outline-none"
+            class="w-full bg-white rounded-[1.5rem] pl-12 pr-12 py-3.5 text-sm font-medium border-0 shadow-sm focus:ring-2 focus:ring-[#8BC34A] placeholder-slate-400 text-slate-900 transition-all outline-none"
             placeholder="Rechercher une entreprise ou admin..."
           />
           <div
@@ -320,7 +367,7 @@
             class="flex items-center gap-3 pl-4 md:pl-6 border-l border-slate-200"
           >
             <div
-              class="w-10 h-10 rounded-full bg-[#A3D977]/20 text-[#12312E] flex items-center justify-center font-bold font-display shadow-sm"
+              class="w-10 h-10 rounded-full bg-[#8BC34A]/20 text-[#12312E] flex items-center justify-center font-bold font-display shadow-sm"
             >
               ST
             </div>
@@ -400,10 +447,10 @@
                 </div>
                 <div class="flex items-center gap-2 mt-2">
                   <span
-                    class="bg-[#A3D977] text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+                    class="bg-[#8BC34A] text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
                     >↑</span
                   >
-                  <span class="text-xs text-[#A3D977] font-medium"
+                  <span class="text-xs text-[#8BC34A] font-medium"
                     >En hausse depuis le mois dernier</span
                   >
                 </div>
@@ -486,7 +533,7 @@
                 </div>
                 <div class="flex items-center gap-2 mt-2">
                   <span
-                    class="bg-[#A3D977]/20 text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+                    class="bg-[#8BC34A]/20 text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
                     >↑</span
                   >
                   <span class="text-xs text-slate-500 font-medium"
@@ -522,7 +569,7 @@
                 ></div>
                 <div class="w-full bg-[#12312E] rounded-full h-3/4"></div>
                 <div
-                  class="w-full bg-[#A3D977] rounded-full h-4/5 relative group"
+                  class="w-full bg-[#8BC34A] rounded-full h-4/5 relative group"
                 >
                   <div
                     class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
@@ -779,7 +826,7 @@
                     type="text"
                     id="invNom"
                     required="required"
-                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#8BC34A] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
                     placeholder="ex: Bolloré Transport"
                   />
                 </div>
@@ -791,7 +838,7 @@
                     type="email"
                     id="invEmail"
                     required="required"
-                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#8BC34A] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
                     placeholder="contact@entreprise.ci"
                   />
                 </div>
@@ -801,7 +848,7 @@
                   >
                   <select
                     id="invFormule"
-                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#8BC34A] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
                   >
                     <option value="STARTER">STARTER (49 000 FCFA/mois)</option>
                     <option value="PRO" selected="selected">

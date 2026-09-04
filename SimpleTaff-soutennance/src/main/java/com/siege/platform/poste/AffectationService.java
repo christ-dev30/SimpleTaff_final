@@ -63,6 +63,10 @@ public class AffectationService {
             affectation.setProjet(payload.get("projet"));
             affectation.setHeureArriveeSite(payload.get("heureArriveeSite"));
             affectation.setHeureDepartSite(payload.get("heureDepartSite"));
+            affectation.setHeureDebut(payload.get("heureArriveeSite"));
+            affectation.setHeureFin(payload.get("heureDepartSite"));
+            affectation.setSiteTravail(payload.get("siteTravail"));
+            affectation.setEmployeurResponsable(payload.get("employeurResponsable"));
         }
 
         poste.setStatut("POURVU");

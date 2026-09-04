@@ -404,7 +404,7 @@ async function loadAffectations() {
     window.allCoordAffectations = data || [];
     if (!data || data.length === 0) {
       tbody.innerHTML =
-        '<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">Aucune affectation enregistrée.</td></tr>';
+        '<tr><td colspan="6" class="px-6 py-6 text-center text-slate-400">Aucune affectation enregistrée.</td></tr>';
       return;
     }
     tbody.innerHTML = data
@@ -437,19 +437,25 @@ async function loadAffectations() {
                             <td class="px-6 py-4 text-slate-700 font-semibold">${clientName} <div class="text-xs text-slate-500 font-normal">Site: ${a.siteNom || "—"}</div></td>
                             <td class="px-6 py-4 text-slate-700 font-semibold">${a.posteLibelle || "—"} <div class="text-xs text-slate-500 font-normal">Zone: ${a.zoneNom || "—"}</div></td>
                             <td class="px-6 py-4 text-slate-500 font-medium"><div class="text-emerald-600 text-[11px]">Début: ${a.dateDebut ? formatDateLabel(a.dateDebut) : "—"}</div><div class="text-rose-500 text-[11px]">Fin: ${a.dateFin && a.dateFin !== "—" ? formatDateLabel(a.dateFin) : "Indéterminée"}</div></td>
+                            <td class="px-6 py-4 text-slate-500 font-mono text-xs"><span class="bg-slate-100 px-1.5 py-0.5 rounded font-bold text-slate-700">${a.heureArriveeSite || "—"} - ${a.heureDepartSite || "—"}</span></td>
                             <td class="px-6 py-4">${badge}</td>
                         </tr>
                     `;
       })
       .join("");
   } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-6 text-center text-red-400">${e.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-6 text-center text-red-400">${e.message}</td></tr>`;
   }
 }
 window.loadAffectations = loadAffectations;
 
 async function loadFormulaireAffectation() {
   try {
+    const dateInput = document.getElementById("newAffectDate");
+    if (dateInput && !dateInput.value) {
+      dateInput.value = new Date().toISOString().slice(0, 10);
+    }
+
     // Charger les postes vacants
     const postes = await apiFetch("/coordonnateur/postes-vacants");
     const posteSelect = document.getElementById("newAffectPoste");
@@ -473,6 +479,7 @@ async function loadFormulaireAffectation() {
 window.submitNouvelleAffectation = async function() {
   const posteId = document.getElementById("newAffectPoste").value;
   const agentId = document.getElementById("newAffectAgent").value;
+  const dateDebut = document.getElementById("newAffectDate").value;
   const heureArrivee = document.getElementById("newAffectArrivee").value;
   const heureDepart = document.getElementById("newAffectDepart").value;
 
@@ -492,8 +499,9 @@ window.submitNouvelleAffectation = async function() {
       body: JSON.stringify({
         posteId,
         agentId,
-        heureArrivee,
-        heureDepart
+        dateDebut: dateDebut || undefined,
+        heureArriveeSite: heureArrivee,
+        heureDepartSite: heureDepart
       })
     });
 
@@ -1042,7 +1050,7 @@ async function loadOverview() {
               zc.pourcentage >= 80
                 ? "bg-[#12312E]"
                 : zc.pourcentage >= 50
-                  ? "bg-[#A3D977]"
+                  ? "bg-[#8BC34A]"
                   : "bg-rose-400";
 
             // Bar
@@ -1274,7 +1282,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const up = await fetch("/api/agents/upload", {
             method: "POST",
             headers: {
-              Authorization: "Bearer " + localStorage.getItem("token"),
+              Authorization: "Bearer " + sessionStorage.getItem("token"),
             },
             body: fd,
           });
@@ -1313,18 +1321,33 @@ document.addEventListener("DOMContentLoaded", () => {
   loadRemplacements();
 });
 
-// ── Évaluations (read-only) ────────────────────────────────────
+// ── Évaluations Coordonnateur ────────────────────────────────────
 async function loadCoordEvaluations() {
   const tbody = document.getElementById("coordEvaluationsTable");
   try {
-    const evals = await apiFetch("/evaluations");
+    // Charger les agents de la zone du coordonnateur pour le formulaire
+    const agents = await apiFetch("/coordonnateur/agents-disponibles");
+    window.allCoordEvalAgents = agents || [];
+    const select = document.getElementById("evalCoordAgentSelect");
+    if (select) {
+      select.innerHTML =
+        '<option value="">Sélectionner l\'agent...</option>' +
+        window.allCoordEvalAgents
+          .map(
+            (a) =>
+              `<option value="${a.id}">${a.nom || ""} ${a.prenom || ""} (${a.matricule || "Sans matricule"})</option>`,
+          )
+          .join("");
+    }
+
+    const evals = await apiFetch("/evaluations-coordonnateur");
     window.allCoordEvals = evals || [];
     renderCoordEvaluations(window.allCoordEvals);
   } catch (err) {
     console.error(err);
     if (tbody)
       tbody.innerHTML =
-        '<tr><td colspan="5" class="p-3 text-center text-red-500">Erreur de chargement des évaluations</td></tr>';
+        '<tr><td colspan="6" class="p-3 text-center text-red-500">Erreur de chargement des évaluations</td></tr>';
   }
 }
 window.loadCoordEvaluations = loadCoordEvaluations;
@@ -1339,16 +1362,16 @@ function renderCoordEvaluations(list) {
   }
   tbody.innerHTML = list
     .map((ev) => {
-      const agentNom = ev.agent ? ev.agent.nom || "N/A" : "N/A";
+      const agentNom = ev.agent ? `${ev.agent.nom || ""} ${ev.agent.prenom || ""}`.trim() || "N/A" : "N/A";
       const dateEval = ev.dateEvaluation || "—";
-      const structure = ev.structureCliente || "—";
+      const site = ev.siteNom && ev.siteNom !== "—" ? ev.siteNom : ev.structureCliente || "—";
       return `
                     <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100">
                         <td class="p-3 font-bold text-slate-900">${agentNom}</td>
-                        <td class="p-3 text-slate-600">${structure}</td>
+                        <td class="p-3 text-slate-600">${site}</td>
                         <td class="p-3">${ev.annee}</td>
                         <td class="p-3 text-slate-500">${dateEval}</td>
-                        <td class="p-3 font-bold text-violet-600">${ev.scoreTotal || 0} / 80</td>
+                        <td class="p-3 font-bold text-violet-600">${ev.scoreTotal || 0} / 60</td>
                         <td class="p-3 text-slate-500 max-w-xs truncate" title="${ev.commentaire || ""}">${ev.commentaire || "—"}</td>
                     </tr>
                 `;
@@ -1363,11 +1386,68 @@ window.filterEvaluationsCoord = function () {
   if (!window.allCoordEvals) return;
   renderCoordEvaluations(
     window.allCoordEvals.filter((ev) => {
-      const nom = ev.agent ? ev.agent.nom || "" : "";
+      const nom = ev.agent ? `${ev.agent.nom || ""} ${ev.agent.prenom || ""}` : "";
       return nom.toLowerCase().includes(query);
     }),
   );
 };
+
+document
+  .getElementById("addEvaluationCoordForm")
+  ?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    try {
+      const agentId = document.getElementById("evalCoordAgentSelect").value;
+      if (!agentId) {
+        alert("Veuillez sélectionner un agent.");
+        return;
+      }
+      const annee = parseInt(document.getElementById("evalCoordAnnee").value);
+      const reactiviteAffectations = parseInt(
+        document.getElementById("evalCoordReactivite").value,
+      );
+      const mobiliteInterSites = parseInt(
+        document.getElementById("evalCoordMobilite").value,
+      );
+      const conformiteAdministrative = parseInt(
+        document.getElementById("evalCoordConformite").value,
+      );
+      const relationnelEquipe = parseInt(
+        document.getElementById("evalCoordRelationnel").value,
+      );
+      const autonomieTerrain = parseInt(
+        document.getElementById("evalCoordAutonomie").value,
+      );
+      const historiqueDisciplinaire = parseInt(
+        document.getElementById("evalCoordHistorique").value,
+      );
+      const commentaire = document.getElementById("evalCoordCommentaire").value;
+
+      if (submitBtn) submitBtn.disabled = true;
+      await apiFetch("/evaluations-coordonnateur", {
+        method: "POST",
+        body: JSON.stringify({
+          agentId,
+          annee,
+          reactiviteAffectations,
+          mobiliteInterSites,
+          conformiteAdministrative,
+          relationnelEquipe,
+          autonomieTerrain,
+          historiqueDisciplinaire,
+          commentaire,
+        }),
+      });
+      alert("Évaluation enregistrée avec succès !");
+      document.getElementById("addEvaluationCoordForm").reset();
+      loadCoordEvaluations();
+    } catch (err) {
+      alert("Erreur lors de l'enregistrement de l'évaluation: " + err.message);
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
 
 // ── Disciplinaire (read-only) ──────────────────────────────────
 async function loadCoordDisciplinaire() {
@@ -1990,7 +2070,7 @@ const uploadAndBindFile = (inputId, statusId, hiddenInputId) => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const response = await fetch("/api/agents/upload", {
         method: "POST",
         body: formData,
@@ -2577,7 +2657,7 @@ window.uploadDocToFolder = async function () {
     const formData = new FormData();
     formData.append("file", file);
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const response = await fetch("/api/agents/upload", {
       method: "POST",
       body: formData,
@@ -3142,12 +3222,12 @@ window.printAdminBadge = function (fullName, qrData, zone) {
   .body{padding:24px;text-align:center}
   .avatar{width:56px;height:56px;border-radius:50%;background:#0284c7;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px;margin:0 auto 10px}
   .name{font-size:20px;font-weight:800;color:#0f172a;text-transform:uppercase;letter-spacing:.5px}
-  .role{font-size:11px;color:#94a3b8;margin-top:3px}
+  .role{font-size:11px;color:#000000;margin-top:3px}
   .divider{border:none;border-top:1.5px solid #e0f2fe;margin:16px 0}
   .qr-wrap{background:#f0f9ff;border-radius:16px;padding:14px;display:inline-block;border:1.5px solid #bae6fd}
-  .instruction{font-size:11px;color:#94a3b8;margin-top:12px}
+  .instruction{font-size:11px;color:#000000;margin-top:12px}
   .security{background:#e0f2fe;border-radius:10px;padding:10px;margin-top:12px;font-size:10px;color:#0369a1;font-weight:600}
-  .date{font-size:10px;color:#94a3b8;margin-top:8px}
+  .date{font-size:10px;color:#000000;margin-top:8px}
   .footer{background:#0284c7;color:#fff;text-align:center;padding:10px;font-size:10px}
   @media print{body{background:#fff}.badge{box-shadow:none;border:1px solid #e0f2fe}}
 </style></head><body>
@@ -3372,7 +3452,7 @@ window.downloadCoordReport = function () {
     alert("Veuillez sélectionner un mois.");
     return;
   }
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   window.open(`/api/rapports/global/export?format=pdf&mois=${mois}&token=${token}`, "_blank");
 };
 

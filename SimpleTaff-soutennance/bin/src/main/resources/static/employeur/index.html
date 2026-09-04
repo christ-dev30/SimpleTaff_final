@@ -1,0 +1,1399 @@
+<!doctype html>
+<html lang="fr" class="antialiased scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Espace Employeur — SimpleTaff</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://unpkg.com/html5-qrcode"
+      type="text/javascript"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+      window.toggleNotificationsDropdown = function () {
+        const dropdown = document.getElementById("notificationsDropdown");
+        if (!dropdown) return;
+        const isHidden = dropdown.classList.toggle("hidden");
+        if (!isHidden && typeof window.loadNotifications === "function")
+          window.loadNotifications();
+      };
+
+      window.clearAllNotifications = function () {
+        const container = document.getElementById("notificationsContainer");
+        if (container)
+          container.innerHTML =
+            '<div class="p-4 text-center text-slate-400">Aucune notification.</div>';
+        const badge = document.getElementById("notificationBadge");
+        if (badge) {
+          badge.textContent = "0";
+          badge.classList.add("hidden");
+        }
+        const dropdown = document.getElementById("notificationsDropdown");
+        if (dropdown) dropdown.classList.add("hidden");
+      };
+
+      document.addEventListener("click", function (e) {
+        const dropdown = document.getElementById("notificationsDropdown");
+        const btn = e.target.closest(
+          '[onclick*="toggleNotificationsDropdown"]',
+        );
+        if (dropdown && !btn && !dropdown.contains(e.target)) {
+          dropdown.classList.add("hidden");
+        }
+      });
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/employeur/employeur.css" rel="stylesheet" />
+    <link href="/shared/fillianta-dashboard.css" rel="stylesheet" />
+  </head>
+  <body class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden">
+    <div id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+    <div id="mobile-topbar">
+      <button
+        class="hamburger-btn"
+        id="hamburger-btn"
+        onclick="toggleMobileSidebar()"
+        aria-label="Menu"
+      >
+        <span></span><span></span><span></span>
+      </button>
+      <span class="font-extrabold text-slate-900 text-sm"
+        >SimpleTaff Client</span
+      >
+      <button onclick="logout()" class="text-red-500 hover:text-red-700 p-2">
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Sidebar -->
+    <aside
+      id="mainSidebar"
+      class="w-64 bg-white border border-slate-100 shadow-sm border-r border-slate-200/50 flex flex-col justify-between hidden md:flex h-full z-10"
+    >
+      <div>
+        <div class="h-20 flex items-center px-6 border-b border-slate-100">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 100" width="100%" height="100%" class="h-20 w-auto">
+  <defs>
+    <!-- DǸgradǸ doux utilisant le vert pastel #eaf4e3 -->
+    <linearGradient id="stLightGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4FBF0" />
+      <stop offset="100%" stop-color="#EAF4E3" />
+    </linearGradient>
+
+    <!-- Ombre douce adaptǸe aux tons naturels -->
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#1B4332" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Groupe Icne -->
+  <g transform="translate(10, 10)">
+    <!-- Fond conteneur arrondi utilisant #eaf4e3 -->
+    <rect x="0" y="0" width="80" height="80" rx="22" 
+          fill="url(#stLightGreen)" 
+          stroke="#D4E6CA" 
+          stroke-width="1.5" 
+          filter="url(#subtleGlow)" />
+    
+    <!-- TracǸ du S en vert profond pour un contraste net (normes WCAG) -->
+    <path d="M 52 26 
+             C 42 22, 28 26, 28 36 
+             C 28 46, 52 46, 52 56 
+             C 52 66, 36 68, 28 62" 
+          fill="none" 
+          stroke="#1B4332" 
+          stroke-width="7" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+          
+    <!-- N"uds de connexion -->
+    <circle cx="56" cy="24" r="4.5" fill="#2D6A4F" />
+    <circle cx="24" cy="64" r="4.5" fill="#2D6A4F" />
+  </g>
+
+  <!-- Typographie SimpleTaff -->
+  <!-- "Simple" en ardoise sombre -->
+  <text x="110" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="400" 
+        letter-spacing="-0.8px" 
+        fill="#0F172A">Simple</text>
+
+  <!-- "Taff" en vert profond harmonisǸ avec #eaf4e3 -->
+  <text x="245" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="800" 
+        letter-spacing="-0.5px" 
+        fill="#1B4332">Taff</text>
+
+  <!-- Tagline descriptive en ton sauge -->
+  <text x="112" y="77" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="11" 
+        font-weight="600" 
+        letter-spacing="2.8px" 
+        fill="#52796F">GESTION &amp; RECRUTEMENT</text>
+</svg>
+          <span class="font-extrabold text-lg text-slate-900"
+            >SimpleTaff Client</span
+          >
+        </div>
+        <nav class="p-4 space-y-1">
+          <div class="sidebar-link active" onclick="showTab('overview')">
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+              />
+            </svg>
+            Vue d'ensemble
+          </div>
+          <div class="sidebar-link" onclick="showTab('pointage')">
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
+              />
+            </svg>
+            Scanner QR Pointage
+          </div>
+          <div class="sidebar-link" onclick="showTab('personnel')">
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+            Personnel assigné
+          </div>
+          <div class="sidebar-link" onclick="showTab('factures')">
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            Factures reçues
+          </div>
+          <div class="sidebar-link" onclick="showTab('evaluations')">
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+              />
+            </svg>
+            Évaluations
+          </div>
+          <div class="sidebar-link" onclick="showTab('disciplinaire')">
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            Sanctions
+          </div>
+        </nav>
+      </div>
+      <div class="p-4 border-t border-slate-100">
+        <button
+          onclick="logout()"
+          class="flex w-full items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold"
+        >
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          Déconnexion
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col relative overflow-hidden">
+      <header
+        class="h-20 flex items-center justify-between px-8 border-b border-slate-200/50 bg-white/50 backdrop-blur-sm z-10"
+      >
+        <div>
+          <h1
+            class="text-2xl font-extrabold tracking-tight text-slate-900"
+            id="clientNom"
+          >
+            Chargement...
+          </h1>
+          <p class="text-sm font-medium text-slate-500 mt-1">
+            Espace Client — Gestion des présences et validations
+          </p>
+        </div>
+
+        <div class="relative w-full max-w-md hidden md:block">
+          <div
+            class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="globalSearchInput"
+            class="w-full bg-slate-100/50 hover:bg-slate-100 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium border-0 focus:ring-2 focus:ring-[#12312E]/20 transition-all outline-none"
+            placeholder="Recherche rapide (Cmd+K)..."
+          />
+          <div
+            id="globalSearchDropdown"
+            class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-[1.5rem] shadow-xl border border-slate-100 max-h-96 overflow-y-auto z-50"
+          >
+            <div id="globalSearchContainer" class="p-2 space-y-1"></div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <button
+              onclick="toggleNotificationsDropdown()"
+              class="text-slate-400 hover:text-[#12312E] transition-colors bg-white/80 w-10 h-10 rounded-full flex items-center justify-center shadow-sm border border-slate-200/50"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                />
+              </svg>
+            </button>
+            <span
+              id="notificationBadge"
+              class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-rose-500 border-2 border-white rounded-full"
+            ></span>
+            <div
+              id="notificationsDropdown"
+              class="hidden absolute right-0 mt-2 w-80 bg-white rounded-[1.5rem] shadow-xl border border-slate-100 z-50 overflow-hidden"
+            >
+              <div
+                class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50"
+              >
+                <h3 class="font-bold text-[#12312E]">Notifications</h3>
+                <button
+                  onclick="
+                    if (window.clearAllNotifications)
+                      window.clearAllNotifications();
+                  "
+                  class="text-xs text-slate-500 hover:text-[#12312E] font-medium transition-colors"
+                >
+                  Tout marquer lu
+                </button>
+              </div>
+              <div
+                id="notificationsContainer"
+                class="max-h-80 overflow-y-auto p-2"
+              >
+                <div class="text-center text-slate-400 text-sm py-4">
+                  Aucune notification
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-right hidden sm:block">
+            <p class="text-sm font-bold text-slate-900" id="profilNom">
+              Chargement...
+            </p>
+            <p class="text-xs text-slate-500" id="profilEmail">...</p>
+          </div>
+          <span class="badge bg-[#A3D977]/30 text-[#12312E]">EMPLOYEUR</span>
+        </div>
+      </header>
+
+      <div class="flex-grow overflow-y-auto p-8 space-y-6">
+        <!-- ═══════════════ TAB: Vue d'ensemble ═══════════════ -->
+        <div id="tab-overview" class="tab-content active space-y-6">
+          <!-- HEADER -->
+          <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"
+          >
+            <div>
+              <h1
+                class="text-3xl font-display font-bold text-[#12312E] tracking-tight"
+              >
+                Espace Client
+              </h1>
+              <p class="text-sm text-slate-500 mt-1">
+                Consultez la présence des agents et gérez vos factures.
+              </p>
+            </div>
+          </div>
+
+          <!-- ROW 1 : 4 CARDS -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6"
+          >
+            <!-- Card 1 (Dark) -->
+            <div
+              class="bg-[#12312E] p-6 rounded-[1.5rem] shadow-xl text-white relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-40"
+            >
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-white/90">Agents Déployés</span>
+                <div
+                  class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/80"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 10l7-7m0 0l7 7m-7-7v18"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <div
+                  id="statOverviewTotal"
+                  class="text-2xl sm:text-3xl font-extrabold truncate w-full text-white"
+                >
+                  45
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                  <span
+                    class="bg-[#A3D977] text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+                    >↑</span
+                  >
+                  <span class="text-xs text-[#A3D977] font-medium"
+                    >Effectif complet</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2 (White) -->
+            <div
+              class="bg-white border border-slate-100 p-6 rounded-[1.5rem] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-40"
+            >
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-slate-800">Postes Actifs</span>
+                <div
+                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 10l7-7m0 0l7 7m-7-7v18"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <div
+                  id="statOverviewPointagesDay"
+                  class="text-2xl sm:text-3xl font-extrabold truncate w-full text-[#12312E]"
+                >
+                  12
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                  <span
+                    class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+                    >→</span
+                  >
+                  <span class="text-xs text-slate-500 font-medium"
+                    >Sur 3 sites différents</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3 (White) -->
+            <div
+              class="bg-white border border-slate-100 p-6 rounded-[1.5rem] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-40"
+            >
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-slate-800"
+                  >Moyenne Évaluations</span
+                >
+                <div
+                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <div
+                  id="statOverviewEvals"
+                  class="text-2xl sm:text-3xl font-extrabold truncate w-full text-[#12312E]"
+                >
+                  0
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                  <span
+                    class="bg-[#A3D977]/20 text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+                    >★</span
+                  >
+                  <span class="text-xs text-slate-500 font-medium"
+                    >Sur 80 points</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 4 (White) -->
+            <div
+              class="bg-white border border-slate-100 p-6 rounded-[1.5rem] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-40"
+            >
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-slate-800">Heures Supp.</span>
+                <div
+                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 14l7 7m0 0l7-7m-7 7V3"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <div
+                  id="statOverviewDernier"
+                  class="text-2xl sm:text-3xl font-extrabold truncate w-full text-[#12312E]"
+                >
+                  0h
+                </div>
+                <div
+                  class="flex items-center gap-2 mt-2 text-xs text-slate-500 font-medium"
+                >
+                  Post-horaire
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ROW 2 : MIDDLE -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+            <!-- Analytics (Col span 5) -->
+            <div
+              class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72"
+            >
+              <h3 class="font-bold text-slate-900 mb-2">
+                Heures Prestées (Globales)
+              </h3>
+              <div
+                id="statHeuresPresteesGlobal"
+                class="text-4xl font-extrabold text-[#12312E] mb-4"
+              >
+                0h
+              </div>
+              <div
+                class="flex-1 flex items-end justify-between gap-2 px-2 relative"
+                id="heuresChartContainer"
+              >
+                <div
+                  id="bar-day-1"
+                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out"
+                  style="height: 10%"
+                ></div>
+                <div
+                  id="bar-day-2"
+                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out"
+                  style="height: 10%"
+                ></div>
+                <div
+                  id="bar-day-3"
+                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out relative group"
+                  style="height: 10%"
+                >
+                  <div
+                    class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 hidden"
+                    id="tooltip-day-3"
+                  >
+                    0h
+                  </div>
+                </div>
+                <div
+                  id="bar-day-4"
+                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out"
+                  style="height: 10%"
+                ></div>
+                <div
+                  id="bar-day-5"
+                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out"
+                  style="height: 10%"
+                ></div>
+                <div
+                  id="bar-day-6"
+                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out"
+                  style="height: 10%"
+                ></div>
+                <div
+                  id="bar-day-7"
+                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full transition-all duration-1000 ease-out"
+                  style="height: 10%"
+                ></div>
+              </div>
+              <div
+                class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3 w-full"
+              >
+                <span class="w-full text-center">L</span
+                ><span class="w-full text-center">M</span
+                ><span class="w-full text-center">M</span
+                ><span class="w-full text-center">J</span
+                ><span class="w-full text-center">V</span
+                ><span class="w-full text-center">S</span
+                ><span class="w-full text-center">D</span>
+              </div>
+            </div>
+
+            <!-- Project List (Col span 7) -->
+            <div
+              class="lg:col-span-7 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72"
+            >
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-900">
+                  Personnel Assigné / Dernier:
+                  <span
+                    id="statDernierAffecte"
+                    class="text-[#12312E] font-extrabold"
+                    >Aucun</span
+                  >
+                </h3>
+              </div>
+              <div class="flex-1 overflow-y-auto pr-2 space-y-4">
+                <table class="w-full text-left">
+                  <tbody
+                    id="personnelTableBody"
+                    class="divide-y divide-slate-100 text-xs"
+                  >
+                    <tr>
+                      <td class="py-2 text-slate-500 text-center">
+                        En attente de données...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ROW 3 : BOTTOM -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Team Collaboration (Col span 7 - Expanded!) -->
+            <div
+              class="lg:col-span-7 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72"
+            >
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-900">Derniers Pointages</h3>
+              </div>
+              <div class="flex-1 overflow-y-auto pr-2 space-y-4">
+                <table class="w-full text-left">
+                  <tbody
+                    id="overviewPointagesStream"
+                    class="divide-y divide-slate-100 text-xs"
+                  >
+                    <tr>
+                      <td class="py-2 text-slate-500 text-center">
+                        En attente de données...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Project Progress (Col span 5 - Expanded!) -->
+            <div
+              class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72 justify-between"
+            >
+              <h3 class="font-bold text-slate-900 mb-2">
+                Indice de Satisfaction Global
+              </h3>
+
+              <div class="relative flex-1 flex items-center justify-center">
+                <svg
+                  viewBox="0 0 100 100"
+                  class="w-40 h-40 transform -rotate-90"
+                >
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    stroke="#f1f5f9"
+                    stroke-width="15"
+                    fill="none"
+                  ></circle>
+                  <circle
+                    id="satisfactionCircle"
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    stroke="#12312E"
+                    stroke-width="15"
+                    fill="none"
+                    stroke-dasharray="0 251.2"
+                    stroke-linecap="round"
+                    class="transition-all duration-1000 ease-out"
+                  ></circle>
+                </svg>
+                <div
+                  class="absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <span
+                    id="statIndiceSatisfaction"
+                    class="text-3xl font-extrabold text-[#12312E]"
+                    >0%</span
+                  >
+                  <span
+                    class="text-[10px] text-slate-400 font-bold uppercase tracking-wider"
+                    >Moyenne</span
+                  >
+                </div>
+              </div>
+
+              <div
+                class="flex items-center justify-center gap-6 text-xs font-bold text-slate-600 mt-4 px-4"
+              >
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#12312E]"></span>
+                  Obtenu
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span> À
+                  améliorer
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════ TAB: Pointage QR ═══════════════ -->
+        <div id="tab-pointage" class="tab-content space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Scanner camera & input -->
+            <div
+              class="lg:col-span-6 bg-white border border-slate-100 shadow-sm rounded-3xl p-8 space-y-6 border border-slate-200/50 shadow-sm relative overflow-hidden"
+            >
+              <div
+                class="absolute top-0 right-0 w-32 h-32 bg-[#EAF4E3] rounded-full blur-3xl -mr-10 -mt-10 opacity-60"
+              ></div>
+
+              <div class="relative">
+                <h2 class="text-xl font-extrabold text-slate-900">
+                  Enregistrement de Pointage
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">
+                  Scanner le badge ou saisissez l'identifiant de l'agent pour
+                  valider son arrivée ou son départ.
+                </p>
+              </div>
+
+              <!-- Camera section container -->
+              <div
+                id="scannerContainer"
+                class="relative overflow-hidden rounded-[1.5rem] bg-slate-50 border-2 border-dashed border-indigo-200 flex flex-col items-center justify-center p-4 transition-all hover:border-indigo-400 group"
+              >
+                <!-- Scanner view finder -->
+                <div
+                  id="reader"
+                  class="w-full rounded-xl overflow-hidden bg-slate-950 shadow-inner"
+                ></div>
+
+                <div
+                  class="py-4 w-full flex justify-center gap-3 relative z-10"
+                >
+                  <button
+                    onclick="startScanning()"
+                    id="btnStartScan"
+                    class="bg-[#12312E] hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-sm shadow-md shadow-indigo-200 transition-all transform hover:scale-105 flex items-center gap-2"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                    Activer la caméra
+                  </button>
+                  <button
+                    onclick="stopScanning()"
+                    id="btnStopScan"
+                    class="hidden bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-rose-600 font-bold py-2.5 px-6 rounded-xl text-sm shadow-sm transition-all flex items-center gap-2 border border-slate-200 hover:border-rose-200"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    Désactiver
+                  </button>
+                </div>
+              </div>
+
+              <!-- Manual form input -->
+              <form id="pointageForm" class="space-y-5 pt-2 relative z-10">
+                <div
+                  id="pointageMsg"
+                  class="hidden text-sm p-4 rounded-xl font-medium text-center border"
+                ></div>
+
+                <!-- Mode selection -->
+                <div>
+                  <label
+                    class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider"
+                    >Mode de saisie</label
+                  >
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button
+                      type="button"
+                      onclick="setPointageMode('QR_CODE')"
+                      id="modeBtnQR"
+                      class="input-minimal text-center font-bold text-xs border-2 border-indigo-600 bg-[#EAF4E3] text-[#12312E] hover:bg-[#EAF4E3] transition-colors"
+                    >
+                      QR Code
+                    </button>
+                    <button
+                      type="button"
+                      disabled
+                      id="modeBtnNFC"
+                      class="input-minimal text-center font-bold text-xs border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed"
+                      title="Non disponible"
+                    >
+                      NFC
+                    </button>
+                    <button
+                      type="button"
+                      disabled
+                      id="modeBtnPHOTO"
+                      class="input-minimal text-center font-bold text-xs border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed"
+                      title="Non disponible"
+                    >
+                      Photo+GPS
+                    </button>
+                    <button
+                      type="button"
+                      disabled
+                      id="modeBtnBIO"
+                      class="input-minimal text-center font-bold text-xs border border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed"
+                      title="Non disponible"
+                    >
+                      Biométrie
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  class="bg-slate-50 p-4 rounded-[1.5rem] border border-slate-100"
+                >
+                  <label
+                    class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider"
+                    id="labelAgentCard"
+                    >Identifiant de l'agent</label
+                  >
+                  <input
+                    type="text"
+                    id="agentCardId"
+                    class="input-minimal text-base py-3"
+                    placeholder="Saisissez ou scannez l'ID de la carte..."
+                  />
+                </div>
+
+                <div
+                  id="photoGpsSection"
+                  class="hidden space-y-3 bg-slate-50 p-4 rounded-[1.5rem] border border-slate-100"
+                >
+                  <div class="text-xs text-slate-600 font-medium">
+                    Capture Photo (optionnelle) et géolocalisation pour
+                    authentification forte.
+                  </div>
+                  <input
+                    type="file"
+                    id="selfieFileInput"
+                    accept="image/*"
+                    class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-[#EAF4E3] file:text-[#12312E] hover:file:bg-indigo-100 transition-colors"
+                  />
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onclick="enregistrerPointage('ENTREE')"
+                    class="flex-1 bg-emerald-500 hover:bg-[#12312E] text-white font-bold py-3.5 rounded-xl text-sm shadow-md shadow-emerald-200 transition-all flex justify-center items-center gap-2"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                      />
+                    </svg>
+                    Pointer l'Arrivée
+                  </button>
+                  <button
+                    type="button"
+                    onclick="enregistrerPointage('SORTIE')"
+                    class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold py-3.5 rounded-xl text-sm shadow-md shadow-rose-200 transition-all flex justify-center items-center gap-2"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2.5"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                      />
+                    </svg>
+                    Pointer le Départ
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Scan Logs -->
+            <div
+              class="lg:col-span-6 bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden flex flex-col h-fit"
+            >
+              <div
+                class="px-6 py-4 border-b border-slate-100 bg-white/50 flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center"
+              >
+                <h2 class="text-sm font-bold text-slate-900">
+                  Historique des pointages par date
+                </h2>
+                <div class="flex items-center gap-2">
+                  <input
+                    type="date"
+                    id="employeurPointageDate"
+                    class="input-minimal w-auto"
+                  />
+                  <button
+                    onclick="loadPointagesLog()"
+                    class="text-xs text-[#12312E] font-bold hover:underline"
+                  >
+                    Actualiser
+                  </button>
+                </div>
+              </div>
+              <div
+                id="employeurPointageDates"
+                class="px-6 py-3 border-b border-slate-100 bg-white/30 flex flex-wrap gap-2 text-xs"
+              >
+                <span class="text-slate-400"
+                  >Chargement des jours enregistrés...</span
+                >
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                  <thead>
+                    <tr
+                      class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase"
+                    >
+                      <th class="px-6 py-2.5">Agent</th>
+                      <th class="px-6 py-2.5">Entree</th>
+                      <th class="px-6 py-2.5">Sortie</th>
+                      <th class="px-6 py-2.5">Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    id="pointageLogsTableBody"
+                    class="divide-y divide-slate-100 text-xs"
+                  >
+                    <tr>
+                      <td
+                        colspan="4"
+                        class="px-6 py-4 text-center text-slate-400"
+                      >
+                        Aucun pointage aujourd'hui.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════ TAB: Factures ═══════════════ -->
+        <div id="tab-factures" class="tab-content space-y-4">
+          <h2 class="text-lg font-bold text-slate-900">Factures reçues</h2>
+          <div
+            class="bg-white border border-slate-100 shadow-sm p-8 text-center text-slate-400 text-sm rounded-[1.5rem]"
+          >
+            Aucune facture disponible pour le moment.
+          </div>
+        </div>
+
+        <!-- ═══════════════ TAB: Personnel ═══════════════ -->
+        <div id="tab-personnel" class="tab-content space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">
+                Personnel assigné
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">
+                Agents de sécurité actuellement affectés à vos sites.
+              </p>
+            </div>
+            <button
+              onclick="loadPersonnelQr()"
+              class="text-xs font-bold text-[#12312E] hover:text-indigo-800 border border-indigo-200 bg-[#EAF4E3] px-3 py-1.5 rounded-lg transition-colors"
+            >
+              ↻ Actualiser
+            </button>
+          </div>
+          <div
+            id="personnelQrGrid"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+          >
+            <div
+              class="bg-white border border-slate-100 shadow-sm p-8 rounded-[1.5rem] text-center text-slate-400 text-sm col-span-full"
+            >
+              Chargement des agents…
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════ TAB: Évaluations ═══════════════ -->
+        <div id="tab-evaluations" class="tab-content space-y-6">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-bold text-slate-900">
+                Évaluations & Performance
+              </h2>
+              <p class="text-xs text-slate-400">
+                Évaluez la qualité de service, la ponctualité et la discipline
+                des agents.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Form to Log Evaluation -->
+            <div class="lg:col-span-5 space-y-4">
+              <div
+                class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] space-y-4"
+              >
+                <h3 class="font-bold text-slate-800 text-sm">
+                  Nouvelle évaluation de performance
+                </h3>
+                <form id="addEvaluationForm" class="space-y-3">
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-xs font-bold text-slate-500 mb-1"
+                        >Agent</label
+                      >
+                      <select
+                        id="evalAgentSelect"
+                        required
+                        class="input-minimal text-xs py-2 px-3"
+                      ></select>
+                    </div>
+                    <div>
+                      <label class="block text-xs font-bold text-slate-500 mb-1"
+                        >Année</label
+                      >
+                      <input
+                        type="number"
+                        id="evalAnnee"
+                        required
+                        class="input-minimal text-xs py-2 px-3"
+                        value="2026"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="space-y-2 border-t border-slate-100 pt-3">
+                    <p class="text-xs font-bold text-slate-700">
+                      Critères d'évaluation (Score de 0 à 10)
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                      <div>
+                        <label class="block text-slate-500 mb-1"
+                          >Ponctualité</label
+                        >
+                        <input
+                          type="number"
+                          id="evalPonctualite"
+                          min="0"
+                          max="10"
+                          value="8"
+                          class="input-minimal text-xs py-2 px-3"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-slate-500 mb-1"
+                          >Discipline</label
+                        >
+                        <input
+                          type="number"
+                          id="evalDiscipline"
+                          min="0"
+                          max="10"
+                          value="8"
+                          class="input-minimal text-xs py-2 px-3"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-slate-500 mb-1"
+                          >Qualité de service</label
+                        >
+                        <input
+                          type="number"
+                          id="evalQualite"
+                          min="0"
+                          max="10"
+                          value="8"
+                          class="input-minimal text-xs py-2 px-3"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-slate-500 mb-1"
+                          >Productivité</label
+                        >
+                        <input
+                          type="number"
+                          id="evalProductivite"
+                          min="0"
+                          max="10"
+                          value="8"
+                          class="input-minimal text-xs py-2 px-3"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-slate-500 mb-1"
+                          >Esprit d'équipe</label
+                        >
+                        <input
+                          type="number"
+                          id="evalEspritEquipe"
+                          min="0"
+                          max="10"
+                          value="8"
+                          class="input-minimal text-xs py-2 px-3"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-slate-500 mb-1"
+                          >Respect procédures</label
+                        >
+                        <input
+                          type="number"
+                          id="evalRespectProcedures"
+                          min="0"
+                          max="10"
+                          value="8"
+                          class="input-minimal text-xs py-2 px-3"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-slate-500 mb-1"
+                          >Satisfaction client</label
+                        >
+                        <input
+                          type="number"
+                          id="evalSatisfactionClient"
+                          min="0"
+                          max="10"
+                          value="8"
+                          class="input-minimal text-xs py-2 px-3"
+                        />
+                      </div>
+                      <div>
+                        <label class="block text-slate-500 mb-1"
+                          >Communication</label
+                        >
+                        <input
+                          type="number"
+                          id="evalCommunication"
+                          min="0"
+                          max="10"
+                          value="8"
+                          class="input-minimal text-xs py-2 px-3"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1"
+                      >Commentaire global</label
+                    >
+                    <textarea
+                      id="evalCommentaire"
+                      rows="2"
+                      class="input-minimal text-xs py-2 px-3"
+                      placeholder="Observations générales..."
+                    ></textarea>
+                  </div>
+                  <button
+                    type="submit"
+                    class="bg-[#12312E] hover:bg-indigo-700 text-white font-bold w-full py-2.5 rounded-xl text-xs mt-2 transition-colors"
+                  >
+                    Enregistrer l'évaluation
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Evaluations History -->
+            <div class="lg:col-span-7 space-y-4">
+              <div
+                class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] space-y-4"
+              >
+                <div class="flex justify-between items-center">
+                  <h3 class="font-bold text-slate-800 text-sm">
+                    Registre des évaluations
+                  </h3>
+                  <input
+                    type="text"
+                    id="searchEvaluations"
+                    oninput="filterEvaluationsTable()"
+                    placeholder="Rechercher par nom..."
+                    class="input-minimal w-48 text-xs py-1.5 px-3"
+                  />
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr
+                        class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100"
+                      >
+                        <th class="p-3">Agent</th>
+                        <th class="p-3">Structure</th>
+                        <th class="p-3">Année</th>
+                        <th class="p-3">Date</th>
+                        <th class="p-3">Score Total</th>
+                        <th class="p-3">Commentaire</th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      id="evaluationsTableBody"
+                      class="divide-y divide-slate-100"
+                    >
+                      <tr>
+                        <td colspan="6" class="p-3 text-center text-slate-400">
+                          Chargement...
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════ TAB: Disciplinaire ═══════════════ -->
+        <div id="tab-disciplinaire" class="tab-content space-y-6">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-xl font-bold text-slate-900">
+                Sanctions & Discipline
+              </h2>
+              <p class="text-xs text-slate-400">
+                Registre des incidents et sanctions réglementaires de vos
+                agents.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Sanctions History List -->
+            <div class="lg:col-span-12 space-y-4">
+              <div
+                class="bg-white border border-slate-100 shadow-sm p-6 rounded-[1.5rem] space-y-4"
+              >
+                <div class="flex justify-between items-center">
+                  <h3 class="font-bold text-slate-800 text-sm">
+                    Registre des incidents & sanctions
+                  </h3>
+                  <input
+                    type="text"
+                    id="searchSanctions"
+                    oninput="filterSanctionsTable()"
+                    placeholder="Rechercher par nom..."
+                    class="input-minimal w-48 text-xs py-1.5 px-3"
+                  />
+                </div>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr
+                        class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-100"
+                      >
+                        <th class="p-3">Agent</th>
+                        <th class="p-3">Structure</th>
+                        <th class="p-3">Type</th>
+                        <th class="p-3">Date Décision</th>
+                        <th class="p-3">Fin</th>
+                        <th class="p-3">Motif</th>
+                        <th class="p-3">Statut</th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      id="sanctionsTableBody"
+                      class="divide-y divide-slate-100"
+                    >
+                      <tr>
+                        <td colspan="7" class="p-3 text-center text-slate-400">
+                          Chargement...
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="/employeur/employeur.js?v=4"></script>
+  </body>
+</html>

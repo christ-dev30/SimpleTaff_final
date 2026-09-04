@@ -97,7 +97,11 @@ public class AgentTerrainController {
             map.put("commune", a.getCommune());
             map.put("ville", a.getVille());
             map.put("email", a.getEmail());
-            
+            map.put("numeroCnps", a.getNumeroCnps());
+            map.put("categorie", a.getCategorie());
+            map.put("equipe", a.getEquipe());
+            map.put("nbParts", a.getNbParts());
+
             if (a.getEmplois() != null && !a.getEmplois().isEmpty()) {
                 java.util.List<String> libelles = new java.util.ArrayList<>();
                 for (com.siege.platform.emploi.Emploi e : a.getEmplois()) {
@@ -167,6 +171,19 @@ public class AgentTerrainController {
         return agentTerrainRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/infos-paie")
+    public ResponseEntity<?> updateInfosPaie(@PathVariable("id") UUID id, @RequestBody Map<String, String> payload) {
+        return agentTerrainRepository.findById(id).map(agent -> {
+            agent.setNumeroCnps(payload.get("numeroCnps"));
+            agent.setCategorie(payload.get("categorie"));
+            agent.setEquipe(payload.get("equipe"));
+            String nbParts = payload.get("nbParts");
+            agent.setNbParts(nbParts != null && !nbParts.isBlank() ? new java.math.BigDecimal(nbParts) : null);
+            agentTerrainRepository.save(agent);
+            return ResponseEntity.ok(Map.of("message", "Informations paie mises à jour."));
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/zones")

@@ -5,8 +5,55 @@
 
 body {
   background-color: #f8fafc !important;
-  color: #334155 !important;
+  color: #000000 !important;
   font-family: "Plus Jakarta Sans", sans-serif !important;
+}
+
+/* Tout texte gris (Tailwind slate/gray/neutral/zinc/stone) devient noir */
+[class*="text-slate-"],
+[class*="text-gray-"],
+[class*="text-neutral-"],
+[class*="text-zinc-"],
+[class*="text-stone-"] {
+  color: #000000 !important;
+}
+
+/* Vert sombre (#12312E et variantes) devient vert clair, partout,
+   quel que soit le préfixe Tailwind (bg-/border-/ring-/hover:/focus:) */
+[class*="bg-[#12312E]"],
+[class*="bg-[#12312e]"],
+[class*="hover:bg-[#12312E]"] {
+  background-color: #8bc34a !important;
+}
+[class*="hover:bg-[#0d2421]"]:hover,
+[class*="hover:bg-[#19403B]"]:hover {
+  background-color: #7cb342 !important;
+}
+[class*="border-[#12312E]"],
+[class*="focus:border-[#12312E]"] {
+  border-color: #8bc34a !important;
+}
+[class*="ring-[#12312E]"] {
+  --tw-ring-color: #8bc34a !important;
+}
+[class*="from-[#12312E]"] {
+  --tw-gradient-from: #8bc34a !important;
+}
+[class*="via-[#19403B]"],
+[class*="via-[#1B4332]"] {
+  --tw-gradient-via: #7cb342 !important;
+}
+[class*="to-[#12312E]"],
+[class*="to-[#19403B]"] {
+  --tw-gradient-to: #8bc34a !important;
+}
+[class*="shadow-[#12312E]"] {
+  --tw-shadow-color: #8bc34a !important;
+}
+/* Texte blanc posé sur un fond qui était vert sombre → noir pour rester lisible */
+[class*="bg-[#12312E]"][class*="text-white"],
+[class*="bg-brand-dark"][class*="text-white"] {
+  color: #000000 !important;
 }
 h1,
 h2,
@@ -62,18 +109,18 @@ h4,
   transition: all 0.2s ease !important;
   border-radius: 0.75rem !important;
   margin: 4px 12px !important;
-  color: #64748b !important;
+  color: #000000 !important;
   font-weight: 500 !important;
 }
 .sidebar-link:hover {
   background: #f8fafc !important;
-  color: #12312e !important;
+  color: #000000 !important;
 }
 .sidebar-link.active {
-  background: #a3d97720 !important;
-  color: #12312e !important;
+  background: #8bc34a20 !important;
+  color: #000000 !important;
   box-shadow: none !important;
-  border-left: 4px solid #a3d977 !important;
+  border-left: 4px solid #8bc34a !important;
   border-radius: 0 0.75rem 0.75rem 0 !important;
 }
 
@@ -82,12 +129,12 @@ button.bg-\[\#12312E\],
 .btn-brand,
 .btn-primary,
 .btn-indigo {
-  background: #12312e !important;
-  color: white !important;
+  background: #8bc34a !important;
+  color: #000000 !important;
   border-radius: 9999px !important;
   transition: all 0.2s ease !important;
   border: none !important;
-  box-shadow: 0 4px 12px -4px rgba(18, 49, 46, 0.3) !important;
+  box-shadow: 0 4px 12px -4px rgba(139, 195, 74, 0.4) !important;
   padding: 0.5rem 1rem !important;
   font-weight: 600 !important;
 }
@@ -95,9 +142,9 @@ button.bg-\[\#12312E\]:hover,
 .btn-brand:hover,
 .btn-primary:hover,
 .btn-indigo:hover {
-  background: #0d2421 !important;
+  background: #7cb342 !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 8px 20px -6px rgba(18, 49, 46, 0.4) !important;
+  box-shadow: 0 8px 20px -6px rgba(124, 179, 66, 0.5) !important;
 }
 button.bg-\[\#12312E\]:active,
 .btn-brand:active,
@@ -112,7 +159,7 @@ button.border.border-slate-300 {
   border-color: #e2e8f0 !important;
   border-radius: 9999px !important;
   transition: all 0.2s ease !important;
-  color: #12312e !important;
+  color: #000000 !important;
 }
 button.border.border-slate-300:hover {
   background: #f8fafc !important;
@@ -129,7 +176,7 @@ table {
 thead th {
   background: transparent !important;
   border-bottom: 1px solid #f1f5f9 !important;
-  color: #94a3b8 !important;
+  color: #000000 !important;
   font-weight: 600 !important;
   font-size: 0.75rem !important;
   text-transform: uppercase !important;
@@ -148,12 +195,12 @@ tbody tr:hover {
   box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.05) !important;
   z-index: 10;
   position: relative;
-  border-color: #a3d977 !important;
+  border-color: #8bc34a !important;
 }
 tbody td {
   padding: 16px !important;
   border: none !important;
-  color: #475569 !important;
+  color: #000000 !important;
 }
 tbody td:first-child {
   border-top-left-radius: 1rem !important;
@@ -181,18 +228,18 @@ tbody td:last-child {
 
 .bg-indigo-100 {
   background: #f1f5f9 !important;
-  color: #475569 !important;
+  color: #000000 !important;
 }
 .text-\[\#12312E\] {
-  color: #475569 !important;
+  color: #000000 !important;
 }
 
 .bg-emerald-100 {
-  background: #a3d97720 !important;
-  color: #12312e !important;
+  background: #8bc34a20 !important;
+  color: #000000 !important;
 }
 .text-emerald-700 {
-  color: #12312e !important;
+  color: #000000 !important;
 }
 
 .bg-amber-100 {
@@ -230,7 +277,7 @@ textarea,
   border-radius: 9999px !important;
   padding: 0.75rem 1.25rem !important;
   transition: all 0.2s ease !important;
-  color: #1e293b !important;
+  color: #000000 !important;
   font-size: 0.875rem !important;
 }
 input:focus,
@@ -240,13 +287,13 @@ textarea:focus,
 .input-field:focus {
   outline: none !important;
   background: white !important;
-  border-color: #a3d977 !important;
-  box-shadow: 0 0 0 3px rgba(163, 217, 119, 0.2) !important;
+  border-color: #8bc34a !important;
+  box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.2) !important;
 }
 
 .fixed.inset-0.bg-slate-900\/50,
 .modal-overlay {
-  background: rgba(18, 49, 46, 0.6) !important;
+  background: rgba(15, 23, 42, 0.6) !important;
   backdrop-filter: blur(8px) !important;
 }
 .fixed.inset-0 .bg-white,

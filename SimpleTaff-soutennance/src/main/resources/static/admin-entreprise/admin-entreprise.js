@@ -6,7 +6,7 @@ if (!checkAuth()) {
   window.location.href = "/vitrine/login.html";
 }
 
-const currentRole = localStorage.getItem("userRole");
+const currentRole = sessionStorage.getItem("userRole");
 if (currentRole !== "ROLE_ADMIN_ENTREPRISE") {
   if (currentRole === "ROLE_SUPER_ADMIN") {
     window.location.href = "/super-admin/";
@@ -132,7 +132,7 @@ async function loadOverview() {
                 idx === 0
                   ? "bg-[#12312E]"
                   : idx === 1
-                    ? "bg-[#A3D977]"
+                    ? "bg-[#8BC34A]"
                     : "bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)]";
               return `
                                 <div class="w-full ${colorClass} rounded-t-sm relative flex flex-col justify-end" style="height: ${heightPct}%" title="${job}: ${count} (${percent}%)">
@@ -957,7 +957,7 @@ const uploadAndBindFile = (inputId, statusId, hiddenInputId) => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       const response = await fetch("/api/agents/upload", {
         method: "POST",
         body: formData,
@@ -1766,8 +1766,38 @@ window.openAgentFolder = async function (agentId) {
 
   document.getElementById("fIdentifiantNfc").value = a.identifiantNfc || "";
 
+  document.getElementById("fAgentNumeroCnps").value = a.numeroCnps || "";
+  document.getElementById("fAgentCategorie").value = a.categorie || "";
+  document.getElementById("fAgentEquipe").value = a.equipe || "";
+  document.getElementById("fAgentNbParts").value = a.nbParts || "";
+
   switchFolderTab("bio");
   document.getElementById("agentFolderModal").classList.remove("hidden");
+};
+
+window.saveAgentInfosPaie = async function () {
+  const agentId = window.currentFolderAgentId;
+  if (!agentId) return;
+  try {
+    await apiFetch(`/agents/${agentId}/infos-paie`, {
+      method: "PUT",
+      body: JSON.stringify({
+        numeroCnps: document.getElementById("fAgentNumeroCnps").value,
+        categorie: document.getElementById("fAgentCategorie").value,
+        equipe: document.getElementById("fAgentEquipe").value,
+        nbParts: document.getElementById("fAgentNbParts").value,
+      }),
+    });
+    if (window.currentFolderAgentObj) {
+      window.currentFolderAgentObj.numeroCnps = document.getElementById("fAgentNumeroCnps").value;
+      window.currentFolderAgentObj.categorie = document.getElementById("fAgentCategorie").value;
+      window.currentFolderAgentObj.equipe = document.getElementById("fAgentEquipe").value;
+      window.currentFolderAgentObj.nbParts = document.getElementById("fAgentNbParts").value;
+    }
+    showToast("Informations paie enregistrées !", 3000);
+  } catch (e) {
+    alert("Erreur lors de l'enregistrement: " + e.message);
+  }
 };
 
 window.closeAgentFolderModal = function () {
@@ -1888,7 +1918,7 @@ window.uploadDocToFolder = async function () {
     const formData = new FormData();
     formData.append("file", file);
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const response = await fetch("/api/agents/upload", {
       method: "POST",
       body: formData,
@@ -3381,7 +3411,7 @@ async function loadContrats() {
                 idx === 0
                   ? "bg-[#12312E]"
                   : idx === 1
-                    ? "bg-[#A3D977]"
+                    ? "bg-[#8BC34A]"
                     : "bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)]";
               return `
                                 <div class="w-full ${colorClass} rounded-t-sm relative flex flex-col justify-end" style="height: ${heightPct}%" title="${job}: ${count} (${percent}%)">
@@ -3846,7 +3876,7 @@ window.exportPresences = async function (format) {
       if (moisInput) moisInput.value = mois;
     }
 
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
     const response = await fetch(
@@ -4689,6 +4719,7 @@ async function loadEvaluations() {
       '<tr><td colspan="7" class="p-3 text-center text-red-500">Erreur chargement évaluations</td></tr>',
     );
   }
+  loadEvaluationsCoordAdmin();
 }
 
 function renderEvaluations(list) {
@@ -4740,6 +4771,63 @@ window.filterEvaluationsTable = function () {
     return name.includes(query);
   });
   renderEvaluations(filtered);
+};
+
+async function loadEvaluationsCoordAdmin() {
+  try {
+    const evals = await apiFetch("/evaluations-coordonnateur");
+    window.allEvaluationsCoordList = evals || [];
+    renderEvaluationsCoordAdmin(window.allEvaluationsCoordList);
+  } catch (e) {
+    console.error(e);
+    safeRenderTbody(
+      document.getElementById("evaluationsCoordAdminTableBody"),
+      '<tr><td colspan="7" class="p-3 text-center text-red-500">Erreur chargement évaluations coordonnateur</td></tr>',
+    );
+  }
+}
+window.loadEvaluationsCoordAdmin = loadEvaluationsCoordAdmin;
+
+function renderEvaluationsCoordAdmin(list) {
+  safeRenderTbody(
+    document.getElementById("evaluationsCoordAdminTableBody"),
+    (list || [])
+      .map((ev) => {
+        const agentNom = ev.agent
+          ? `${ev.agent.nom || ""} ${ev.agent.prenom || ""}`.trim()
+          : "—";
+        const site =
+          ev.siteNom && ev.siteNom !== "—"
+            ? ev.siteNom
+            : ev.structureCliente || "—";
+        return `
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="p-3 font-bold text-slate-800">${agentNom}</td>
+                            <td class="p-3 text-slate-600 font-medium">${site}</td>
+                            <td class="p-3 text-slate-500 font-medium">${ev.coordonnateurEvaluateur || "—"}</td>
+                            <td class="p-3 text-slate-600 font-medium">${ev.annee || "—"}</td>
+                            <td class="p-3 text-slate-500">${ev.dateEvaluation || "—"}</td>
+                            <td class="p-3 text-slate-800 font-bold"><span class="px-2.5 py-0.5 rounded bg-violet-50 text-violet-700">${ev.scoreTotal || 0}/60</span></td>
+                            <td class="p-3 text-slate-500 max-w-xs truncate" title="${ev.commentaire || ""}">${ev.commentaire || "—"}</td>
+                        </tr>
+                    `;
+      })
+      .join("") ||
+      '<tr><td colspan="7" class="p-3 text-center text-slate-400">Aucune évaluation coordonnateur.</td></tr>',
+  );
+}
+
+window.filterEvaluationsCoordAdmin = function () {
+  const query =
+    document.getElementById("searchEvaluationsCoordAdmin")?.value?.toLowerCase() || "";
+  if (!window.allEvaluationsCoordList) return;
+  const filtered = window.allEvaluationsCoordList.filter((ev) => {
+    const name = ev.agent
+      ? `${ev.agent.nom || ""} ${ev.agent.prenom || ""}`.toLowerCase()
+      : "";
+    return name.includes(query);
+  });
+  renderEvaluationsCoordAdmin(filtered);
 };
 
 async function loadRapports(type) {
@@ -5092,7 +5180,7 @@ window.exportRapport = async function (type, format) {
       type ||
       document.getElementById("rapportsTypeSelect")?.value ||
       "pointages";
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
     const response = await fetch(
@@ -5237,7 +5325,7 @@ document
       fd.append("file", file);
       const res = await fetch("/api/agents/upload", {
         method: "POST",
-        headers: { Authorization: "Bearer " + localStorage.getItem("token") },
+        headers: { Authorization: "Bearer " + sessionStorage.getItem("token") },
         body: fd,
       });
       const data = await res.json();
@@ -5489,7 +5577,7 @@ window.exportRapportAgent = async function (fmt) {
   try {
     var res = await fetch(url, {
       headers: {
-        Authorization: "Bearer " + (localStorage.getItem("token") || ""),
+        Authorization: "Bearer " + (sessionStorage.getItem("token") || ""),
       },
     });
     if (!res.ok) throw new Error("HTTP " + res.status);
@@ -5684,12 +5772,12 @@ window.printAdminBadge = function (fullName, qrData, zone) {
   .body{padding:24px;text-align:center}
   .avatar{width:56px;height:56px;border-radius:50%;background:#0284c7;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px;margin:0 auto 10px}
   .name{font-size:20px;font-weight:800;color:#0f172a;text-transform:uppercase;letter-spacing:.5px}
-  .role{font-size:11px;color:#94a3b8;margin-top:3px}
+  .role{font-size:11px;color:#000000;margin-top:3px}
   .divider{border:none;border-top:1.5px solid #e0f2fe;margin:16px 0}
   .qr-wrap{background:#f0f9ff;border-radius:16px;padding:14px;display:inline-block;border:1.5px solid #bae6fd}
-  .instruction{font-size:11px;color:#94a3b8;margin-top:12px}
+  .instruction{font-size:11px;color:#000000;margin-top:12px}
   .security{background:#e0f2fe;border-radius:10px;padding:10px;margin-top:12px;font-size:10px;color:#0369a1;font-weight:600}
-  .date{font-size:10px;color:#94a3b8;margin-top:8px}
+  .date{font-size:10px;color:#000000;margin-top:8px}
   .footer{background:#0284c7;color:#fff;text-align:center;padding:10px;font-size:10px}
   @media print{body{background:#fff}.badge{box-shadow:none;border:1px solid #e0f2fe}}
 </style></head><body>
@@ -6030,7 +6118,7 @@ window.chargerBulletins = async function() {
           <div class="text-[10px] font-mono text-slate-400">${b.agent.matricule || b.agent.id.substring(0,8)} - <span class="text-indigo-500 font-semibold">${b.metier || 'Métier non défini'}</span></div>
         </td>
         <td class="p-3 text-[#12312E] font-bold">${b.salaireBrutEffectif || 0} F CFA</td>
-        <td class="p-3 text-[#A3D977] font-bold">+${b.totalPrimes || 0} F CFA</td>
+        <td class="p-3 text-[#8BC34A] font-bold">+${b.totalPrimes || 0} F CFA</td>
         <td class="p-3 text-red-500">
           <div class="font-bold">- ${( (b.cotisationCnps || 0) + (b.cotisationCnam || 0) + (b.retenueAbsence || 0) ).toFixed(2)} F CFA</div>
           <div class="text-[10px] text-red-400">
@@ -6058,7 +6146,7 @@ window.exportBulletinPDF = function(bulletinId) {
     alert("Bulletin introuvable en mémoire.");
     return;
   }
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   window.open('/api/paie/' + bulletinId + '/export?format=pdf&token=' + token, '_blank');
 };
 
@@ -6072,9 +6160,36 @@ window.loadParametresPaie = async function() {
       document.getElementById("paramPrimeTransport").value = params.primeTransport || 15000;
       document.getElementById("paramPrimeLogement").value = params.primeLogement || 10000;
       document.getElementById("paramPrimeRendement").value = params.primeRendement || 5000;
+      document.getElementById("paramLieuPaie").value = params.lieuPaie || "";
     }
   } catch(e) {
     console.error("Erreur chargement parametres paie", e);
+  }
+
+  try {
+    const config = await apiFetch("/admin/entreprise/config");
+    if (config) {
+      document.getElementById("configNumeroCnps").value = config.numeroCnps || "";
+      document.getElementById("configNumeroContribuable").value = config.numeroContribuable || "";
+    }
+  } catch(e) {
+    console.error("Erreur chargement config entreprise", e);
+  }
+};
+
+window.saveEntrepriseLegalInfo = async function() {
+  try {
+    await apiFetch("/admin/entreprise/config", {
+      method: "PUT",
+      body: JSON.stringify({
+        numeroCnps: document.getElementById("configNumeroCnps").value,
+        numeroContribuable: document.getElementById("configNumeroContribuable").value,
+      }),
+    });
+    showToast("Informations légales enregistrées avec succès !", 3000);
+  } catch (e) {
+    console.error("Erreur sauvegarde infos légales", e);
+    alert("Erreur lors de l'enregistrement des informations légales.");
   }
 };
 
@@ -6084,9 +6199,10 @@ window.saveParametresPaie = async function() {
     tauxCnam: parseFloat(document.getElementById("paramTauxCnam").value || 0),
     primeTransport: parseFloat(document.getElementById("paramPrimeTransport").value || 0),
     primeLogement: parseFloat(document.getElementById("paramPrimeLogement").value || 0),
-    primeRendement: parseFloat(document.getElementById("paramPrimeRendement").value || 0)
+    primeRendement: parseFloat(document.getElementById("paramPrimeRendement").value || 0),
+    lieuPaie: document.getElementById("paramLieuPaie").value || null
   };
-  
+
   try {
     const res = await apiFetch("/paie/parametres", {
       method: "POST",

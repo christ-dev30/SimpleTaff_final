@@ -148,7 +148,7 @@
   width: 22px;
   height: 2px;
   border-radius: 2px;
-  background: #475569;
+  background: #000000;
   transition: all 250ms var(--spring-easing);
 }
 .hamburger-btn.open span:nth-child(1) {

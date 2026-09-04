@@ -23,6 +23,15 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", "Ressource non trouvée."));
     }
 
+    @ExceptionHandler({
+            org.springframework.security.authorization.AuthorizationDeniedException.class,
+            org.springframework.security.access.AccessDeniedException.class
+    })
+    public ResponseEntity<Map<String, String>> handleAccessDenied(Exception ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("message", "Accès refusé : vous n'avez pas les droits nécessaires pour cette action."));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
         System.err.println("Unhandled Exception: " + ex.getMessage());

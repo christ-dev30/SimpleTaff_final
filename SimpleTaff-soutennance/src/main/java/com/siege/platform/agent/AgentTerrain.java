@@ -68,6 +68,13 @@ public class AgentTerrain {
     private String ville;
     private String email;
 
+    private String numeroCnps;
+    private String categorie;
+    private String equipe;
+
+    @Column(precision = 4, scale = 1)
+    private java.math.BigDecimal nbParts;
+
     @Column(nullable = false)
     private String statut;
 

@@ -131,6 +131,9 @@ public class AgentTerrainService {
         agent.setCommune(payload.get("commune"));
         agent.setVille(payload.get("ville"));
         agent.setEmail(payload.get("email"));
+        agent.setNumeroCnps(payload.get("numeroCnps"));
+        agent.setCategorie(payload.get("categorie"));
+        agent.setEquipe(payload.get("equipe"));
 
         // Re-generate or update the active card codeQr to include matricule in signed token
         Optional<CarteAgent> cardOpt = carteAgentRepository.findByAgentIdAndStatut(agent.getId(), "ACTIVE");

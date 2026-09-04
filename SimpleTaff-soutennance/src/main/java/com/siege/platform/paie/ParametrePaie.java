@@ -40,4 +40,6 @@ public class ParametrePaie {
 
     @Column(precision = 12, scale = 2)
     private BigDecimal primeRendement = new BigDecimal("0.00");
+
+    private String lieuPaie;
 }

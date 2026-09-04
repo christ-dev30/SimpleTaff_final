@@ -1,0 +1,58 @@
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+h1,
+h2,
+h3,
+.font-display {
+  font-family: "Outfit", sans-serif;
+}
+
+/* Custom colors based on the design */
+.bg-brand-dark {
+  background-color: #12312e;
+} /* Dark green */
+.text-brand-dark {
+  color: #12312e;
+}
+.bg-brand-black {
+  background-color: #111111;
+}
+.bg-brand-card {
+  background-color: #19403b;
+} /* Slightly lighter dark green for cards */
+.bg-brand-card-hover {
+  background-color: #1e4c46;
+}
+.text-brand-light {
+  color: #a3d977;
+} /* Accent green */
+
+.btn-primary {
+  background-color: #12312e;
+  color: white;
+  border-radius: 9999px; /* Pill shape */
+  transition: all 0.2s ease;
+}
+.btn-primary:hover {
+  background-color: #0d2421;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: #12312e;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+.btn-secondary:hover {
+  border-color: #d1d5db;
+  background-color: #f9fafb;
+}
+
+.custom-card {
+  transition: transform 0.2s ease;
+}
+.custom-card:hover {
+  transform: translateY(-2px);
+}

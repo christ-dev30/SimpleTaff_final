@@ -1,0 +1,1029 @@
+<!doctype html>
+<html lang="fr" class="antialiased scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Espace Super Admin — SimpleTaff</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="/super-admin/super-admin.css" rel="stylesheet" />
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Plus Jakarta Sans", "sans-serif"],
+              display: ["Outfit", "sans-serif"],
+            },
+            colors: {
+              brand: {
+                dark: "#12312E",
+                light: "#A3D977",
+                card: "#19403B",
+                gray: "#F8FAFC",
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <script>
+      window.toggleNotificationsDropdown = function () {
+        const dropdown = document.getElementById("notificationsDropdown");
+        if (!dropdown) return;
+        const isHidden = dropdown.classList.toggle("hidden");
+        if (!isHidden && typeof window.loadNotifications === "function")
+          window.loadNotifications();
+      };
+
+      window.clearAllNotifications = function () {
+        const container = document.getElementById("notificationsContainer");
+        if (container)
+          container.innerHTML =
+            '<div class="p-4 text-center text-slate-400">Aucune notification.</div>';
+        const badge = document.getElementById("notificationBadge");
+        if (badge) {
+          badge.classList.add("hidden");
+          badge.style.display = "none";
+        }
+      };
+
+      document.addEventListener("click", function (e) {
+        const dropdown = document.getElementById("notificationsDropdown");
+        const btn = e.target.closest(
+          '[onclick*="toggleNotificationsDropdown"]',
+        );
+        if (dropdown && !btn && !dropdown.contains(e.target)) {
+          dropdown.classList.add("hidden");
+        }
+      });
+    </script>
+    <link href="/shared/fillianta-dashboard.css" rel="stylesheet" />
+  </head>
+  <body
+    class="bg-slate-50 text-slate-800 flex h-screen overflow-hidden relative"
+  >
+    <div id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+    <div id="mobile-topbar">
+      <button
+        class="hamburger-btn"
+        id="hamburger-btn"
+        onclick="toggleMobileSidebar()"
+        aria-label="Menu"
+      >
+        <span></span><span></span><span></span>
+      </button>
+      <span class="font-extrabold text-slate-900 text-sm">SimpleTaff SAAS</span>
+      <button onclick="logout()" class="text-red-500 hover:text-red-700 p-2">
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Sidebar -->
+    <aside
+      id="mainSidebar"
+      class="w-64 bg-white border border-slate-100 shadow-sm border-r border-slate-200/60 flex flex-col justify-between md:flex h-full z-10 hidden"
+    >
+      <div>
+        <div class="h-20 flex items-center px-6 border-b border-slate-100">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 100" width="100%" height="100%" class="h-20 w-auto">
+  <defs>
+    <!-- DǸgradǸ doux utilisant le vert pastel #eaf4e3 -->
+    <linearGradient id="stLightGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4FBF0" />
+      <stop offset="100%" stop-color="#EAF4E3" />
+    </linearGradient>
+
+    <!-- Ombre douce adaptǸe aux tons naturels -->
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#1B4332" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Groupe Icne -->
+  <g transform="translate(10, 10)">
+    <!-- Fond conteneur arrondi utilisant #eaf4e3 -->
+    <rect x="0" y="0" width="80" height="80" rx="22" 
+          fill="url(#stLightGreen)" 
+          stroke="#D4E6CA" 
+          stroke-width="1.5" 
+          filter="url(#subtleGlow)" />
+    
+    <!-- TracǸ du S en vert profond pour un contraste net (normes WCAG) -->
+    <path d="M 52 26 
+             C 42 22, 28 26, 28 36 
+             C 28 46, 52 46, 52 56 
+             C 52 66, 36 68, 28 62" 
+          fill="none" 
+          stroke="#1B4332" 
+          stroke-width="7" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+          
+    <!-- N"uds de connexion -->
+    <circle cx="56" cy="24" r="4.5" fill="#2D6A4F" />
+    <circle cx="24" cy="64" r="4.5" fill="#2D6A4F" />
+  </g>
+
+  <!-- Typographie SimpleTaff -->
+  <!-- "Simple" en ardoise sombre -->
+  <text x="110" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="400" 
+        letter-spacing="-0.8px" 
+        fill="#0F172A">Simple</text>
+
+  <!-- "Taff" en vert profond harmonisǸ avec #eaf4e3 -->
+  <text x="245" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="800" 
+        letter-spacing="-0.5px" 
+        fill="#1B4332">Taff</text>
+
+  <!-- Tagline descriptive en ton sauge -->
+  <text x="112" y="77" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="11" 
+        font-weight="600" 
+        letter-spacing="2.8px" 
+        fill="#52796F">GESTION &amp; RECRUTEMENT</text>
+</svg>
+          <span class="font-extrabold text-lg text-slate-900"
+            >SimpleTaff SAAS</span
+          >
+        </div>
+        <nav class="p-4 space-y-1">
+          <div class="sidebar-link active" onclick="showTab('dashboard')">
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+              />
+            </svg>
+            Dashboard
+          </div>
+          <div class="sidebar-link" onclick="showTab('entreprises')">
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+              />
+            </svg>
+            Entreprises (Tenants)
+          </div>
+          <div class="sidebar-link" onclick="showTab('invitations')">
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+            Invitations
+          </div>
+          <div class="sidebar-link" onclick="showTab('abonnements')">
+            <svg
+              class="w-5 h-5 mr-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            Abonnements & Tarifs
+          </div>
+        </nav>
+      </div>
+      <div class="p-4 border-t border-slate-100">
+        <button
+          onclick="logout()"
+          class="flex w-full items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold"
+        >
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+            />
+          </svg>
+          Déconnexion
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main flex-1 flex flex-col overflow-hidden">
+      <header
+        class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4 w-full"
+      >
+        <div class="relative w-full max-w-xl">
+          <div
+            class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="globalSearchInput"
+            class="w-full bg-white rounded-[1.5rem] pl-12 pr-12 py-3.5 text-sm font-medium border-0 shadow-sm focus:ring-2 focus:ring-[#A3D977] placeholder-slate-400 text-slate-900 transition-all outline-none"
+            placeholder="Rechercher une entreprise ou admin..."
+          />
+          <div
+            class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 font-medium text-xs"
+          >
+            ⌘K
+          </div>
+
+          <!-- Search Dropdown -->
+          <div
+            id="globalSearchDropdown"
+            class="hidden absolute top-full left-0 right-0 mt-2 bg-white rounded-[1.5rem] shadow-xl border border-slate-100 z-50 overflow-hidden"
+          >
+            <div
+              id="globalSearchContainer"
+              class="max-h-80 overflow-y-auto p-2"
+            ></div>
+          </div>
+        </div>
+
+        <div
+          class="flex items-center gap-4 md:gap-6 shrink-0 w-full md:w-auto justify-between md:justify-end"
+        >
+          <div class="flex items-center gap-4">
+            <div class="relative">
+              <button
+                onclick="toggleNotificationsDropdown()"
+                class="text-slate-400 hover:text-slate-600 transition-colors bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  />
+                </svg>
+              </button>
+              <span
+                id="notificationBadge"
+                class="hidden absolute top-0 right-0 w-2.5 h-2.5 bg-rose-500 border-2 border-[#F8FAFC] rounded-full"
+              ></span>
+              <!-- Notifications Dropdown -->
+              <div
+                id="notificationsDropdown"
+                class="hidden absolute right-0 mt-2 w-80 bg-white rounded-[1.5rem] shadow-xl border border-slate-100 z-50 overflow-hidden"
+              >
+                <div
+                  class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50"
+                >
+                  <h3 class="font-bold text-[#12312E]">Notifications</h3>
+                  <button
+                    onclick="if (window.markAllAsRead) window.markAllAsRead();"
+                    class="text-xs text-slate-500 hover:text-[#12312E] font-medium transition-colors"
+                  >
+                    Tout marquer comme lu
+                  </button>
+                </div>
+                <div
+                  id="notificationsContainer"
+                  class="max-h-80 overflow-y-auto p-2"
+                >
+                  <div class="text-center text-slate-400 text-sm py-4">
+                    Aucune notification
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex items-center gap-3 pl-4 md:pl-6 border-l border-slate-200"
+          >
+            <div
+              class="w-10 h-10 rounded-full bg-[#A3D977]/20 text-[#12312E] flex items-center justify-center font-bold font-display shadow-sm"
+            >
+              ST
+            </div>
+            <div class="hidden sm:block text-left">
+              <div class="text-sm font-bold text-slate-900 leading-tight">
+                Super Admin
+              </div>
+              <div class="text-xs text-slate-500 font-medium">
+                user@simpletaff.ci
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="flex-1 overflow-y-auto p-8 space-y-6">
+        <!-- ═══════════════ TAB: Dashboard ═══════════════ -->
+        <div id="tab-dashboard" class="tab-content active space-y-6">
+          <!-- HEADER -->
+          <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"
+          >
+            <div>
+              <h1
+                class="text-3xl font-display font-bold text-[#12312E] tracking-tight"
+              >
+                Tableau de Bord Super Admin
+              </h1>
+              <p class="text-sm text-slate-500 mt-1">
+                Supervisez la plateforme et gérez les abonnements SaaS.
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <button
+                onclick="showTab('invitations')"
+                class="bg-[#12312E] hover:bg-[#0d2421] text-white px-5 py-2.5 rounded-[1rem] text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+              >
+                + Nouveau Client
+              </button>
+            </div>
+          </div>
+
+          <!-- ROW 1 : 3 CARDS -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6"
+          >
+            <!-- Card 1 (Dark) -->
+            <div
+              class="bg-[#12312E] p-6 rounded-[1.5rem] shadow-xl text-white relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-40"
+            >
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-white/90">Total Clients SaaS</span>
+                <div
+                  class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/80"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 10l7-7m0 0l7 7m-7-7v18"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <div
+                  id="statActives"
+                  class="text-2xl sm:text-3xl font-extrabold truncate w-full text-white"
+                >
+                  24
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                  <span
+                    class="bg-[#A3D977] text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+                    >↑</span
+                  >
+                  <span class="text-xs text-[#A3D977] font-medium"
+                    >En hausse depuis le mois dernier</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2 (White) -->
+            <div
+              class="bg-white border border-slate-100 p-6 rounded-[1.5rem] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-40"
+            >
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-slate-800">Abonnements Actifs</span>
+                <div
+                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 10l7-7m0 0l7 7m-7-7v18"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <div
+                  id="statPending"
+                  class="text-2xl sm:text-3xl font-extrabold truncate w-full text-[#12312E]"
+                >
+                  22
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                  <span
+                    class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+                    >→</span
+                  >
+                  <span class="text-xs text-slate-500 font-medium"
+                    >En hausse depuis le mois dernier</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3 (White) -->
+            <div
+              class="bg-white border border-slate-100 p-6 rounded-[1.5rem] shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between h-40"
+            >
+              <div class="flex justify-between items-start">
+                <span class="font-bold text-slate-800">Coordonnateurs</span>
+                <div
+                  class="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-400"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 10l7-7m0 0l7 7m-7-7v18"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <div
+                  id="statTotal"
+                  class="text-2xl sm:text-3xl font-extrabold truncate w-full text-[#12312E]"
+                >
+                  145
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                  <span
+                    class="bg-[#A3D977]/20 text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
+                    >↑</span
+                  >
+                  <span class="text-xs text-slate-500 font-medium"
+                    >En hausse depuis le mois dernier</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ROW 2 : MIDDLE -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+            <!-- Analytics (Col span 8) -->
+            <div
+              class="lg:col-span-8 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72"
+            >
+              <h3 class="font-bold text-slate-900 mb-2">
+                Revenus SaaS Mensuels
+              </h3>
+              <div
+                id="revenuSaasVal"
+                class="text-3xl font-extrabold text-[#12312E] mb-4"
+              >
+                0 FCFA
+              </div>
+              <div
+                id="saasChartContainer"
+                class="flex-1 flex items-end justify-between gap-2 px-2 relative"
+              >
+                <!-- Bar chart mockup -->
+                <div
+                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"
+                ></div>
+                <div class="w-full bg-[#12312E] rounded-full h-3/4"></div>
+                <div
+                  class="w-full bg-[#A3D977] rounded-full h-4/5 relative group"
+                >
+                  <div
+                    class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    74%
+                  </div>
+                </div>
+                <div class="w-full bg-[#12312E] rounded-full h-full"></div>
+                <div
+                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/3"
+                ></div>
+                <div
+                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"
+                ></div>
+                <div
+                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/5"
+                ></div>
+              </div>
+              <div
+                id="saasChartLabels"
+                class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3"
+              >
+                <span>L</span><span>M</span><span>M</span><span>J</span
+                ><span>V</span><span>S</span><span>D</span>
+              </div>
+            </div>
+
+            <!-- Reminders (Col span 4) -->
+            <div
+              class="lg:col-span-4 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72"
+            >
+              <h3 class="font-bold text-slate-900 mb-4">Abonnements Expirés</h3>
+              <div class="flex-1 flex flex-col justify-center">
+                <h4
+                  id="abonnementExpireNom"
+                  class="text-xl font-bold text-[#12312E] leading-tight"
+                >
+                  Aucun abonnement
+                </h4>
+                <p
+                  id="abonnementExpireDate"
+                  class="text-xs text-slate-500 font-medium mt-2"
+                >
+                  -
+                </p>
+              </div>
+              <button
+                class="bg-[#12312E] hover:bg-[#0d2421] text-white w-full py-3 rounded-xl font-bold text-sm shadow-md transition-all flex justify-center items-center gap-2"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Contacter Client
+              </button>
+            </div>
+          </div>
+
+          <!-- ROW 3 : BOTTOM -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Team Collaboration (Col span 7 - Expanded!) -->
+            <div
+              class="lg:col-span-7 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72"
+            >
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-900">
+                  Nouveaux Administrateurs
+                </h3>
+              </div>
+              <div class="flex-1 overflow-y-auto pr-2 space-y-4">
+                <table class="w-full text-left">
+                  <tbody
+                    id="dashboardAdminsTable"
+                    class="divide-y divide-slate-100 text-xs"
+                  >
+                    <tr>
+                      <td class="py-2 text-slate-500 text-center">
+                        En attente de données...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Project Progress (Col span 5 - Expanded!) -->
+            <div
+              class="lg:col-span-5 bg-white border border-slate-100 rounded-[1.5rem] p-6 shadow-sm flex flex-col h-72 justify-between"
+            >
+              <h3 class="font-bold text-slate-900 mb-2">
+                Croissance Mensuelle
+              </h3>
+
+              <div class="relative flex-1 flex items-center justify-center">
+                <svg
+                  viewBox="0 0 100 100"
+                  class="w-40 h-40 transform -rotate-90"
+                >
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    stroke="#f1f5f9"
+                    stroke-width="15"
+                    fill="none"
+                  ></circle>
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="40"
+                    stroke="#12312E"
+                    stroke-width="15"
+                    fill="none"
+                    stroke-dasharray="251.3"
+                    stroke-dashoffset="251.3"
+                    stroke-linecap="round"
+                    id="croissanceCircle"
+                    class="transition-all duration-1000 ease-out"
+                  ></circle>
+                </svg>
+                <div
+                  class="absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <span
+                    id="croissanceValue"
+                    class="text-3xl font-extrabold text-[#12312E]"
+                    >0%</span
+                  >
+                  <span
+                    class="text-[10px] text-slate-400 font-bold uppercase tracking-wider"
+                    >Objectif</span
+                  >
+                </div>
+              </div>
+
+              <div
+                class="flex items-center justify-center gap-6 text-xs font-bold text-slate-600 mt-4 px-4"
+              >
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#12312E]"></span>
+                  Croissance
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-slate-200"></span>
+                  Reste à atteindre
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End tab-dashboard -->
+
+        <!-- ═══════════════ TAB: Entreprises ═══════════════ -->
+        <div id="tab-entreprises" class="tab-content space-y-4">
+          <div class="flex justify-between items-center">
+            <h2 class="text-lg font-bold text-slate-900">
+              Entreprises enregistrées
+            </h2>
+            <button
+              onclick="loadEntreprises()"
+              class="text-xs text-[#12312E] font-bold hover:underline"
+            >
+              ↻ Actualiser
+            </button>
+          </div>
+          <div
+            class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] overflow-hidden w-full"
+          >
+            <div class="overflow-x-auto">
+              <table class="w-full text-left min-w-[700px]">
+                <thead>
+                  <tr
+                    class="bg-slate-50/80 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider"
+                  >
+                    <th class="px-6 py-3">Entreprise</th>
+                    <th class="px-6 py-3">Formule</th>
+                    <th class="px-6 py-3">Statut</th>
+                    <th class="px-6 py-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="entreprisesTable"
+                  class="divide-y divide-slate-100 text-sm"
+                >
+                  <tr>
+                    <td
+                      colspan="4"
+                      class="px-6 py-6 text-center text-slate-400"
+                    >
+                      Chargementâ€¦
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TAB: Invitations â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div id="tab-invitations" class="tab-content space-y-6">
+          <h2 class="text-lg font-bold text-slate-900">
+            Envoyer une invitation d'abonnement
+          </h2>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Form -->
+            <div
+              class="lg:col-span-5 bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-6 space-y-4"
+            >
+              <div id="inviteMsg" class="hidden text-sm p-3 rounded-xl"></div>
+
+              <!-- Success link display -->
+              <div
+                id="inviteSuccess"
+                class="hidden bg-green-50 border border-green-200 rounded-xl p-4 space-y-2"
+              >
+                <p class="text-green-700 font-bold text-sm">
+                  ✅ Invitation envoyée !
+                </p>
+                <p class="text-xs text-green-600">
+                  Si l'email n'arrive pas, copiez ce lien manuellement :
+                </p>
+                <div class="flex gap-2 items-center">
+                  <input
+                    type="text"
+                    id="inviteLinkDisplay"
+                    readonly="readonly"
+                    class="flex-1 text-xs border border-green-200 rounded-lg p-2 bg-white font-mono"
+                  />
+                  <button
+                    onclick="copyInviteLink()"
+                    class="text-xs bg-green-600 text-white px-3 py-2 rounded-lg font-bold hover:bg-green-700 transition-colors"
+                  >
+                    Copier
+                  </button>
+                </div>
+              </div>
+
+              <form id="inviteForm" class="space-y-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1.5"
+                    >Nom de l'entreprise cliente</label
+                  >
+                  <input
+                    type="text"
+                    id="invNom"
+                    required="required"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
+                    placeholder="ex: Bolloré Transport"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1.5"
+                    >Email du contact (Admin de l'entreprise)</label
+                  >
+                  <input
+                    type="email"
+                    id="invEmail"
+                    required="required"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
+                    placeholder="contact@entreprise.ci"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1.5"
+                    >Formule souscrite</label
+                  >
+                  <select
+                    id="invFormule"
+                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
+                  >
+                    <option value="STARTER">STARTER (49 000 FCFA/mois)</option>
+                    <option value="PRO" selected="selected">
+                      PRO (120 000 FCFA/mois)
+                    </option>
+                    <option value="ENTERPRISE">ENTERPRISE (Sur devis)</option>
+                  </select>
+                </div>
+
+                <div
+                  class="flex items-center gap-2 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2.5 text-xs text-amber-700"
+                >
+                  <svg
+                    class="w-4 h-4 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  Le lien sera à usage unique et expirera dans
+                  <strong>&nbsp;30 minutes</strong>.
+                </div>
+                <button
+                  type="submit"
+                  id="invBtn"
+                  class="bg-[#12312E] hover:bg-[#0d2421] text-white rounded-xl shadow-md transition-all font-bold w-full py-3 flex items-center justify-center gap-2"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <span id="invBtnText">Envoyer l'invitation</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Info card -->
+            <div class="lg:col-span-7 space-y-4">
+              <div
+                class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-6 space-y-4"
+              >
+                <h3 class="font-bold text-slate-900">
+                  Comment ça fonctionne ?
+                </h3>
+                <ol class="space-y-3">
+                  <li class="flex gap-3">
+                    <div
+                      class="w-7 h-7 rounded-full bg-[#12312E]/10 text-[#12312E] flex items-center justify-center font-bold text-xs flex-shrink-0"
+                    >
+                      1
+                    </div>
+                    <p class="text-sm text-slate-600 mt-0.5">
+                      Remplissez le formulaire avec les informations de
+                      l'entreprise cliente et son formule d'abonnement.
+                    </p>
+                  </li>
+                  <li class="flex gap-3">
+                    <div
+                      class="w-7 h-7 rounded-full bg-[#12312E]/10 text-[#12312E] flex items-center justify-center font-bold text-xs flex-shrink-0"
+                    >
+                      2
+                    </div>
+                    <p class="text-sm text-slate-600 mt-0.5">
+                      Un email est automatiquement envoyé à l'entreprise avec un
+                      lien unique d'activation.
+                    </p>
+                  </li>
+                  <li class="flex gap-3">
+                    <div
+                      class="w-7 h-7 rounded-full bg-[#12312E]/10 text-[#12312E] flex items-center justify-center font-bold text-xs flex-shrink-0"
+                    >
+                      3
+                    </div>
+                    <p class="text-sm text-slate-600 mt-0.5">
+                      L'entreprise clique sur le lien, crée son compte
+                      administrateur, et son abonnement est activé.
+                    </p>
+                  </li>
+                  <li class="flex gap-3">
+                    <div
+                      class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs flex-shrink-0"
+                    >
+                      ⚠
+                    </div>
+                    <p class="text-sm text-slate-600 mt-0.5">
+                      Si l'entreprise ne s'inscrit pas dans les
+                      <strong>30 minutes</strong>, le lien expire et
+                      l'abonnement reste <strong>inactif</strong>. Vous devrez
+                      renvoyer une invitation.
+                    </p>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• TAB: Abonnements â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <div id="tab-abonnements" class="tab-content">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div
+              class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-6 space-y-3 border-2 border-slate-200"
+            >
+              <p class="text-xs font-bold text-slate-400 uppercase">STARTER</p>
+              <p class="text-3xl font-extrabold text-slate-900">
+                49 000
+                <span class="text-base font-semibold text-slate-400"
+                  >FCFA/mois</span
+                >
+              </p>
+              <ul class="text-sm text-slate-600 space-y-1">
+                <li>✔ Jusqu'à 20 agents</li>
+                <li>✔ 1 site</li>
+                <li>✔ Pointage QR</li>
+                <li>✖ Multi-sites</li>
+                <li>✖ Rapports avancés</li>
+              </ul>
+            </div>
+            <div
+              class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-6 space-y-3 border-2 border-indigo-400 relative"
+            >
+              <span
+                class="absolute -top-3 left-1/2 -translate-x-1/2 badge bg-[#12312E] text-white"
+                >Populaire</span
+              >
+              <p class="text-xs font-bold text-indigo-400 uppercase">PRO</p>
+              <p class="text-3xl font-extrabold text-slate-900">
+                120 000
+                <span class="text-base font-semibold text-slate-400"
+                  >FCFA/mois</span
+                >
+              </p>
+              <ul class="text-sm text-slate-600 space-y-1">
+                <li>✔ Agents illimités</li>
+                <li>✔ Multi-sites</li>
+                <li>✔ Pointage QR</li>
+                <li>✔ Rapports avancés</li>
+                <li>✔ Gestion paie</li>
+              </ul>
+            </div>
+            <div
+              class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-6 space-y-3 border-2 border-slate-200"
+            >
+              <p class="text-xs font-bold text-slate-400 uppercase">
+                ENTERPRISE
+              </p>
+              <p class="text-3xl font-extrabold text-slate-900">Sur devis</p>
+              <ul class="text-sm text-slate-600 space-y-1">
+                <li>✔ Tout le plan PRO</li>
+                <li>✔ API dédiée</li>
+                <li>✔ Support prioritaire</li>
+                <li>✔ SLA garanti</li>
+                <li>✔ Personnalisation</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="/super-admin/super-admin.js?v=4"></script>
+  </body>
+</html>

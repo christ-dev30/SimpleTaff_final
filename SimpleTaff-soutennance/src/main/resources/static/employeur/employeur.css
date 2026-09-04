@@ -1,7 +1,7 @@
 body {
   font-family: "Plus Jakarta Sans", sans-serif;
   background: #f8fafc;
-  color: #1e293b;
+  color: #000000;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -25,17 +25,17 @@ h3 {
   font-weight: 600;
   font-size: 14px;
   transition: all 200ms ease;
-  color: #64748b;
+  color: #000000;
   cursor: pointer;
 }
 .sidebar-link:hover {
   background: #f1f5f9;
-  color: #1e293b;
+  color: #000000;
 }
 .sidebar-link.active {
-  background: #a3d97720;
-  color: #12312e;
-  border-left: 4px solid #a3d977;
+  background: #8bc34a20;
+  color: #000000;
+  border-left: 4px solid #8bc34a;
   border-radius: 0 0.75rem 0.75rem 0;
   font-weight: 700;
 }

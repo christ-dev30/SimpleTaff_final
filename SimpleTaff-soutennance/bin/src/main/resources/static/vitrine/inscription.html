@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="fr" class="antialiased">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inscription - SimpleTaff</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Plus Jakarta Sans", "sans-serif"],
+              display: ["Outfit", "sans-serif"],
+            },
+            colors: {
+              brand: {
+                dark: "#12312E",
+                light: "#A3D977",
+                card: "#19403B",
+                gray: "#F8FAFC",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/shared/global.css" />
+  </head>
+  <body class="bg-white min-h-screen flex antialiased">
+    <!-- Left: Form Section -->
+    <div
+      class="w-full lg:w-1/2 flex flex-col justify-center items-center px-8 sm:px-16 lg:px-24"
+    >
+      <div class="w-full max-w-sm fade-in-up">
+        <!-- Logo -->
+        <a href="/" class="block mb-8">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 100" width="100%" height="100%" class="h-20 w-auto">
+  <defs>
+    <!-- DǸgradǸ doux utilisant le vert pastel #eaf4e3 -->
+    <linearGradient id="stLightGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4FBF0" />
+      <stop offset="100%" stop-color="#EAF4E3" />
+    </linearGradient>
+
+    <!-- Ombre douce adaptǸe aux tons naturels -->
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#1B4332" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Groupe Icne -->
+  <g transform="translate(10, 10)">
+    <!-- Fond conteneur arrondi utilisant #eaf4e3 -->
+    <rect x="0" y="0" width="80" height="80" rx="22" 
+          fill="url(#stLightGreen)" 
+          stroke="#D4E6CA" 
+          stroke-width="1.5" 
+          filter="url(#subtleGlow)" />
+    
+    <!-- TracǸ du S en vert profond pour un contraste net (normes WCAG) -->
+    <path d="M 52 26 
+             C 42 22, 28 26, 28 36 
+             C 28 46, 52 46, 52 56 
+             C 52 66, 36 68, 28 62" 
+          fill="none" 
+          stroke="#1B4332" 
+          stroke-width="7" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+          
+    <!-- N"uds de connexion -->
+    <circle cx="56" cy="24" r="4.5" fill="#2D6A4F" />
+    <circle cx="24" cy="64" r="4.5" fill="#2D6A4F" />
+  </g>
+
+  <!-- Typographie SimpleTaff -->
+  <!-- "Simple" en ardoise sombre -->
+  <text x="110" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="400" 
+        letter-spacing="-0.8px" 
+        fill="#0F172A">Simple</text>
+
+  <!-- "Taff" en vert profond harmonisǸ avec #eaf4e3 -->
+  <text x="245" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="800" 
+        letter-spacing="-0.5px" 
+        fill="#1B4332">Taff</text>
+
+  <!-- Tagline descriptive en ton sauge -->
+  <text x="112" y="77" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="11" 
+        font-weight="600" 
+        letter-spacing="2.8px" 
+        fill="#52796F">GESTION &amp; RECRUTEMENT</text>
+</svg>
+        </a>
+
+        <!-- Loading state -->
+        <div id="loadingState" class="text-center py-10">
+          <svg
+            class="animate-spin h-8 w-8 text-[#A3D977] mx-auto mb-4"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <p class="text-slate-500 text-sm font-medium">
+            Vérification du lien d'invitation...
+          </p>
+        </div>
+
+        <!-- Error state -->
+        <div id="errorState" class="hidden text-center">
+          <div
+            class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-5"
+          >
+            <svg
+              class="w-8 h-8 text-red-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <h2 class="text-xl font-bold text-slate-900 mb-2">
+            Lien invalide ou expiré
+          </h2>
+          <p id="errorMsg" class="text-slate-500 text-sm mb-6">
+            Ce lien d'invitation n'est plus valide.
+          </p>
+
+          <div class="flex flex-col gap-3 mb-6">
+            <a
+              href="https://wa.me/2250778566674"
+              target="_blank"
+              class="flex items-center justify-center gap-2 w-full py-3 px-4 bg-[#A3D977] hover:bg-[#8cc462] text-[#12312E] rounded-xl text-sm font-bold transition-colors"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.888-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.347-.272.297-1.04 1.016-1.04 2.479 0 1.463 1.065 2.876 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"
+                />
+              </svg>
+              WhatsApp / Support
+            </a>
+          </div>
+
+          <a
+            href="/vitrine/login.html"
+            class="text-[#12312E] font-semibold hover:underline text-sm"
+            >← Retour à la connexion</a
+          >
+        </div>
+
+        <!-- Registration form -->
+        <div id="formState" class="hidden">
+          <!-- Header -->
+          <h2 class="font-display text-3xl font-semibold text-slate-900 mb-2">
+            Activez votre espace
+          </h2>
+          <p class="text-sm text-slate-500 mb-6">
+            Créez votre compte administrateur pour activer votre abonnement
+          </p>
+
+          <!-- Invite summary badge -->
+          <div
+            class="bg-[#F8FAFC] border border-slate-200 rounded-2xl p-4 mb-6"
+          >
+            <p
+              class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1"
+            >
+              Entreprise invitée
+            </p>
+            <p class="text-base font-bold text-slate-900" id="entrepriseNom">
+              —
+            </p>
+            <div class="flex items-center gap-2 mt-1">
+              <span
+                class="text-[10px] bg-[#A3D977]/20 text-[#12312E] px-2 py-0.5 rounded-md font-bold"
+                id="formuleLabel"
+                >—</span
+              >
+              <span class="text-xs text-slate-400">·</span>
+              <span class="text-xs text-slate-500" id="emailLabel">—</span>
+            </div>
+          </div>
+
+          <form id="registerForm" class="space-y-4">
+            <div id="alertMsg" class="hidden text-sm p-3 rounded-xl"></div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-slate-900 mb-1.5"
+                  >Nom</label
+                >
+                <input
+                  type="text"
+                  id="nom"
+                  required
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
+                  placeholder="Dupont"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-900 mb-1.5"
+                  >Prénom</label
+                >
+                <input
+                  type="text"
+                  id="prenom"
+                  required
+                  class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
+                  placeholder="Jean"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-900 mb-1.5"
+                >Email (non modifiable)</label
+              >
+              <input
+                type="email"
+                id="emailDisplay"
+                disabled
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none text-sm bg-slate-100 opacity-70 cursor-not-allowed"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-900 mb-1.5"
+                >Mot de passe (8 caractères min.)</label
+              >
+              <input
+                type="password"
+                id="password"
+                required
+                minlength="8"
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-900 mb-1.5"
+                >Confirmer le mot de passe</label
+              >
+              <input
+                type="password"
+                id="confirmPassword"
+                required
+                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] focus:border-[#12312E] outline-none transition-all text-sm bg-slate-50 focus:bg-white"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <!-- Expiry notice -->
+            <div
+              class="flex items-center gap-2 bg-[#A3D977]/10 border border-[#A3D977]/30 rounded-xl px-3 py-2 mt-2"
+            >
+              <svg
+                class="w-4 h-4 text-[#12312E] flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <p class="text-xs text-[#12312E]">
+                Ce lien expire à
+                <span id="expirationTime" class="font-bold">—</span>
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              id="submitBtn"
+              class="w-full py-3.5 px-4 flex justify-center items-center text-sm font-bold rounded-xl text-white bg-[#12312E] hover:bg-[#0d2421] shadow-lg transition-all hover:-translate-y-0.5 mt-4"
+            >
+              <span id="btnText">Activer mon compte</span>
+              <svg
+                id="btnSpinner"
+                class="hidden animate-spin ml-2 h-4 w-4 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </button>
+          </form>
+
+          <div class="mt-8 text-center text-sm">
+            <a
+              href="/vitrine/login.html"
+              class="text-slate-400 hover:text-slate-600 transition-colors"
+              >← Retour à la connexion</a
+            >
+          </div>
+        </div>
+
+        <!-- Success state -->
+        <div id="successState" class="hidden text-center fade-in">
+          <div
+            class="w-16 h-16 bg-[#A3D977]/20 rounded-2xl flex items-center justify-center mx-auto mb-5"
+          >
+            <svg
+              class="w-8 h-8 text-[#12312E]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2.5"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+          <h2 class="font-display text-3xl font-extrabold text-[#12312E] mb-2">
+            Compte activé !
+          </h2>
+          <p class="text-slate-500 text-sm mb-6">
+            Votre espace entreprise est maintenant actif. Connectez-vous pour
+            commencer.
+          </p>
+          <a
+            href="/vitrine/login.html"
+            class="bg-[#12312E] text-white hover:bg-[#0d2421] transition-colors inline-block px-8 py-3 text-sm font-bold rounded-xl shadow-md"
+          >
+            Se connecter →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Dark Green Graphic Section -->
+    <div
+      class="hidden lg:flex w-1/2 bg-[#12312E] p-12 relative overflow-hidden flex-col justify-center rounded-l-[3rem] shadow-2xl my-4 mr-4"
+    >
+      <!-- Abstract glowing effect -->
+      <div
+        class="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-[#12312E] via-[#19403B] to-[#12312E] opacity-50"
+      ></div>
+      <div
+        class="absolute -top-40 -right-40 w-96 h-96 bg-[#A3D977] rounded-full mix-blend-overlay filter blur-[100px] opacity-20"
+      ></div>
+      <div
+        class="absolute bottom-20 left-10 w-72 h-72 bg-white rounded-full mix-blend-overlay filter blur-[100px] opacity-10"
+      ></div>
+
+      <div class="relative z-10 max-w-lg mx-auto">
+        <h1
+          class="font-display text-5xl xl:text-6xl text-white mb-12 italic leading-tight"
+        >
+          Digitalisez<br />la gestion<br /><span class="font-normal"
+            >de votre personnel,</span
+          ><br />aujourd'hui.
+        </h1>
+
+        <!-- Mockup Card matching Fillianta style -->
+        <div class="relative mt-8">
+          <!-- Side smaller cards -->
+          <div
+            class="absolute -left-12 bottom-0 w-16 h-48 bg-[#F8FAFC] rounded-2xl shadow-xl flex flex-col items-center py-6 gap-6 z-10 opacity-90"
+          >
+            <div
+              class="w-8 h-8 bg-[#12312E] rounded-full flex items-center justify-center text-[#A3D977]"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                />
+              </svg>
+            </div>
+            <div class="w-8 h-8 bg-slate-200 rounded-full"></div>
+            <div class="w-8 h-8 bg-slate-200 rounded-full"></div>
+          </div>
+
+          <div
+            class="absolute -left-20 bottom-10 w-16 h-16 bg-[#F8FAFC] rounded-2xl shadow-xl flex items-center justify-center z-20"
+          >
+            <div
+              class="w-8 h-8 rounded-xl bg-[#12312E] text-[#A3D977] flex items-center justify-center"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Main Balance Card -->
+          <div
+            class="w-full h-80 bg-[#F8FAFC] rounded-[2rem] p-8 shadow-2xl relative z-0 flex flex-col justify-end"
+          >
+            <div class="absolute top-8 left-8">
+              <svg
+                class="w-8 h-8 text-[#A3D977]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+            <div class="mb-4">
+              <div class="font-display text-4xl font-extrabold text-[#12312E]">
+                24,500 <span class="text-2xl">FCFA</span>
+              </div>
+              <div class="text-sm text-slate-500 font-medium">
+                Coût journalier estimé
+              </div>
+            </div>
+            <div
+              class="flex justify-between items-end border-t border-slate-200 pt-4"
+            >
+              <div>
+                <div class="text-sm font-bold text-[#12312E]">Formule Pro</div>
+                <div class="text-xs text-slate-500 font-mono mt-1">
+                  150 AGENTS MAX
+                </div>
+              </div>
+              <div
+                class="bg-slate-200 text-slate-700 text-[10px] font-bold px-3 py-1.5 rounded-full"
+              >
+                En savoir plus
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/vitrine/inscription.js"></script>
+  </body>
+</html>

@@ -37,6 +37,7 @@ public class CoordonnateurController {
     private final com.siege.platform.poste.PosteRepository posteRepo;
     private final com.siege.platform.poste.AffectationService affectationService;
     private final UtilisateurRepository utilisateurRepo;
+    private final com.siege.platform.emploi.EmploiRepository emploiRepo;
 
     public CoordonnateurController(AgentTerrainRepository agentRepo,
                                     AffectationRepository affectationRepo,
@@ -49,7 +50,8 @@ public class CoordonnateurController {
                                     com.siege.platform.structuredemandeuse.SiteRepository siteRepo,
                                     com.siege.platform.poste.PosteRepository posteRepo,
                                     com.siege.platform.poste.AffectationService affectationService,
-                                    UtilisateurRepository utilisateurRepo) {
+                                    UtilisateurRepository utilisateurRepo,
+                                    com.siege.platform.emploi.EmploiRepository emploiRepo) {
         this.agentRepo = agentRepo;
         this.affectationRepo = affectationRepo;
         this.zoneRepo = zoneRepo;
@@ -62,6 +64,7 @@ public class CoordonnateurController {
         this.posteRepo = posteRepo;
         this.affectationService = affectationService;
         this.utilisateurRepo = utilisateurRepo;
+        this.emploiRepo = emploiRepo;
     }
 
     @GetMapping("/stats")
@@ -215,6 +218,8 @@ public class CoordonnateurController {
             map.put("siteNom", af.getPoste() != null && af.getPoste().getSite() != null ? af.getPoste().getSite().getNom() : "—");
             map.put("zoneNom", af.getPoste() != null && af.getPoste().getSite() != null && af.getPoste().getSite().getZone() != null ? af.getPoste().getSite().getZone().getNom() : "—");
             map.put("structureCliente", af.getPoste() != null && af.getPoste().getSite() != null && af.getPoste().getSite().getStructureDemandeuse() != null ? af.getPoste().getSite().getStructureDemandeuse().getRaisonSociale() : "—");
+            map.put("heureArriveeSite", af.getHeureArriveeSite());
+            map.put("heureDepartSite", af.getHeureDepartSite());
             result.add(map);
         }
         return ResponseEntity.ok(result);
@@ -348,43 +353,75 @@ public class CoordonnateurController {
     @PostMapping("/affectations")
     public ResponseEntity<?> creerAffectation(@RequestBody Map<String, Object> payload, java.security.Principal principal) {
         try {
-            String coordonnateurEmail = principal.getName();
             UUID siteId = UUID.fromString(payload.get("posteId").toString());
             UUID agentId = UUID.fromString(payload.get("agentId").toString());
-            
+
+            Utilisateur user = utilisateurRepo.findByEmail(principal.getName()).orElse(null);
+            UUID coordZoneId = (user instanceof Coordonnateur coord && coord.getZone() != null) ? coord.getZone().getId() : null;
+
             com.siege.platform.structuredemandeuse.Site site = siteRepo.findById(siteId)
                     .orElseThrow(() -> new IllegalArgumentException("Site introuvable"));
-                    
+
+            AgentTerrain agent = agentRepo.findById(agentId)
+                    .orElseThrow(() -> new IllegalArgumentException("Agent introuvable"));
+
+            if (coordZoneId != null) {
+                boolean siteDansZone = site.getZone() != null && coordZoneId.equals(site.getZone().getId());
+                boolean agentDansZone = agent.getZone() != null && coordZoneId.equals(agent.getZone().getId());
+                if (!siteDansZone) {
+                    return ResponseEntity.status(403).body(Map.of("error", "Ce site n'appartient pas à votre zone."));
+                }
+                if (!agentDansZone) {
+                    return ResponseEntity.status(403).body(Map.of("error", "Cet agent n'appartient pas à votre zone."));
+                }
+            }
+
             Poste poste = posteRepo.findAll().stream()
                     .filter(p -> p.getSite() != null && p.getSite().getId().equals(siteId) && ("VACANT".equalsIgnoreCase(p.getStatut()) || "OUVERT".equalsIgnoreCase(p.getStatut())))
                     .findFirst()
                     .orElseGet(() -> {
+                        com.siege.platform.emploi.Emploi emploi = agent.getEmplois() != null && !agent.getEmplois().isEmpty()
+                                ? agent.getEmplois().iterator().next()
+                                : emploiRepo.findByEntrepriseId(site.getEntreprise().getId()).stream().findFirst().orElse(null);
+                        if (emploi == null) {
+                            throw new IllegalStateException("Aucun emploi défini pour ce site : créez d'abord un poste ou un emploi.");
+                        }
                         Poste newPoste = new Poste();
                         newPoste.setSite(site);
                         newPoste.setEntreprise(site.getEntreprise());
+                        newPoste.setEmploi(emploi);
                         newPoste.setStatut("VACANT");
                         return posteRepo.save(newPoste);
                     });
-                    
-            // Vérification relâchée pour le MVP
-            boolean authorized = true;
-            if (poste.getSite() != null && poste.getSite().getZone() != null) {
-                // autoriser
-            }
-            if (!authorized) {
-                return ResponseEntity.status(403).body(Map.of("error", "Vous ne pouvez pas affecter un agent sur un poste hors de votre zone."));
-            }
 
-            // payload as Map<String, String> for the service
+            // payload as Map<String, String> pour le service, en normalisant les noms d'heures
             Map<String, String> stringPayload = new HashMap<>();
             for (Map.Entry<String, Object> entry : payload.entrySet()) {
                 if (entry.getValue() != null) {
                     stringPayload.put(entry.getKey(), entry.getValue().toString());
                 }
             }
+            if (stringPayload.containsKey("heureArrivee") && !stringPayload.containsKey("heureArriveeSite")) {
+                stringPayload.put("heureArriveeSite", stringPayload.get("heureArrivee"));
+            }
+            if (stringPayload.containsKey("heureDepart") && !stringPayload.containsKey("heureDepartSite")) {
+                stringPayload.put("heureDepartSite", stringPayload.get("heureDepart"));
+            }
 
-            Affectation affectation = affectationService.creerAffectation(poste.getId(), agentId, LocalDate.now(), stringPayload);
-            return ResponseEntity.ok(affectation);
+            LocalDate dateDebut = LocalDate.now();
+            if (payload.get("dateDebut") != null && !payload.get("dateDebut").toString().isBlank()) {
+                dateDebut = LocalDate.parse(payload.get("dateDebut").toString());
+            }
+
+            Affectation affectation = affectationService.creerAffectation(poste.getId(), agentId, dateDebut, stringPayload);
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("id", affectation.getId());
+            result.put("statut", affectation.getStatut());
+            result.put("dateDebut", affectation.getDateDebutOccupation());
+            result.put("heureArriveeSite", affectation.getHeureArriveeSite());
+            result.put("heureDepartSite", affectation.getHeureDepartSite());
+            result.put("message", "Affectation créée avec succès.");
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

@@ -108,6 +108,33 @@ public class PaieController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/bulletins")
+    public ResponseEntity<?> listBulletins() {
+        Entreprise entreprise = tenantService.entreprise();
+        List<BulletinDePaie> bulletins = bulletinRepository.findByEntrepriseIdOrderByPeriodeDesc(entreprise.getId());
+        List<Map<String, Object>> result = bulletins.stream().map(b -> {
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", b.getId());
+            map.put("periode", b.getPeriode());
+            map.put("agentNom", b.getAgent() != null ? b.getAgent().getNom() + " " + b.getAgent().getPrenom() : "—");
+            map.put("salaireNetCalcule", b.getSalaireNetCalcule());
+            map.put("joursValides", b.getJoursValides());
+            map.put("joursAbsNonJust", b.getJoursAbsenceNonJustifiee());
+            map.put("statutPaiement", b.getStatutPaiement());
+            return map;
+        }).collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/bulletins/{id}/payer")
+    public ResponseEntity<?> payerBulletin(@PathVariable UUID id) {
+        return bulletinRepository.findById(id).map(b -> {
+            b.setStatutPaiement("PAYE");
+            bulletinRepository.save(b);
+            return ResponseEntity.ok(Map.of("message", "Bulletin marqué comme payé."));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getBulletin(@PathVariable UUID id) {
         return bulletinRepository.findById(id)
@@ -115,10 +142,16 @@ public class PaieController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.siege.platform.contrat.ContratAgentRepository contratAgentRepository;
+
     @GetMapping("/{id}/export")
     public ResponseEntity<byte[]> exportBulletinPdf(@PathVariable UUID id, @RequestParam(value = "format", defaultValue = "pdf") String format) {
         return bulletinRepository.findById(id).map(b -> {
-            byte[] pdfBytes = BulletinPdfBuilder.build(b);
+            ParametrePaie parametre = parametreRepository.findByEntrepriseId(b.getEntreprise().getId()).orElse(null);
+            List<com.siege.platform.contrat.ContratAgent> contrats = contratAgentRepository.findByAgentIdOrderByDateDebutDesc(b.getAgent().getId());
+            com.siege.platform.contrat.ContratAgent contrat = contrats.isEmpty() ? null : contrats.get(0);
+            byte[] pdfBytes = BulletinPdfBuilder.build(b, parametre, contrat);
             org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
             headers.setContentType(org.springframework.http.MediaType.APPLICATION_PDF);
             headers.setContentDispositionFormData("attachment", "Bulletin_Paie_" + (b.getAgent().getMatricule() != null ? b.getAgent().getMatricule() : b.getAgent().getNom()) + "_" + b.getPeriode() + ".pdf");
@@ -147,6 +180,7 @@ public class PaieController {
             if (parametreUpdates.getPrimeTransport() != null) parametre.setPrimeTransport(parametreUpdates.getPrimeTransport());
             if (parametreUpdates.getPrimeLogement() != null) parametre.setPrimeLogement(parametreUpdates.getPrimeLogement());
             if (parametreUpdates.getPrimeRendement() != null) parametre.setPrimeRendement(parametreUpdates.getPrimeRendement());
+            if (parametreUpdates.getLieuPaie() != null) parametre.setLieuPaie(parametreUpdates.getLieuPaie());
 
             parametreRepository.save(parametre);
             return ResponseEntity.ok(Map.of("message", "Paramètres enregistrés avec succès"));

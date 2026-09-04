@@ -287,6 +287,8 @@ public class EntrepriseAdminController {
         map.put("tauxCotisation", e.getTauxCotisation());
         map.put("seuilAbsenceLongueJours", e.getSeuilAbsenceLongueJours());
         map.put("tauxRetenueReduite", e.getTauxRetenueReduite());
+        map.put("numeroCnps", e.getNumeroCnps());
+        map.put("numeroContribuable", e.getNumeroContribuable());
         return ResponseEntity.ok(map);
     }
 
@@ -309,6 +311,12 @@ public class EntrepriseAdminController {
             }
             if (payload.containsKey("tauxRetenueReduite")) {
                 e.setTauxRetenueReduite(new BigDecimal(payload.get("tauxRetenueReduite").toString()));
+            }
+            if (payload.containsKey("numeroCnps")) {
+                e.setNumeroCnps((String) payload.get("numeroCnps"));
+            }
+            if (payload.containsKey("numeroContribuable")) {
+                e.setNumeroContribuable((String) payload.get("numeroContribuable"));
             }
             entrepriseRepository.save(e);
             return ResponseEntity.ok(Map.of("message", "Configuration mise à jour avec succès !"));

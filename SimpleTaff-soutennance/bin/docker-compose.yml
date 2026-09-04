@@ -1,0 +1,78 @@
+version: '3.9'
+
+# ============================================================
+#   SimpleTaff — Docker Compose
+#   Lance l'app + PostgreSQL en un seul commande:
+#     docker compose up --build
+# ============================================================
+
+services:
+
+  # ── Base de données PostgreSQL ───────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: simpletaff_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-simpletaff_db}
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-simpletaff_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - simpletaff_network
+
+  # ── Application Spring Boot ──────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: simpletaff_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # Override DB_HOST to use the Docker service name
+      DB_HOST: db
+      DB_PORT: 5432
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    volumes:
+      # Persist uploads (agent photos, contract PDFs, etc.)
+      - uploads_data:/app/uploads
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    networks:
+      - simpletaff_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  postgres_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+networks:
+  simpletaff_network:
+    driver: bridge

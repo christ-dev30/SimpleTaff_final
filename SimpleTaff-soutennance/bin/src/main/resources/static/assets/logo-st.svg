@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 100" width="100%" height="100%">
+  <defs>
+    <!-- Dégradé doux utilisant le vert pastel #eaf4e3 -->
+    <linearGradient id="stLightGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4FBF0" />
+      <stop offset="100%" stop-color="#EAF4E3" />
+    </linearGradient>
+
+    <!-- Ombre douce adaptée aux tons naturels -->
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#1B4332" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Groupe Icône -->
+  <g transform="translate(10, 10)">
+    <!-- Fond conteneur arrondi utilisant #eaf4e3 -->
+    <rect x="0" y="0" width="80" height="80" rx="22" 
+          fill="url(#stLightGreen)" 
+          stroke="#D4E6CA" 
+          stroke-width="1.5" 
+          filter="url(#subtleGlow)" />
+    
+    <!-- Tracé du S en vert profond pour un contraste net (normes WCAG) -->
+    <path d="M 52 26 
+             C 42 22, 28 26, 28 36 
+             C 28 46, 52 46, 52 56 
+             C 52 66, 36 68, 28 62" 
+          fill="none" 
+          stroke="#1B4332" 
+          stroke-width="7" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+          
+    <!-- Nœuds de connexion -->
+    <circle cx="56" cy="24" r="4.5" fill="#2D6A4F" />
+    <circle cx="24" cy="64" r="4.5" fill="#2D6A4F" />
+  </g>
+
+  <!-- Typographie SimpleTaff -->
+  <!-- "Simple" en ardoise sombre -->
+  <text x="110" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="400" 
+        letter-spacing="-0.8px" 
+        fill="#0F172A">Simple</text>
+
+  <!-- "Taff" en vert profond harmonisé avec #eaf4e3 -->
+  <text x="245" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="800" 
+        letter-spacing="-0.5px" 
+        fill="#1B4332">Taff</text>
+
+  <!-- Tagline descriptive en ton sauge -->
+  <text x="112" y="77" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="11" 
+        font-weight="600" 
+        letter-spacing="2.8px" 
+        fill="#52796F">GESTION &amp; RECRUTEMENT</text>
+</svg>

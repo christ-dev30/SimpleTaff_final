@@ -10,6 +10,14 @@
       rel="stylesheet"
     />
     <link href="/vitrine/demo.css" rel="stylesheet" />
+      <style>
+      /* Tout texte gris devient noir */
+      [class*="text-slate-"],
+      [class*="text-gray-"],
+      [class*="text-neutral-"] {
+        color: #000000 !important;
+      }
+    </style>
   </head>
   <body class="bg-[#F8FAFC] text-slate-900 min-h-screen antialiased pt-24">
     <!-- NAV -->
@@ -22,28 +30,75 @@
         class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between"
       >
         <a href="/" class="flex items-center gap-3 group">
-          <div
-            class="w-10 h-10 rounded-xl bg-[#12312E] text-slate-900 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform"
-          >
-            <svg
-              class="w-5 h-5 text-slate-900"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2.5"
-                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 100" width="100%" height="100%" class="h-20 w-auto">
+  <defs>
+    <!-- DǸgradǸ doux utilisant le vert pastel #eaf4e3 -->
+    <linearGradient id="stLightGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F4FBF0" />
+      <stop offset="100%" stop-color="#EAF4E3" />
+    </linearGradient>
+
+    <!-- Ombre douce adaptǸe aux tons naturels -->
+    <filter id="subtleGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#1B4332" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Groupe Icne -->
+  <g transform="translate(10, 10)">
+    <!-- Fond conteneur arrondi utilisant #eaf4e3 -->
+    <rect x="0" y="0" width="80" height="80" rx="22" 
+          fill="url(#stLightGreen)" 
+          stroke="#D4E6CA" 
+          stroke-width="1.5" 
+          filter="url(#subtleGlow)" />
+    
+    <!-- TracǸ du S en vert profond pour un contraste net (normes WCAG) -->
+    <path d="M 52 26 
+             C 42 22, 28 26, 28 36 
+             C 28 46, 52 46, 52 56 
+             C 52 66, 36 68, 28 62" 
+          fill="none" 
+          stroke="#1B4332" 
+          stroke-width="7" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" />
+          
+    <!-- N"uds de connexion -->
+    <circle cx="56" cy="24" r="4.5" fill="#2D6A4F" />
+    <circle cx="24" cy="64" r="4.5" fill="#2D6A4F" />
+  </g>
+
+  <!-- Typographie SimpleTaff -->
+  <!-- "Simple" en ardoise sombre -->
+  <text x="110" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="400" 
+        letter-spacing="-0.8px" 
+        fill="#0F172A">Simple</text>
+
+  <!-- "Taff" en vert profond harmonisǸ avec #eaf4e3 -->
+  <text x="245" y="58" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="40" 
+        font-weight="800" 
+        letter-spacing="-0.5px" 
+        fill="#1B4332">Taff</text>
+
+  <!-- Tagline descriptive en ton sauge -->
+  <text x="112" y="77" 
+        font-family="Inter, system-ui, -apple-system, sans-serif" 
+        font-size="11" 
+        font-weight="600" 
+        letter-spacing="2.8px" 
+        fill="#52796F">GESTION &amp; RECRUTEMENT</text>
+</svg>
           <span
-            class="font-display font-bold text-xl text-[#12312E] tracking-tight"
+            class="font-display font-bold text-xl text-black tracking-tight"
             >SimpleTaff
             <span
-              class="text-xs bg-[#A3D977]/20 px-2 py-0.5 rounded-full text-[#12312E] ml-2 font-normal"
+              class="text-xs bg-[#8BC34A]/20 px-2 py-0.5 rounded-full text-black ml-2 font-normal"
               >Fillianta</span
             ></span
           >
@@ -51,22 +106,22 @@
         <div class="flex items-center gap-6">
           <a
             href="/"
-            class="text-slate-500 hover:text-[#12312E] text-sm font-medium transition-colors"
+            class="text-slate-500 hover:text-black text-sm font-medium transition-colors"
             >Accueil</a
           >
           <a
             href="/vitrine/demo.html"
-            class="text-slate-500 hover:text-[#12312E] text-sm font-medium transition-colors"
+            class="text-slate-500 hover:text-black text-sm font-medium transition-colors"
             >Démo Interactive</a
           >
           <a
             href="/vitrine/contact-souscription.html"
-            class="text-slate-500 hover:text-[#12312E] text-sm font-medium transition-colors"
+            class="text-slate-500 hover:text-black text-sm font-medium transition-colors"
             >Contact</a
           >
           <a
             href="/vitrine/login.html"
-            class="bg-[#12312E] hover:bg-[#0d2421] text-slate-900 px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+            class="bg-[#8BC34A] hover:bg-[#7cb342] text-slate-900 px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
             >Connexion</a
           >
         </div>
@@ -94,7 +149,7 @@
             class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4 active"
           >
             <span
-              class="w-8 h-8 rounded-lg bg-[#A3D977]/20 text-[#12312E] flex items-center justify-center font-bold flex-shrink-0"
+              class="w-8 h-8 rounded-lg bg-[#8BC34A]/20 text-black flex items-center justify-center font-bold flex-shrink-0"
               >1</span
             >
             <div>
@@ -112,7 +167,7 @@
             class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4"
           >
             <span
-              class="w-8 h-8 rounded-lg bg-[#12312E]/10 text-[#12312E] flex items-center justify-center font-bold flex-shrink-0"
+              class="w-8 h-8 rounded-lg bg-[#8BC34A]/10 text-black flex items-center justify-center font-bold flex-shrink-0"
               >2</span
             >
             <div>
@@ -131,7 +186,7 @@
             class="step-btn w-full text-left p-4 rounded-xl border border-slate-200 bg-white border border-slate-200 shadow-sm hover:bg-white/10 transition-all flex items-start gap-4"
           >
             <span
-              class="w-8 h-8 rounded-lg bg-[#A3D977]/20 text-[#12312E] flex items-center justify-center font-bold flex-shrink-0"
+              class="w-8 h-8 rounded-lg bg-[#8BC34A]/20 text-black flex items-center justify-center font-bold flex-shrink-0"
               >3</span
             >
             <div>
@@ -185,7 +240,7 @@
           <div id="step-1-content" class="step-content space-y-6">
             <div>
               <span
-                class="text-xs font-semibold uppercase tracking-wider text-[#A3D977]"
+                class="text-xs font-semibold uppercase tracking-wider text-[#8BC34A]"
                 >Backoffice Admin</span
               >
               <h2 class="text-2xl font-bold mt-1">Fiche Agent Terrain</h2>
@@ -205,7 +260,7 @@
                 <label class="block text-xs text-slate-500 mb-1"
                   >Zone Tarifaire</label
                 >
-                <div class="text-sm font-semibold text-[#12312E]">
+                <div class="text-sm font-semibold text-black">
                   Zone Industrielle Yopougon
                 </div>
               </div>
@@ -225,7 +280,7 @@
                 <label class="block text-xs text-slate-500 mb-1"
                   >Taux Horaire</label
                 >
-                <div class="text-sm font-semibold text-[#A3D977]">
+                <div class="text-sm font-semibold text-[#8BC34A]">
                   1 200 FCFA / heure
                 </div>
               </div>
@@ -236,10 +291,10 @@
               <div class="text-xs text-slate-500 font-semibold uppercase">
                 Documents requis validés
               </div>
-              <div class="flex items-center gap-2 text-sm text-[#A3D977]">
+              <div class="flex items-center gap-2 text-sm text-[#8BC34A]">
                 ✓ Pièce d'identité (CNI / Passeport)
               </div>
-              <div class="flex items-center gap-2 text-sm text-[#A3D977]">
+              <div class="flex items-center gap-2 text-sm text-[#8BC34A]">
                 ✓ Casier judiciaire vierge
               </div>
             </div>
@@ -249,7 +304,7 @@
           <div id="step-2-content" class="step-content space-y-6 hidden">
             <div>
               <span
-                class="text-xs font-semibold uppercase tracking-wider text-[#12312E]"
+                class="text-xs font-semibold uppercase tracking-wider text-black"
                 >Planning & Logistique</span
               >
               <h2 class="text-2xl font-bold mt-1">
@@ -269,7 +324,7 @@
                   </div>
                 </div>
                 <span
-                  class="text-xs bg-[#A3D977]/20 text-[#12312E] px-3 py-1 rounded-full border border-[#A3D977]"
+                  class="text-xs bg-[#8BC34A]/20 text-black px-3 py-1 rounded-full border border-[#8BC34A]"
                   >Client Actif</span
                 >
               </div>
@@ -287,14 +342,14 @@
                   class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100"
                 >
                   <div class="text-xs text-slate-500">Agent Assigné</div>
-                  <div class="text-sm font-semibold text-[#12312E]">
+                  <div class="text-sm font-semibold text-black">
                     Junior Kouassi
                   </div>
                 </div>
               </div>
 
               <div
-                class="bg-[#A3D977]/10 border border-[#A3D977] rounded-xl p-4 text-xs text-slate-600"
+                class="bg-[#8BC34A]/10 border border-[#8BC34A] rounded-xl p-4 text-xs text-slate-600"
               >
                 💡 **Règles d'affectation :** En cas d'absence, le coordonnateur
                 peut libérer Junior Kouassi de son affectation en un clic et y
@@ -307,7 +362,7 @@
           <div id="step-3-content" class="step-content space-y-6 hidden">
             <div>
               <span
-                class="text-xs font-semibold uppercase tracking-wider text-[#A3D977]"
+                class="text-xs font-semibold uppercase tracking-wider text-[#8BC34A]"
                 >Pointage Mobile</span
               >
               <h2 class="text-2xl font-bold mt-1">Scan de la Carte QR Code</h2>
@@ -340,7 +395,7 @@
                 >
                   <div class="text-xs text-slate-500">Statut du scan</div>
                   <div
-                    class="text-sm font-bold text-[#A3D977] flex items-center gap-2 mt-1"
+                    class="text-sm font-bold text-[#8BC34A] flex items-center gap-2 mt-1"
                   >
                     <span
                       class="w-2 h-2 rounded-full bg-green-400 animate-ping"
@@ -375,7 +430,7 @@
               <div
                 class="bg-white border border-slate-200 shadow-sm rounded-xl p-4 border border-slate-100 space-y-2"
               >
-                <div class="text-xs text-[#A3D977] font-bold">
+                <div class="text-xs text-[#8BC34A] font-bold">
                   1. Bulletin d'Agent
                 </div>
                 <div class="flex justify-between text-sm">
@@ -384,7 +439,7 @@
                 </div>
                 <div class="flex justify-between text-sm">
                   <span>Salaire Brut :</span>
-                  <span class="font-semibold text-[#A3D977]">201 600 FCFA</span>
+                  <span class="font-semibold text-[#8BC34A]">201 600 FCFA</span>
                 </div>
                 <div
                   class="flex justify-between text-sm border-t border-slate-200 pt-2 text-xs text-slate-500"
@@ -492,7 +547,7 @@
                 class="hidden bg-white border border-slate-200 shadow-sm rounded-xl p-3 border border-red-500/20 bg-red-500/5 text-xs flex items-center justify-between"
               >
                 <div>
-                  <span class="text-[#A3D977] font-semibold"
+                  <span class="text-[#8BC34A] font-semibold"
                     >✓ Devis généré avec succès !</span
                   >
                   <p class="text-slate-500 mt-1">
@@ -518,7 +573,7 @@
             >
             <button
               onclick="nextStep()"
-              class="bg-brand-dark text-slate-900 hover:bg-[#0d2421] transition-colors px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-2"
+              class="bg-[#8BC34A] text-slate-900 hover:bg-[#7cb342] transition-colors px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-2"
             >
               Continuer la démo →
             </button>

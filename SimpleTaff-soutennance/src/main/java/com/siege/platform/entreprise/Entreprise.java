@@ -43,6 +43,9 @@ public class Entreprise {
     @Column(nullable = false, precision = 5, scale = 2)
     private BigDecimal tauxRetenueReduite = new BigDecimal("25.00");
 
+    private String numeroCnps;
+    private String numeroContribuable;
+
     @PrePersist
     protected void onCreate() {
         dateCreation = LocalDateTime.now();

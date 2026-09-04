@@ -1,0 +1,12 @@
+* {
+  font-family: "Inter", sans-serif;
+}
+.step-btn.active {
+  background: #a3d97720;
+  border-color: #a3d977;
+  color: #12312e;
+}
+.step-btn.active div h3 {
+  color: #12312e;
+  font-weight: 700;
+}

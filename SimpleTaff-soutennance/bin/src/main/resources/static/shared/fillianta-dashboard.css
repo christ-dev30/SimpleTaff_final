@@ -1,0 +1,255 @@
+/* ═══════════════════════════════════════════════════════════════════
+   FILLIANTA DASHBOARD CSS
+   Applique le design system Fillianta (arrondis, vert, flottant)
+═══════════════════════════════════════════════════════════════════ */
+
+body {
+  background-color: #f8fafc !important;
+  color: #334155 !important;
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+}
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: "Outfit", sans-serif !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* Sidebar & Layout */
+.main-sidebar,
+#mainSidebar {
+  background: #ffffff !important;
+  border: 1px solid #f1f5f9 !important;
+  border-radius: 2rem !important;
+  margin: 1rem !important;
+  height: calc(100vh - 2rem) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05) !important;
+  overflow-y: auto !important;
+}
+
+/* App Main Area adjustments if sidebar has margin */
+.app-main {
+  margin: 1rem 1rem 1rem 0 !important;
+  height: calc(100vh - 2rem) !important;
+  border-radius: 2rem !important;
+}
+
+/* Cards */
+.bg-white.border.border-slate-100.shadow-sm,
+.bg-white.rounded-\[1\.5rem\],
+.bg-white.rounded-xl,
+.bg-white.shadow-sm,
+.stat-card,
+.glass {
+  background: #ffffff !important;
+  border: 1px solid #f1f5f9 !important;
+  box-shadow: 0 4px 20px -6px rgba(0, 0, 0, 0.04) !important;
+  border-radius: 1.5rem !important;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease !important;
+}
+.bg-white.border.border-slate-100.shadow-sm:hover,
+.stat-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 25px -8px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Sidebar Links */
+.sidebar-link {
+  transition: all 0.2s ease !important;
+  border-radius: 0.75rem !important;
+  margin: 4px 12px !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+}
+.sidebar-link:hover {
+  background: #f8fafc !important;
+  color: #12312e !important;
+}
+.sidebar-link.active {
+  background: #a3d97720 !important;
+  color: #12312e !important;
+  box-shadow: none !important;
+  border-left: 4px solid #a3d977 !important;
+  border-radius: 0 0.75rem 0.75rem 0 !important;
+}
+
+/* Buttons */
+button.bg-\[\#12312E\],
+.btn-brand,
+.btn-primary,
+.btn-indigo {
+  background: #12312e !important;
+  color: white !important;
+  border-radius: 9999px !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  box-shadow: 0 4px 12px -4px rgba(18, 49, 46, 0.3) !important;
+  padding: 0.5rem 1rem !important;
+  font-weight: 600 !important;
+}
+button.bg-\[\#12312E\]:hover,
+.btn-brand:hover,
+.btn-primary:hover,
+.btn-indigo:hover {
+  background: #0d2421 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 20px -6px rgba(18, 49, 46, 0.4) !important;
+}
+button.bg-\[\#12312E\]:active,
+.btn-brand:active,
+.btn-primary:active,
+.btn-indigo:active {
+  transform: scale(0.97) !important;
+}
+
+/* Secondary Buttons / Outlines */
+button.border.border-slate-300 {
+  background: white !important;
+  border-color: #e2e8f0 !important;
+  border-radius: 9999px !important;
+  transition: all 0.2s ease !important;
+  color: #12312e !important;
+}
+button.border.border-slate-300:hover {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Tables */
+table {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  width: 100%;
+  margin-top: -8px;
+}
+thead th {
+  background: transparent !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #94a3b8 !important;
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 12px 16px !important;
+}
+tbody tr {
+  background: white !important;
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.02) !important;
+  border-radius: 1rem !important;
+  transition: all 0.2s ease !important;
+  border: 1px solid #f8fafc !important;
+}
+tbody tr:hover {
+  transform: translateY(-2px) scale(1.005) !important;
+  box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.05) !important;
+  z-index: 10;
+  position: relative;
+  border-color: #a3d977 !important;
+}
+tbody td {
+  padding: 16px !important;
+  border: none !important;
+  color: #475569 !important;
+}
+tbody td:first-child {
+  border-top-left-radius: 1rem !important;
+  border-bottom-left-radius: 1rem !important;
+}
+tbody td:last-child {
+  border-top-right-radius: 1rem !important;
+  border-bottom-right-radius: 1rem !important;
+}
+
+/* Badges */
+.badge,
+.bg-indigo-100,
+.bg-emerald-100,
+.bg-amber-100,
+.bg-blue-100,
+.bg-red-100 {
+  border-radius: 9999px !important;
+  padding: 4px 12px !important;
+  font-weight: 700 !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.02em !important;
+  border: none !important;
+}
+
+.bg-indigo-100 {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+}
+.text-\[\#12312E\] {
+  color: #475569 !important;
+}
+
+.bg-emerald-100 {
+  background: #a3d97720 !important;
+  color: #12312e !important;
+}
+.text-emerald-700 {
+  color: #12312e !important;
+}
+
+.bg-amber-100 {
+  background: #fef3c7 !important;
+  color: #d97706 !important;
+}
+.text-amber-700 {
+  color: #d97706 !important;
+}
+
+.bg-blue-100 {
+  background: #e0f2fe !important;
+  color: #0284c7 !important;
+}
+.text-blue-700 {
+  color: #0284c7 !important;
+}
+
+.bg-red-100 {
+  background: #fee2e2 !important;
+  color: #b91c1c !important;
+}
+.text-red-700 {
+  color: #b91c1c !important;
+}
+
+/* Inputs & Modals */
+input,
+select,
+textarea,
+.input-minimal,
+.input-field {
+  background: #f8fafc !important;
+  border: 1px solid transparent !important;
+  border-radius: 9999px !important;
+  padding: 0.75rem 1.25rem !important;
+  transition: all 0.2s ease !important;
+  color: #1e293b !important;
+  font-size: 0.875rem !important;
+}
+input:focus,
+select:focus,
+textarea:focus,
+.input-minimal:focus,
+.input-field:focus {
+  outline: none !important;
+  background: white !important;
+  border-color: #a3d977 !important;
+  box-shadow: 0 0 0 3px rgba(163, 217, 119, 0.2) !important;
+}
+
+.fixed.inset-0.bg-slate-900\/50,
+.modal-overlay {
+  background: rgba(18, 49, 46, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+}
+.fixed.inset-0 .bg-white,
+.modal-content {
+  border-radius: 2rem !important;
+}
