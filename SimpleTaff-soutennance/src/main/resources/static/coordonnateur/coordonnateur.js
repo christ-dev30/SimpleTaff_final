@@ -1050,7 +1050,7 @@ async function loadOverview() {
               zc.pourcentage >= 80
                 ? "bg-[#12312E]"
                 : zc.pourcentage >= 50
-                  ? "bg-[#8BC34A]"
+                  ? "bg-[#A3D977]"
                   : "bg-rose-400";
 
             // Bar

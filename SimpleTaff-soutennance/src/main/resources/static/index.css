@@ -10,7 +10,7 @@ h3,
 
 /* Custom colors based on the design */
 .bg-brand-dark {
-  background-color: #8bc34a;
+  background-color: #a3d977;
 } /* Light green (brand) */
 .text-brand-dark {
   color: #000000;
@@ -19,23 +19,23 @@ h3,
   background-color: #111111;
 }
 .bg-brand-card {
-  background-color: #7cb342;
+  background-color: #8bc34a;
 } /* Secondary light green for cards */
 .bg-brand-card-hover {
-  background-color: #7cb342;
+  background-color: #8bc34a;
 }
 .text-brand-light {
-  color: #8bc34a;
+  color: #a3d977;
 } /* Accent green */
 
 .btn-primary {
-  background-color: #8bc34a;
+  background-color: #a3d977;
   color: #000000;
   border-radius: 9999px; /* Pill shape */
   transition: all 0.2s ease;
 }
 .btn-primary:hover {
-  background-color: #7cb342;
+  background-color: #8bc34a;
 }
 
 .btn-secondary {

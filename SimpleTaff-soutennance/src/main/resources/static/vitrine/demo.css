@@ -2,8 +2,8 @@
   font-family: "Inter", sans-serif;
 }
 .step-btn.active {
-  background: #8bc34a20;
-  border-color: #8bc34a;
+  background: #a3d97720;
+  border-color: #a3d977;
   color: #000000;
 }
 .step-btn.active div h3 {

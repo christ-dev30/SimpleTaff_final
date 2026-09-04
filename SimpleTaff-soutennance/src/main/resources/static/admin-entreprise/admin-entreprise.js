@@ -132,7 +132,7 @@ async function loadOverview() {
                 idx === 0
                   ? "bg-[#12312E]"
                   : idx === 1
-                    ? "bg-[#8BC34A]"
+                    ? "bg-[#A3D977]"
                     : "bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)]";
               return `
                                 <div class="w-full ${colorClass} rounded-t-sm relative flex flex-col justify-end" style="height: ${heightPct}%" title="${job}: ${count} (${percent}%)">
@@ -3411,7 +3411,7 @@ async function loadContrats() {
                 idx === 0
                   ? "bg-[#12312E]"
                   : idx === 1
-                    ? "bg-[#8BC34A]"
+                    ? "bg-[#A3D977]"
                     : "bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)]";
               return `
                                 <div class="w-full ${colorClass} rounded-t-sm relative flex flex-col justify-end" style="height: ${heightPct}%" title="${job}: ${count} (${percent}%)">
@@ -6118,7 +6118,7 @@ window.chargerBulletins = async function() {
           <div class="text-[10px] font-mono text-slate-400">${b.agent.matricule || b.agent.id.substring(0,8)} - <span class="text-indigo-500 font-semibold">${b.metier || 'Métier non défini'}</span></div>
         </td>
         <td class="p-3 text-[#12312E] font-bold">${b.salaireBrutEffectif || 0} F CFA</td>
-        <td class="p-3 text-[#8BC34A] font-bold">+${b.totalPrimes || 0} F CFA</td>
+        <td class="p-3 text-[#A3D977] font-bold">+${b.totalPrimes || 0} F CFA</td>
         <td class="p-3 text-red-500">
           <div class="font-bold">- ${( (b.cotisationCnps || 0) + (b.cotisationCnam || 0) + (b.retenueAbsence || 0) ).toFixed(2)} F CFA</div>
           <div class="text-[10px] text-red-400">

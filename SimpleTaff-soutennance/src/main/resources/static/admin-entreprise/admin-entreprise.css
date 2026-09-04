@@ -62,8 +62,8 @@ h4 {
     box-shadow 150ms;
 }
 .input-field:focus {
-  border-color: #8bc34a;
-  box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.2);
+  border-color: #a3d977;
+  box-shadow: 0 0 0 3px rgba(163, 217, 119, 0.2);
   background: #fff;
 }
 .btn-brand {
@@ -72,7 +72,7 @@ h4 {
   justify-content: center;
   padding: 10px 20px;
   border-radius: 12px;
-  background: #8bc34a;
+  background: #a3d977;
   color: #000000;
   font-weight: 700;
   font-size: 13px;
@@ -80,12 +80,12 @@ h4 {
   border: none;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 12px -4px rgba(139, 195, 74, 0.4);
+  box-shadow: 0 4px 12px -4px rgba(163, 217, 119, 0.4);
 }
 .btn-brand:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(124, 179, 66, 0.5);
-  background: #7cb342;
+  box-shadow: 0 10px 25px -5px rgba(139, 195, 74, 0.5);
+  background: #8bc34a;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -148,9 +148,9 @@ h4 {
   color: #000000;
 }
 .sidebar-link.active {
-  background: #8bc34a20;
+  background: #a3d97720;
   color: #000000;
-  border-left: 4px solid #8bc34a;
+  border-left: 4px solid #a3d977;
   border-radius: 0 0.75rem 0.75rem 0;
   font-weight: 700;
 }

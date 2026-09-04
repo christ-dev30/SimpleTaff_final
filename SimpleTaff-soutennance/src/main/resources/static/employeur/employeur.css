@@ -33,9 +33,9 @@ h3 {
   color: #000000;
 }
 .sidebar-link.active {
-  background: #8bc34a20;
+  background: #a3d97720;
   color: #000000;
-  border-left: 4px solid #8bc34a;
+  border-left: 4px solid #a3d977;
   border-radius: 0 0.75rem 0.75rem 0;
   font-weight: 700;
 }

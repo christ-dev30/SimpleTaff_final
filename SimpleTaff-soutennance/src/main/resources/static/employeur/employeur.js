@@ -432,7 +432,7 @@ async function loadOverview() {
             if (h > 0) {
               bar.className =
                 "w-full rounded-full transition-all duration-1000 ease-out relative group " +
-                (h >= 8 ? "bg-[#12312E]" : "bg-[#8BC34A]");
+                (h >= 8 ? "bg-[#12312E]" : "bg-[#A3D977]");
               // Add tooltip
               const hInt = Math.floor(h);
               const mInt = Math.round((h - hInt) * 60);
