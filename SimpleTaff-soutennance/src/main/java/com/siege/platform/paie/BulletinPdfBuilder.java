@@ -106,6 +106,8 @@ public class BulletinPdfBuilder {
             String entrepriseCnps = orDash(b.getEntreprise() != null ? b.getEntreprise().getNumeroCnps() : null);
             String entrepriseContribuable = orDash(b.getEntreprise() != null ? b.getEntreprise().getNumeroContribuable() : null);
             String matricule = orDash(b.getAgent().getMatricule());
+            String equipe = orDash(b.getAgent().getEquipe());
+            String categorie = orDash(b.getAgent().getCategorie());
             String salCat = formatVal(b.getSalaireDeBase());
             String nbParts = b.getAgent().getNbParts() != null ? b.getAgent().getNbParts().stripTrailingZeros().toPlainString() : "—";
             String nationalite = orDash(b.getAgent().getNationalite());
@@ -128,6 +130,8 @@ public class BulletinPdfBuilder {
             addInfoRow(leftDetails, "N° Contribuable :", entrepriseContribuable, labelFont, valueFont);
             addInfoRow(leftDetails, "Entreprise :", entrepriseNom, labelFont, valueFont);
             addInfoRow(leftDetails, "Matricule :", matricule, labelFont, valueFont);
+            addInfoRow(leftDetails, "Équipe :", equipe, labelFont, valueFont);
+            addInfoRow(leftDetails, "Catégorie :", categorie, labelFont, valueFont);
             addInfoRow(leftDetails, "Sal. Catégoriel :", salCat + " F CFA", labelFont, valueFont);
             addInfoRow(leftDetails, "Nb Parts (IGR) :", nbParts, labelFont, valueFont);
             addInfoRow(leftDetails, "Nationalité :", nationalite, labelFont, valueFont);
