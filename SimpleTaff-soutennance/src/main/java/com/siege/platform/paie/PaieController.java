@@ -36,6 +36,16 @@ public class PaieController {
         }
     }
 
+    @PostMapping("/bulletins/generer")
+    public ResponseEntity<?> genererBulletinDetaille(@RequestBody GenererBulletinRequest request) {
+        try {
+            paieService.calculerEtGenererBulletinDetaille(request);
+            return ResponseEntity.ok(Map.of("message", "Bulletin calculé avec succès"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
     @GetMapping("/periode/{periode}")
     public ResponseEntity<?> getBulletinsByPeriode(@PathVariable String periode) {
         Entreprise entreprise = tenantService.entreprise();

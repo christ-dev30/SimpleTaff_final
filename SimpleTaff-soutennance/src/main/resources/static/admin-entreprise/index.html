@@ -711,12 +711,12 @@
                     id="statOverviewAgents"
                     class="text-2xl sm:text-3xl font-extrabold truncate w-full text-white"
                   >
-                    245
+                    —
                   </div>
                   <div class="flex items-center gap-2 mt-2">
                     <span
                       class="bg-[#A3D977] text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                      >↑</span
+                      ><i class="fa-solid fa-arrow-up"></i></span
                     >
                     <span class="text-xs text-[#A3D977] font-medium"
                       >En hausse depuis le mois dernier</span
@@ -754,12 +754,12 @@
                     id="statOverviewPostes"
                     class="text-2xl sm:text-3xl font-extrabold truncate w-full text-[#12312E]"
                   >
-                    10
+                    —
                   </div>
                   <div class="flex items-center gap-2 mt-2">
                     <span
                       class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                      >→</span
+                      ><i class="fa-solid fa-arrow-right"></i></span
                     >
                     <span class="text-xs text-slate-500 font-medium"
                       >Stable par rapport au mois dernier</span
@@ -797,12 +797,12 @@
                     id="statOverviewAffectations"
                     class="text-2xl sm:text-3xl font-extrabold truncate w-full text-[#12312E]"
                   >
-                    124
+                    —
                   </div>
                   <div class="flex items-center gap-2 mt-2">
                     <span
                       class="bg-[#A3D977]/20 text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                      >↑</span
+                      ><i class="fa-solid fa-arrow-up"></i></span
                     >
                     <span class="text-xs text-slate-500 font-medium"
                       >En hausse depuis le mois dernier</span
@@ -840,7 +840,7 @@
                     id="statOverviewPointages"
                     class="text-2xl sm:text-3xl font-extrabold truncate w-full text-[#12312E]"
                   >
-                    218
+                    —
                   </div>
                   <div
                     class="flex items-center gap-2 mt-2 text-xs text-slate-500 font-medium"
@@ -862,34 +862,14 @@
                 </h3>
                 <div
                   id="chartBarsContainer"
-                  class="flex-1 flex items-end justify-between gap-2 px-2 relative"
+                  class="flex-1 flex items-center justify-center gap-2 px-2 relative"
                 >
-                  <!-- Bar chart mockup -->
-                  <div
-                    class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"
-                  ></div>
-                  <div class="w-full bg-[#12312E] rounded-full h-3/4"></div>
-                  <div
-                    class="w-full bg-[#A3D977] rounded-full h-4/5 relative group"
-                  >
-                    <div
-                      class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      74%
-                    </div>
-                  </div>
-                  <div class="w-full bg-[#12312E] rounded-full h-full"></div>
-                  <div
-                    class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/3"
-                  ></div>
+                  <div class="text-xs text-slate-400 font-bold">Chargement…</div>
                 </div>
                 <div
                   id="chartLabelsContainer"
                   class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3"
-                >
-                  <span>-</span><span>-</span><span>-</span><span>-</span
-                  ><span>-</span>
-                </div>
+                ></div>
               </div>
 
               <!-- Reminders (Col span 3) -->
@@ -972,7 +952,7 @@
                     onclick="showTab('pointage')"
                     class="text-xs font-bold text-[#12312E] hover:underline"
                   >
-                    Voir tout →
+                    Voir tout <i class="fa-solid fa-arrow-right"></i>
                   </button>
                 </div>
                 <div class="flex-1 overflow-y-auto pr-2 space-y-4">
@@ -1647,6 +1627,9 @@
                 <button onclick="chargerBulletins()" class="px-6 py-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition-all font-bold text-slate-700 flex items-center justify-center gap-2">
                   <i class="fa-solid fa-sync"></i> Recharger
                 </button>
+                <button type="button" onclick="openCalculModal()" class="px-6 py-3 rounded-xl border border-slate-200 hover:bg-slate-50 transition-all font-bold text-slate-700 flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-file-invoice"></i> Bulletin détaillé
+                </button>
               </div>
             </div>
 
@@ -1675,6 +1658,78 @@
                     </tr>
                   </tbody>
                 </table>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-5 space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="text-xs font-bold text-slate-500 uppercase">
+                  Facturation Clients
+                </div>
+                <button type="button" onclick="openFactureModal()" class="bg-[#12312E] hover:bg-[#19403B] text-white font-bold py-2 px-4 rounded-xl text-xs transition-colors flex items-center gap-2">
+                  <i class="fa-solid fa-plus"></i> Nouvelle Facture
+                </button>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-left text-xs whitespace-nowrap">
+                  <thead>
+                    <tr class="bg-slate-100 font-bold">
+                      <th class="p-2">Date</th>
+                      <th class="p-2">Période</th>
+                      <th class="p-2">Client</th>
+                      <th class="p-2">Montant</th>
+                      <th class="p-2">Statut</th>
+                      <th class="p-2">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="facturesTableBody" class="divide-y divide-slate-100">
+                    <tr>
+                      <td colspan="6" class="p-3 text-center text-slate-400">
+                        Aucune facture émise.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-100 shadow-sm rounded-[1.5rem] p-5 space-y-4">
+              <div class="text-xs font-bold text-slate-500 uppercase">
+                Primes de Rendement
+              </div>
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div class="space-y-3">
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full text-left text-xs whitespace-nowrap">
+                      <thead>
+                        <tr class="bg-slate-100 font-bold">
+                          <th class="p-1">Règle</th>
+                          <th class="p-1">FCFA / point</th>
+                          <th class="p-1">Seuil min.</th>
+                        </tr>
+                      </thead>
+                      <tbody id="primeRulesTableBody" class="divide-y divide-slate-100">
+                        <tr><td colspan="3" class="p-1 text-center text-slate-400">Aucune règle.</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <form id="addPrimeRuleForm" class="flex flex-col md:flex-row gap-2">
+                    <input type="text" id="primeLibelle" required placeholder="Libellé (ex: Palier 1)" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] outline-none text-xs bg-slate-50" />
+                    <input type="number" id="primeMontantParPoint" required placeholder="FCFA / point" class="w-32 px-3 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] outline-none text-xs bg-slate-50" />
+                    <input type="number" id="primeSeuilMinimum" required placeholder="Seuil min. (pts)" class="w-32 px-3 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] outline-none text-xs bg-slate-50" />
+                    <button type="submit" class="btn-brand py-2 px-4 text-xs">Ajouter</button>
+                  </form>
+                </div>
+                <div class="space-y-3 border-t lg:border-t-0 lg:border-l border-slate-100 pt-4 lg:pt-0 lg:pl-4">
+                  <div class="text-xs font-bold text-slate-500 uppercase">Simuler une prime</div>
+                  <form id="simulatePrimeForm" class="grid grid-cols-3 gap-2">
+                    <input type="number" id="simScore" required placeholder="Score (pts)" class="px-3 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] outline-none text-xs bg-slate-50" />
+                    <input type="number" id="simMontantParPoint" placeholder="FCFA / point (manuel)" class="px-3 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] outline-none text-xs bg-slate-50" />
+                    <input type="number" id="simSeuilMinimum" placeholder="Seuil (manuel)" class="px-3 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-[#A3D977] outline-none text-xs bg-slate-50" />
+                    <button type="submit" class="btn-brand col-span-3 py-2 text-xs">Simuler</button>
+                  </form>
+                  <div id="simPrimeResult" class="hidden bg-slate-50 rounded-xl p-3 text-xs space-y-1"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -2432,7 +2487,7 @@
                 onclick="loadMateriel()"
                 class="text-xs text-sky-600 font-bold hover:underline"
               >
-                ↻ Actualiser
+                <i class="fa-solid fa-arrows-rotate"></i> Actualiser
               </button>
             </div>
 
@@ -2444,7 +2499,7 @@
                 class="font-bold text-sm text-slate-800 flex items-center gap-2"
               >
                 <i class="fa-solid fa-map-location-dot text-sky-600"></i>
-                <span>📍 Assigner du matériel à une zone & coordonnateur</span>
+                <span><i class="fa-solid fa-location-dot"></i> Assigner du matériel à une zone & coordonnateur</span>
               </h3>
               <form
                 id="assignMaterielZoneForm"
@@ -2548,7 +2603,7 @@
               <h3
                 class="font-bold text-sm text-slate-800 flex items-center gap-2"
               >
-                <span>📥 Demandes de matériel reçues des coordonnateurs</span>
+                <span><i class="fa-solid fa-inbox"></i> Demandes de matériel reçues des coordonnateurs</span>
               </h3>
               <div class="overflow-x-auto">
                 <table class="min-w-full text-left text-xs whitespace-nowrap">
@@ -2587,7 +2642,7 @@
               <h3
                 class="font-bold text-sm text-slate-800 flex items-center gap-2"
               >
-                <span>📜 Historique des affectations de matériel</span>
+                <span><i class="fa-solid fa-scroll"></i> Historique des affectations de matériel</span>
               </h3>
               <div class="overflow-x-auto">
                 <table class="min-w-full text-left text-xs whitespace-nowrap">
@@ -3977,7 +4032,7 @@
               <p
                 class="text-xs text-amber-600 font-bold bg-amber-50 p-3 rounded-xl border border-amber-200"
               >
-                ⚠️ Tous les documents doivent être au format PDF. La taille
+                <i class="fa-solid fa-triangle-exclamation"></i> Tous les documents doivent être au format PDF. La taille
                 cumulée de l'ensemble des fichiers (y compris la photo) ne doit
                 pas dépasser 13 Mo.
                 <span
@@ -4254,7 +4309,7 @@
               onclick="closeFinaliserAgentAdminModal()"
               class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200 text-slate-500 hover:bg-rose-100 hover:text-rose-600 transition-colors"
             >
-              ✕
+              <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
 
@@ -4669,7 +4724,7 @@
                 <div
                   class="text-xs font-bold text-red-700 uppercase flex items-center gap-1"
                 >
-                  🚨 Personne à contacter en cas d'urgence
+                  <i class="fa-solid fa-triangle-exclamation"></i> Personne à contacter en cas d'urgence
                 </div>
                 <div class="text-xs text-slate-700">
                   <strong class="text-slate-900">Nom et prénoms :</strong>

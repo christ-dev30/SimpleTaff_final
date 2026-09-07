@@ -187,70 +187,80 @@ public class SuperAdminController {
         try {
             // Check if enterprise exists before deleting to get its name
             String nomEntreprise = entrepriseRepository.findById(id).map(Entreprise::getNom).orElse("Inconnue");
-            
+
             // Dans Hibernate 6 avec MySQL, les UUID sont stockés en binary(16).
             // JdbcTemplate ne fait pas la conversion automatique, on passe donc un byte[].
             byte[] idBytes = uuidToBytes(id);
-            
-            // 0. Notifications
-            jdbcTemplate.update("DELETE FROM notification_evenement WHERE entreprise_id = ?", idBytes);
-            
-            // 1. Pointages de l'entreprise
-            jdbcTemplate.update("DELETE FROM pointage WHERE entreprise_id = ?", idBytes);
-            
-            // 2. Cartes agent des agents de l'entreprise
-            jdbcTemplate.update("DELETE FROM carte_agent WHERE agent_id IN (SELECT id FROM agent_terrain WHERE entreprise_id = ?)", idBytes);
-            
-            // 3. Pieces justificatives
-            jdbcTemplate.update("DELETE FROM piece_justificative WHERE agent_id IN (SELECT id FROM agent_terrain WHERE entreprise_id = ?)", idBytes);
-            
-            // 4. Competences agent_emploi
-            jdbcTemplate.update("DELETE FROM agent_emploi WHERE agent_id IN (SELECT id FROM agent_terrain WHERE entreprise_id = ?)", idBytes);
-            
-            // 5. Affectations
-            jdbcTemplate.update("DELETE FROM affectation WHERE entreprise_id = ?", idBytes);
-            
-            // 6. Bulletins de paie
-            jdbcTemplate.update("DELETE FROM bulletin_de_paie WHERE entreprise_id = ?", idBytes);
-            
-            // 7. Factures
-            jdbcTemplate.update("DELETE FROM facture WHERE entreprise_id = ?", idBytes);
-            
-            // 8. Postes
-            jdbcTemplate.update("DELETE FROM poste WHERE entreprise_id = ?", idBytes);
-            
-            // 9. Employeur_site
-            jdbcTemplate.update("DELETE FROM employeur_site WHERE site_id IN (SELECT id FROM site WHERE structure_demandeuse_id IN (SELECT id FROM structure_demandeuse WHERE entreprise_id = ?))", idBytes);
-            
-            // 10. Sites
-            jdbcTemplate.update("DELETE FROM site WHERE structure_demandeuse_id IN (SELECT id FROM structure_demandeuse WHERE entreprise_id = ?)", idBytes);
-            
-            // 11. Agents de terrain
-            jdbcTemplate.update("DELETE FROM agent_terrain WHERE entreprise_id = ?", idBytes);
-            
-            // 12. Utilisateurs de l'entreprise
-            jdbcTemplate.update("DELETE FROM utilisateur WHERE entreprise_id = ?", idBytes);
-            
-            // 13. Structures demandeuses
-            jdbcTemplate.update("DELETE FROM structure_demandeuse WHERE entreprise_id = ?", idBytes);
-            
-            // 14. Emplois
-            jdbcTemplate.update("DELETE FROM emploi WHERE entreprise_id = ?", idBytes);
-            
-            // 15. Zones
-            jdbcTemplate.update("DELETE FROM zone WHERE entreprise_id = ?", idBytes);
-            
-            // 15.5 Invitations
-            jdbcTemplate.update("DELETE FROM invitation_entreprise WHERE entreprise_id = ?", idBytes);
-            
-            // 16. L'entreprise elle-même
-            int rowsDeleted = jdbcTemplate.update("DELETE FROM entreprise WHERE id = ?", idBytes);
-            
-            if (rowsDeleted > 0) {
-                notificationService.creerAlerte(null, "SUPER_ADMIN", "L'entreprise " + nomEntreprise + " a été définitivement supprimée.");
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
+
+            // Désactive temporairement la vérification des contraintes de clé étrangère le
+            // temps de cette transaction : l'ordre exact des DELETE ci-dessous n'a alors plus
+            // besoin d'être un tri topologique parfait du graphe de dépendances (qui évolue à
+            // chaque nouvelle table liée à une entreprise). C'est réactivé dans le finally,
+            // avant que la connexion ne retourne au pool, pour ne jamais affaiblir les
+            // contraintes ailleurs dans l'application.
+            jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=0");
+            try {
+                String agentIds = "SELECT id FROM agent_terrain WHERE entreprise_id = ?";
+                String contratIds = "SELECT id FROM contrat_agent WHERE entreprise_id = ?";
+                String affectationIds = "SELECT id FROM affectation WHERE entreprise_id = ?";
+                String materielIds = "SELECT id FROM materiel WHERE entreprise_id = ?";
+                String siteIds = "SELECT id FROM site WHERE structure_demandeuse_id IN (SELECT id FROM structure_demandeuse WHERE entreprise_id = ?)";
+
+                // Tables dépendant d'un agent/affectation/contrat/matériel de l'entreprise
+                jdbcTemplate.update("DELETE FROM conge_absence_longue WHERE agent_id IN (" + agentIds + ")", idBytes);
+                jdbcTemplate.update("DELETE FROM communication_agent WHERE agent_id IN (" + agentIds + ")", idBytes);
+                jdbcTemplate.update("DELETE FROM affectation_materiel WHERE agent_id IN (" + agentIds + ")", idBytes);
+                jdbcTemplate.update("DELETE FROM demande_dotation WHERE agent_id IN (" + agentIds + ")", idBytes);
+                jdbcTemplate.update("DELETE FROM demande_remplacement WHERE agent_id IN (" + agentIds + ")", idBytes);
+                jdbcTemplate.update("DELETE FROM carte_agent WHERE agent_id IN (" + agentIds + ")", idBytes);
+                jdbcTemplate.update("DELETE FROM piece_justificative WHERE agent_id IN (" + agentIds + ")", idBytes);
+                jdbcTemplate.update("DELETE FROM agent_emploi WHERE agent_id IN (" + agentIds + ")", idBytes);
+                jdbcTemplate.update("DELETE FROM renouvellement_contrat WHERE contrat_id IN (" + contratIds + ")", idBytes);
+
+                // Tables directement rattachées à l'entreprise
+                jdbcTemplate.update("DELETE FROM notification_evenement WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM audit_log WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM pointage WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM demande_conge WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM solde_conge WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM sanction WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM evaluation_agent WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM evaluation_coordonnateur WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM certification_agent WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM demande_materiel WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM bulletin_de_paie WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM parametre_paie WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM facture WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM regle_prime_rendement WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM workflow_definition WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM contrat_agent WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM affectation WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM materiel WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM poste WHERE entreprise_id = ?", idBytes);
+
+                // Sites / structures clientes
+                jdbcTemplate.update("DELETE FROM employeur_site WHERE site_id IN (" + siteIds + ")", idBytes);
+                jdbcTemplate.update("DELETE FROM site WHERE structure_demandeuse_id IN (SELECT id FROM structure_demandeuse WHERE entreprise_id = ?)", idBytes);
+                jdbcTemplate.update("DELETE FROM structure_demandeuse WHERE entreprise_id = ?", idBytes);
+
+                // Agents, utilisateurs, référentiels
+                jdbcTemplate.update("DELETE FROM agent_terrain WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM utilisateur WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM emploi WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM zone WHERE entreprise_id = ?", idBytes);
+                jdbcTemplate.update("DELETE FROM invitation_entreprise WHERE entreprise_id = ?", idBytes);
+
+                // L'entreprise elle-même
+                int rowsDeleted = jdbcTemplate.update("DELETE FROM entreprise WHERE id = ?", idBytes);
+
+                if (rowsDeleted > 0) {
+                    notificationService.creerAlerte(null, "SUPER_ADMIN", "L'entreprise " + nomEntreprise + " a été définitivement supprimée.");
+                    return ResponseEntity.noContent().build();
+                } else {
+                    return ResponseEntity.notFound().build();
+                }
+            } finally {
+                jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS=1");
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Map.of("message", "Erreur lors de la suppression en cascade: " + e.getMessage()));

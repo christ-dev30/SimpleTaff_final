@@ -83,17 +83,17 @@ async function loadMateriel() {
             const st = (m.statut || "").toUpperCase();
             if (st === "DISPONIBLE") {
               statusBadge =
-                '<span class="badge bg-green-100 text-green-700 font-bold">🟢 Disponible</span>';
+                '<span class="badge bg-green-100 text-green-700 font-bold"><i class="fa-solid fa-circle text-green-500 text-[6px] align-middle"></i> Disponible</span>';
             } else if (st === "ASSIGNE" || st === "REMIS") {
               statusBadge =
-                '<span class="badge bg-sky-100 text-sky-700 font-bold">🔵 Assigné</span>';
+                '<span class="badge bg-sky-100 text-sky-700 font-bold"><i class="fa-solid fa-circle text-sky-500 text-[6px] align-middle"></i> Assigné</span>';
             } else if (
               st === "DEFECTUEUX" ||
               st === "EN_PANNE" ||
               st === "REPARATION"
             ) {
               statusBadge =
-                '<span class="badge bg-amber-100 text-amber-800 font-bold">⚠️ En Panne</span>';
+                '<span class="badge bg-amber-100 text-amber-800 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> En Panne</span>';
             } else {
               statusBadge = `<span class="badge bg-slate-100 text-slate-700 font-bold">${st || "—"}</span>`;
             }
@@ -296,7 +296,7 @@ window.filterAgents = function () {
                                     PDF
                                 </button>
                                 <button onclick="printAdminBadge('${a.nom} ${a.prenom}', '${a.codeQr}', '${a.zoneNom}')" class="flex items-center gap-1 text-slate-600 hover:text-slate-800 font-bold text-[10px] border border-slate-200 bg-slate-50 px-2 py-0.5 rounded-lg transition-all">
-                                    🖨️
+                                    <i class="fa-solid fa-print"></i>
                                 </button>
                             </div>
                         </td>
@@ -419,7 +419,7 @@ async function loadAffectations() {
             .toUpperCase() || "AG";
         const badge =
           (a.statut || "").toUpperCase() === "ACTIVE"
-            ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 Active</span>'
+            ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold"><i class="fa-solid fa-circle text-emerald-500 text-[6px] align-middle"></i> Active</span>'
             : '<span class="badge bg-slate-100 text-slate-600 font-medium">Clôturée</span>';
         const clientName =
           a.structureCliente && a.structureCliente !== "—"
@@ -533,8 +533,8 @@ function renderCoordPointages(data) {
     .map((p) => {
       const isEntree = (p.typePointage || "").toUpperCase() === "ENTREE";
       const badge = isEntree
-        ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 Entrée</span>'
-        : '<span class="badge bg-rose-100 text-rose-700 font-bold">🔴 Sortie</span>';
+        ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold"><i class="fa-solid fa-circle text-emerald-500 text-[6px] align-middle"></i> Entrée</span>'
+        : '<span class="badge bg-rose-100 text-rose-700 font-bold"><i class="fa-solid fa-circle text-rose-500 text-[6px] align-middle"></i> Sortie</span>';
       const timeStr = p.dateHeure
         ? new Date(p.dateHeure).toLocaleTimeString("fr-FR", {
             hour: "2-digit",
@@ -789,23 +789,23 @@ async function loadCoordMateriel() {
             const st = (m.statut || "").toUpperCase();
             if (st === "DISPONIBLE") {
               statusBadge =
-                '<span class="badge bg-green-100 text-green-700 font-bold">🟢 Disponible</span>';
+                '<span class="badge bg-green-100 text-green-700 font-bold"><i class="fa-solid fa-circle text-green-500 text-[6px] align-middle"></i> Disponible</span>';
             } else if (st === "ASSIGNE" || st === "REMIS") {
               statusBadge =
-                '<span class="badge bg-sky-100 text-sky-700 font-bold">🔵 Assigné</span>';
+                '<span class="badge bg-sky-100 text-sky-700 font-bold"><i class="fa-solid fa-circle text-sky-500 text-[6px] align-middle"></i> Assigné</span>';
             } else if (
               st === "DEFECTUEUX" ||
               st === "EN_PANNE" ||
               st === "REPARATION"
             ) {
               statusBadge =
-                '<span class="badge bg-amber-100 text-amber-800 font-bold">⚠️ En Panne / Défaut</span>';
+                '<span class="badge bg-amber-100 text-amber-800 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> En Panne / Défaut</span>';
             } else if (st === "INUTILISABLE") {
               statusBadge =
-                '<span class="badge bg-rose-100 text-rose-700 font-bold">⛔ Inutilisable</span>';
+                '<span class="badge bg-rose-100 text-rose-700 font-bold"><i class="fa-solid fa-ban"></i> Inutilisable</span>';
             } else if (st === "PERDU") {
               statusBadge =
-                '<span class="badge bg-purple-100 text-purple-700 font-bold">🔍 Perdu</span>';
+                '<span class="badge bg-purple-100 text-purple-700 font-bold"><i class="fa-solid fa-magnifying-glass"></i> Perdu</span>';
             } else {
               statusBadge = `<span class="badge bg-slate-100 text-slate-700 font-bold">${st || "—"}</span>`;
             }
@@ -996,9 +996,18 @@ async function loadCoordConges() {
 window.loadCoordConges = loadCoordConges;
 
 async function loadOverview() {
+  // Fire every independent request immediately so they run in parallel
+  // instead of one after another.
+  const todayStrEarly = new Date().toISOString().slice(0, 10);
+  const statsPromiseCoord = apiFetch("/coordonnateur/stats");
+  const pointagesPromiseCoord = apiFetch(
+    `/coordonnateur/pointages?date=${todayStrEarly}`,
+  );
+  const affectationsPromiseCoord = apiFetch("/coordonnateur/affectations");
+
   // 1. Stats
   try {
-    const stats = await apiFetch("/coordonnateur/stats");
+    const stats = await statsPromiseCoord;
     if (stats) {
       document.getElementById("statAgentsCoord").textContent =
         stats.agentsSurSite ?? "—";
@@ -1080,11 +1089,9 @@ async function loadOverview() {
 
   // 2. Dashboard List 1: Pointages aujourd'hui
   const tbodyPtRec = document.getElementById("pointagesRecentsDashboardTable");
-  const todayStr = new Date().toISOString().slice(0, 10);
   let todayPointagesList = [];
   try {
-    todayPointagesList =
-      (await apiFetch(`/coordonnateur/pointages?date=${todayStr}`)) || [];
+    todayPointagesList = (await pointagesPromiseCoord) || [];
     if (tbodyPtRec) {
       if (todayPointagesList.length === 0) {
         tbodyPtRec.innerHTML =
@@ -1095,8 +1102,8 @@ async function loadOverview() {
           .map((p) => {
             const isEntree = (p.typePointage || "").toUpperCase() === "ENTREE";
             const badge = isEntree
-              ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 Entrée</span>'
-              : '<span class="badge bg-rose-100 text-rose-700 font-bold">🔴 Sortie</span>';
+              ? '<span class="badge bg-emerald-100 text-emerald-700 font-bold"><i class="fa-solid fa-circle text-emerald-500 text-[6px] align-middle"></i> Entrée</span>'
+              : '<span class="badge bg-rose-100 text-rose-700 font-bold"><i class="fa-solid fa-circle text-rose-500 text-[6px] align-middle"></i> Sortie</span>';
             const timeStr = p.dateHeure
               ? new Date(p.dateHeure).toLocaleTimeString("fr-FR", {
                   hour: "2-digit",
@@ -1124,7 +1131,7 @@ async function loadOverview() {
   // 3. Dashboard List 2: Agents Actuellement sur Site (Affectations + Pointages)
   const tbodyAffRec = document.getElementById("affectationsRecentesTable");
   try {
-    const affectations = (await apiFetch("/coordonnateur/affectations")) || [];
+    const affectations = (await affectationsPromiseCoord) || [];
     if (tbodyAffRec) {
       const activeAffectations = affectations.filter(
         (a) => (a.statut || "").toUpperCase() === "ACTIVE",
@@ -1161,11 +1168,11 @@ async function loadOverview() {
             if (pointageAjd) {
               if ((pointageAjd.typePointage || "").toUpperCase() === "ENTREE") {
                 statusBadge =
-                  '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 Sur Site</span>';
+                  '<span class="badge bg-emerald-100 text-emerald-700 font-bold"><i class="fa-solid fa-circle text-emerald-500 text-[6px] align-middle"></i> Sur Site</span>';
                 timeInfo = `<div class="text-emerald-600 text-[10px]">Arrivée: ${new Date(pointageAjd.dateHeureEntree || pointageAjd.dateHeure).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</div>`;
               } else {
                 statusBadge =
-                  '<span class="badge bg-rose-100 text-rose-700 font-bold">🔴 Fin de service</span>';
+                  '<span class="badge bg-rose-100 text-rose-700 font-bold"><i class="fa-solid fa-circle text-rose-500 text-[6px] align-middle"></i> Fin de service</span>';
                 timeInfo = `<div class="text-rose-500 text-[10px]">Départ: ${new Date(pointageAjd.dateHeureSortie || pointageAjd.dateHeure).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</div>`;
               }
             }
@@ -1289,7 +1296,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const upData = await up.json();
           justificatifUrl = upData.url || upData.fileUrl || null;
           const status = document.getElementById("reqCongeJustifStatus");
-          if (status) status.textContent = justifFile.name + " — envoyé ✔";
+          if (status) status.textContent = justifFile.name + " — envoyé ✓";
         }
         await apiFetch("/conges", {
           method: "POST",
@@ -1937,7 +1944,7 @@ document.addEventListener("DOMContentLoaded", () => {
           throw new Error("Veuillez d'abord téléverser le contrat signé.");
         }
 
-        const contracts = await apiFetch("/contrats?agentId=" + agentId);
+        const contracts = await apiFetch("/contrats/agent/" + agentId);
         const pendingContrat =
           (contracts || []).find(
             (c) => c.statut === "EN_ATTENTE_CONTRAT_SIGNE",
@@ -2166,7 +2173,7 @@ function setupGeographicValidation(inputId, datalistId, fieldName) {
       if (!isAlerting) {
         isAlerting = true;
         alert(
-          `⚠️ SÉLECTION REQUISE : Veuillez sélectionner une entrée valide pour le champ "${fieldName}" depuis la liste de suggestion.`,
+          `<i class="fa-solid fa-triangle-exclamation"></i> SÉLECTION REQUISE : Veuillez sélectionner une entrée valide pour le champ "${fieldName}" depuis la liste de suggestion.`,
         );
         input.value = "";
         setTimeout(() => {
@@ -3070,7 +3077,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// 🎨 Badge Generation & Print PDF 🎨────────────────────────────
+// <i class="fa-solid fa-palette"></i> Badge Generation & Print PDF <i class="fa-solid fa-palette"></i>────────────────────────────
 window.generateAdminBadgePdf = function (fullName, qrData, zone) {
   QRCode.toDataURL(
     qrData,
@@ -3158,7 +3165,7 @@ window.generateAdminBadgePdf = function (fullName, qrData, zone) {
       doc.setTextColor(3, 105, 161);
       doc.setFont("helvetica", "bold");
       doc.text(
-        "🔒  Code sécurisé JWT — Usage strictement personnel",
+        "🔒 Code sécurisé JWT — Usage strictement personnel",
         W / 2,
         246,
         { align: "center" },
@@ -3240,7 +3247,7 @@ window.printAdminBadge = function (fullName, qrData, zone) {
     <hr class="divider">
     <div class="qr-wrap"><img src="${qrDataUrl}" width="180" height="180"></div>
     <p class="instruction">Scannez ce QR lors de chaque pointage</p>
-    <div class="security">🔒 Code sécurisé — Usage strictly personnel</div>
+    <div class="security"><i class="fa-solid fa-lock"></i> Code sécurisé — Usage strictly personnel</div>
     <div class="date">Émis le ${now}</div>
   </div>
   <div class="footer">SimpleTaff — Gestion du Personnel &copy; ${new Date().getFullYear()}</div>
@@ -3308,10 +3315,14 @@ window.loadNotifications = async function () {
 window.showToast = function (message, type = "info", duration = 3500) {
   const container = document.getElementById("toast-container");
   if (!container) return;
-  const icons = { success: "✓", error: "✕", info: "ℹ" };
+  const icons = {
+    success: '<i class="fa-solid fa-check"></i>',
+    error: '<i class="fa-solid fa-xmark"></i>',
+    info: '<i class="fa-solid fa-circle-info"></i>',
+  };
   const toast = document.createElement("div");
   toast.className = `toast toast-${type}`;
-  toast.innerHTML = `<span style="font-size:15px">${icons[type] || "ℹ"}</span><span>${message}</span>`;
+  toast.innerHTML = `<span style="font-size:15px">${icons[type] || '<i class="fa-solid fa-circle-info"></i>'}</span><span>${message}</span>`;
   container.appendChild(toast);
   setTimeout(() => {
     toast.style.opacity = "0";
@@ -3348,7 +3359,7 @@ if (searchInput) {
       if (name.includes(q) || (a.telephone || "").includes(q)) {
         results.push({
           type: "Agent",
-          icon: "👤",
+          icon: '<i class="fa-solid fa-user"></i>',
           text: (a.nom || a.agentNom || "") + " " + (a.prenom || ""),
           tab: "agents",
           action: () => {
@@ -3371,7 +3382,7 @@ if (searchInput) {
       if (name.includes(q) || site.includes(q)) {
         results.push({
           type: "Affectation",
-          icon: "🏢",
+          icon: '<i class="fa-solid fa-building"></i>',
           text: (a.agentNom || "") + " - " + (a.siteNom || ""),
           tab: "affectations",
           action: () => {
@@ -3390,7 +3401,7 @@ if (searchInput) {
       if ((ent.nom || "").toLowerCase().includes(q)) {
         results.push({
           type: "Entreprise",
-          icon: "🏢",
+          icon: '<i class="fa-solid fa-building"></i>',
           text: ent.nom,
           tab: "entreprises",
           action: () => {

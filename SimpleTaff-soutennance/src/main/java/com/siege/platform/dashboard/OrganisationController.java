@@ -450,12 +450,12 @@ public class OrganisationController {
 
     private Entreprise getEntrepriseFromToken(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
-        if (header == null || !header.startsWith("Bearer ")) throw new RuntimeException("Token manquant.");
+        if (header == null || !header.startsWith("Bearer ")) throw new IllegalArgumentException("Token manquant.");
         String token = header.substring(7);
         String email = jwtUtils.getUserNameFromJwtToken(token);
         Utilisateur user = utilisateurRepo.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable."));
-        if (user.getEntreprise() == null) throw new RuntimeException("Aucune entreprise associée à ce compte.");
+                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable."));
+        if (user.getEntreprise() == null) throw new IllegalArgumentException("Aucune entreprise associée à ce compte.");
         return user.getEntreprise();
     }
 

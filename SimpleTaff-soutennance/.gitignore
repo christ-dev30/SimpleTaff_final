@@ -43,3 +43,12 @@ schema_info.txt
 cp.txt
 sources.txt
 CheckDb.class
+
+# ── Scripts contenant des identifiants réels (DB prod / hash) ──
+CheckDb.java
+QueryUsers.java
+fix_passwords.sql
+check_db_structure.js
+
+# ── Copie de build obsolète (contient les mêmes identifiants) ──
+bin/

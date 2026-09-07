@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RestController
 @RequestMapping("/api/notifications")
-@PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'COORDONNATEUR', 'SUPER_ADMIN')")
+@PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'COORDONNATEUR', 'EMPLOYEUR', 'SUPER_ADMIN')")
 @Transactional
 public class NotificationController {
     private final NotificationEvenementRepository repository;

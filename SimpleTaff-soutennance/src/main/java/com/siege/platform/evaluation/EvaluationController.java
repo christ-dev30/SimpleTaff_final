@@ -108,7 +108,7 @@ public class EvaluationController {
     }
  
     @PostMapping
-    @PreAuthorize("hasAnyRole('EMPLOYEUR', 'SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('EMPLOYEUR', 'ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
     public ResponseEntity<?> create(@RequestBody Map<String, Object> payload) {
         EvaluationAgent evaluation = new EvaluationAgent();
         evaluation.setEntreprise(tenantService.entreprise());

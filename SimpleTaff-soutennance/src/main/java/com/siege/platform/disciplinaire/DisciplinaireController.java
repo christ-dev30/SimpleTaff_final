@@ -90,7 +90,7 @@ public class DisciplinaireController {
 
     @PostMapping("/sanctions")
     @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
-    public ResponseEntity<?> create(@RequestBody Map<String, Object> payload) {
+ public ResponseEntity<?> create(@RequestBody Map<String, Object> payload) {
         Sanction sanction = new Sanction();
         sanction.setEntreprise(tenantService.entreprise());
         sanction.setAgent(agentRepository.findById(UUID.fromString((String) payload.get("agentId"))).orElseThrow());

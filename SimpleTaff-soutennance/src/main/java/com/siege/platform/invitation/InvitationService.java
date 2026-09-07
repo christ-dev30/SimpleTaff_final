@@ -25,6 +25,7 @@ public class InvitationService {
     private final JavaMailSender mailSender;
     private final PasswordEncoder passwordEncoder;
     private final com.siege.platform.notification.NotificationService notificationService;
+    private final String mailPassword;
 
     public InvitationService(
             InvitationEntrepriseRepository invitationRepository,
@@ -32,13 +33,15 @@ public class InvitationService {
             UtilisateurRepository utilisateurRepository,
             JavaMailSender mailSender,
             PasswordEncoder passwordEncoder,
-            com.siege.platform.notification.NotificationService notificationService) {
+            com.siege.platform.notification.NotificationService notificationService,
+            @org.springframework.beans.factory.annotation.Value("${spring.mail.password}") String mailPassword) {
         this.invitationRepository = invitationRepository;
         this.entrepriseRepository = entrepriseRepository;
         this.utilisateurRepository = utilisateurRepository;
         this.mailSender = mailSender;
         this.passwordEncoder = passwordEncoder;
         this.notificationService = notificationService;
+        this.mailPassword = mailPassword;
     }
 
     /**
@@ -131,9 +134,9 @@ public class InvitationService {
             try {
                 System.out.println("[InvitationService] Démarrage de l'envoi de l'email à " + destinataire + " via l'API REST de Brevo...");
                 
-                String apiKey = System.getenv("MAIL_PASSWORD");
-                if (apiKey == null || apiKey.isEmpty()) {
-                    System.err.println("[InvitationService] ERREUR: La clé API Brevo (MAIL_PASSWORD) n'est pas définie dans les variables d'environnement.");
+                String apiKey = this.mailPassword;
+                if (apiKey == null || apiKey.isEmpty() || apiKey.contains("${")) {
+                    System.err.println("[InvitationService] ERREUR: La clé API Brevo (spring.mail.password) n'est pas définie dans la configuration.");
                     return;
                 }
                 

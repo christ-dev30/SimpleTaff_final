@@ -134,7 +134,7 @@
 				<configuration>
 					<url>jdbc:postgresql://localhost:5432/simpletaff_db</url>
 					<user>postgres</user>
-					<password>@Juniorehui15</password>
+					<password>${env.FLYWAY_LOCAL_PG_PASSWORD}</password>
 				</configuration>
 			</plugin>
 		</plugins>

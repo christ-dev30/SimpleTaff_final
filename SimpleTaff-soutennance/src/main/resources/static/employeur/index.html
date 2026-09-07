@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Espace Employeur — SimpleTaff</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <script
       src="https://unpkg.com/html5-qrcode"
       type="text/javascript"
@@ -443,12 +447,12 @@
                   id="statOverviewTotal"
                   class="text-2xl sm:text-3xl font-extrabold truncate w-full text-white"
                 >
-                  45
+                  —
                 </div>
                 <div class="flex items-center gap-2 mt-2">
                   <span
                     class="bg-[#A3D977] text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                    >↑</span
+                    ><i class="fa-solid fa-arrow-up"></i></span
                   >
                   <span class="text-xs text-[#A3D977] font-medium"
                     >Effectif complet</span
@@ -486,12 +490,12 @@
                   id="statOverviewPointagesDay"
                   class="text-2xl sm:text-3xl font-extrabold truncate w-full text-[#12312E]"
                 >
-                  12
+                  —
                 </div>
                 <div class="flex items-center gap-2 mt-2">
                   <span
                     class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                    >→</span
+                    ><i class="fa-solid fa-arrow-right"></i></span
                   >
                   <span class="text-xs text-slate-500 font-medium"
                     >Sur 3 sites différents</span
@@ -536,7 +540,7 @@
                 <div class="flex items-center gap-2 mt-2">
                   <span
                     class="bg-[#A3D977]/20 text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                    >★</span
+                    ><i class="fa-solid fa-star"></i></span
                   >
                   <span class="text-xs text-slate-500 font-medium"
                     >Sur 80 points</span
@@ -1082,7 +1086,7 @@
               onclick="loadPersonnelQr()"
               class="text-xs font-bold text-[#12312E] hover:text-indigo-800 border border-indigo-200 bg-[#EAF4E3] px-3 py-1.5 rounded-lg transition-colors"
             >
-              ↻ Actualiser
+              <i class="fa-solid fa-arrows-rotate"></i> Actualiser
             </button>
           </div>
           <div

@@ -357,9 +357,21 @@ window.enregistrerPointage = enregistrerPointage;
 // Fetch agents assignés & Vue d'ensemble
 async function loadOverview() {
   try {
+    // Fire independent requests immediately so they run in parallel
+    // instead of one after another.
+    const mePromise = apiFetch("/employeur/me").catch((eMe) => {
+      console.warn("Could not load structure profile", eMe);
+      return null;
+    });
+    const personnelPromise = apiFetch("/employeur/personnel");
+    const statsPromiseEmployeur = apiFetch("/employeur/stats").catch((eStats) => {
+      console.warn("Could not load stats", eStats);
+      return null;
+    });
+
     // Fetch structure profile for name
     try {
-      const meInfo = await apiFetch("/employeur/me");
+      const meInfo = await mePromise;
       if (meInfo) {
         if (meInfo.structureCliente) {
           document.getElementById("clientNom").textContent =
@@ -380,12 +392,12 @@ async function loadOverview() {
     }
 
     // Fetch agents
-    const response = await apiFetch("/employeur/personnel");
+    const response = await personnelPromise;
     const agents = Array.isArray(response) ? response : [];
     window.allAgents = agents;
 
     try {
-      const statsRes = await apiFetch("/employeur/stats");
+      const statsRes = await statsPromiseEmployeur;
       if (statsRes) {
         document.getElementById("statOverviewTotal").textContent =
           statsRes.totalAgents || 0;
@@ -1165,7 +1177,7 @@ if (searchInput) {
       if (name.includes(q) || (a.telephone || "").includes(q)) {
         results.push({
           type: "Agent",
-          icon: "👤",
+          icon: '<i class="fa-solid fa-user"></i>',
           text: (a.nom || a.agentNom || "") + " " + (a.prenom || ""),
           tab: "personnel",
           action: () => {
@@ -1188,7 +1200,7 @@ if (searchInput) {
       if (name.includes(q) || site.includes(q)) {
         results.push({
           type: "Affectation",
-          icon: "🏢",
+          icon: '<i class="fa-solid fa-building"></i>',
           text: (a.agentNom || "") + " - " + (a.siteNom || ""),
           tab: "affectations",
           action: () => {
@@ -1207,7 +1219,7 @@ if (searchInput) {
       if ((ent.nom || "").toLowerCase().includes(q)) {
         results.push({
           type: "Entreprise",
-          icon: "🏢",
+          icon: '<i class="fa-solid fa-building"></i>',
           text: ent.nom,
           tab: "entreprises",
           action: () => {

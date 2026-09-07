@@ -78,6 +78,9 @@ public class RapportService {
 
     public Map<String, Object> genererRapportGlobal(String mois) {
         Utilisateur current = getCurrentUser();
+        if (current == null || current.getEntreprise() == null) {
+            throw new IllegalArgumentException("Aucune entreprise associée à ce compte.");
+        }
         YearMonth ym = YearMonth.parse(mois);
         LocalDate debutMois = ym.atDay(1);
         LocalDate finMois = ym.atEndOfMonth();
@@ -192,6 +195,9 @@ public class RapportService {
 
     public Map<String, Object> genererRapportAgent(String mois, java.util.UUID agentId) {
         Utilisateur current = getCurrentUser();
+        if (current == null || current.getEntreprise() == null) {
+            throw new IllegalArgumentException("Aucune entreprise associée à ce compte.");
+        }
         YearMonth ym = YearMonth.parse(mois);
         LocalDate debutMois = ym.atDay(1);
         LocalDate finMois = ym.atEndOfMonth();

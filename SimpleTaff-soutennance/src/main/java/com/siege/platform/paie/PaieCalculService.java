@@ -148,4 +148,92 @@ public class PaieCalculService {
 
         return bulletinRepository.save(bulletin);
     }
+
+    @Transactional
+    public BulletinDePaie calculerEtGenererBulletinDetaille(GenererBulletinRequest request) {
+        Entreprise entreprise = tenantService.entreprise();
+
+        Affectation affectation = affectationRepository.findById(request.getAffectationId())
+                .orElseThrow(() -> new IllegalArgumentException("Affectation introuvable."));
+        AgentTerrain agent = affectation.getAgent();
+
+        List<ContratAgent> contrats = contratRepository.findByAgentIdOrderByDateDebutDesc(agent.getId());
+        BigDecimal salaireBase = contrats.stream()
+                .filter(c -> "ACTIF".equals(c.getStatut()))
+                .map(ContratAgent::getSalaireBase)
+                .findFirst()
+                .orElse(new BigDecimal("100000.00"));
+
+        BigDecimal salaireBrutEffectif = salaireBase;
+        if (request.getJoursPrevus() > 0 && request.getJoursValides() < request.getJoursPrevus()) {
+            BigDecimal fraction = BigDecimal.valueOf(request.getJoursValides())
+                    .divide(BigDecimal.valueOf(request.getJoursPrevus()), 4, RoundingMode.HALF_UP);
+            salaireBrutEffectif = salaireBase.multiply(fraction);
+        }
+
+        BigDecimal retenueAbsence = BigDecimal.ZERO;
+        if (request.getJoursAbsNonJust() > 0 && request.getJoursPrevus() > 0) {
+            BigDecimal valeurJour = salaireBase.divide(BigDecimal.valueOf(request.getJoursPrevus()), 4, RoundingMode.HALF_UP);
+            retenueAbsence = valeurJour.multiply(BigDecimal.valueOf(request.getJoursAbsNonJust()));
+            salaireBrutEffectif = salaireBrutEffectif.subtract(retenueAbsence);
+        }
+
+        ParametrePaie parametre = parametreRepository.findByEntrepriseId(entreprise.getId())
+                .orElse(new ParametrePaie());
+
+        BigDecimal primeTransport = new BigDecimal("15000.00");
+        BigDecimal primeLogement = BigDecimal.ZERO;
+        BigDecimal primeRendement = BigDecimal.ZERO;
+        BigDecimal totalPrimes = primeTransport.add(primeLogement).add(primeRendement);
+
+        YearMonth ym = YearMonth.parse(request.getPeriode());
+        LocalDate debutMois = ym.atDay(1);
+        LocalDate finMois = ym.atEndOfMonth();
+        long nombreSanctions = sanctionRepository.countByAgentIdAndDateDecisionBetween(agent.getId(), debutMois, finMois);
+
+        if (request.getJoursAbsNonJust() >= 2 || nombreSanctions >= 1) {
+            totalPrimes = BigDecimal.ZERO;
+        }
+
+        BigDecimal assiette = salaireBrutEffectif.add(totalPrimes);
+        BigDecimal cnps = assiette.multiply(parametre.getTauxCnps()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal cnam = assiette.multiply(parametre.getTauxCnam()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal impot = BigDecimal.ZERO;
+
+        BigDecimal totalDeductions = cnps.add(cnam).add(impot);
+        BigDecimal salaireNet = assiette.subtract(totalDeductions).setScale(2, RoundingMode.HALF_UP);
+
+        BulletinDePaie bulletin = new BulletinDePaie();
+        bulletin.setEntreprise(entreprise);
+        bulletin.setAgent(agent);
+        bulletin.setAffectation(affectation);
+        bulletin.setPeriode(request.getPeriode());
+        bulletin.setJoursPrevus(request.getJoursPrevus());
+        bulletin.setJoursValides(request.getJoursValides());
+        bulletin.setJoursAbsenceNonJustifiee(request.getJoursAbsNonJust());
+        bulletin.setJoursAbsenceJustifieeCourte(request.getJoursAbsJustCourte());
+        bulletin.setJoursAbsenceJustifieeLongue(request.getJoursAbsJustLongue());
+        bulletin.setJoursCongePaye(request.getJoursCongePaye());
+        bulletin.setSalaireDeBase(salaireBase);
+        bulletin.setSalaireBrutEffectif(salaireBrutEffectif);
+        bulletin.setRetenueAbsence(retenueAbsence);
+        bulletin.setPrimeTransport(primeTransport);
+        bulletin.setPrimeLogement(primeLogement);
+        bulletin.setPrimeRendement(primeRendement);
+        bulletin.setTotalPrimes(totalPrimes);
+        bulletin.setCotisationCnps(cnps);
+        bulletin.setCotisationCnam(cnam);
+        bulletin.setImpotSurRevenu(impot);
+        bulletin.setSalaireNetCalcule(salaireNet);
+        bulletin.setCreeLe(java.time.LocalDateTime.now());
+        bulletin.setDateCloture(java.time.LocalDateTime.now());
+
+        Optional<BulletinDePaie> existant = bulletinRepository.findByAgentIdAndPeriode(agent.getId(), request.getPeriode());
+        existant.ifPresent(b -> {
+            bulletin.setId(b.getId());
+            bulletin.setCreeLe(b.getCreeLe() != null ? b.getCreeLe() : java.time.LocalDateTime.now());
+        });
+
+        return bulletinRepository.save(bulletin);
+    }
 }

@@ -68,8 +68,19 @@ public class EntrepriseAdminController {
     }
 
     @GetMapping("/emplois")
-    public ResponseEntity<List<Emploi>> getEmplois() {
-        return ResponseEntity.ok(emploiRepository.findAll());
+    public ResponseEntity<List<Map<String, Object>>> getEmplois() {
+        List<Map<String, Object>> response = new ArrayList<>();
+        for (Emploi e : emploiRepository.findAll()) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("id", e.getId());
+            map.put("libelle", e.getLibelle());
+            map.put("categorie", e.getCategorie());
+            map.put("description", e.getDescription());
+            map.put("competencesRequises", e.getCompetencesRequises());
+            map.put("salaireBrutReference", e.getSalaireBrutReference());
+            response.add(map);
+        }
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/emplois")

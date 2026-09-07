@@ -248,6 +248,14 @@ async function loadOverview() {
             })
             .join("");
         }
+      } else if (document.getElementById("saasChartContainer")) {
+        document.getElementById("saasChartContainer").innerHTML =
+          '<div class="w-full text-center text-xs text-slate-400 py-4 h-full flex items-center justify-center font-bold">Aucune donnée disponible</div>';
+        const labelsContainer = document.getElementById("saasChartLabels");
+        if (labelsContainer) labelsContainer.innerHTML = "";
+        if (document.getElementById("revenuSaasVal")) {
+          document.getElementById("revenuSaasVal").textContent = "0 FCFA";
+        }
       }
       if (document.getElementById("croissanceValue")) {
         const croissanceValue = res.croissanceMensuelle || 0;
@@ -427,7 +435,7 @@ if (searchInput) {
         ) {
           results.push({
             type: "Administrateur",
-            icon: "👤",
+            icon: '<i class="fa-solid fa-user"></i>',
             text: (a.prenom || "") + " " + (a.nom || ""),
             tab: "dashboard",
             action: () => {
@@ -446,7 +454,7 @@ if (searchInput) {
         if ((ent.nom || "").toLowerCase().includes(q)) {
           results.push({
             type: "Entreprise",
-            icon: "🏢",
+            icon: '<i class="fa-solid fa-building"></i>',
             text: ent.nom,
             tab: "entreprises",
             action: () => {

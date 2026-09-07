@@ -21,17 +21,11 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-    private final com.siege.platform.utilisateur.UtilisateurRepository utilisateurRepository;
-    private final jakarta.persistence.EntityManager entityManager;
 
     public AuthController(AuthenticationManager authenticationManager,
-                          JwtUtils jwtUtils,
-                          com.siege.platform.utilisateur.UtilisateurRepository utilisateurRepository,
-                          jakarta.persistence.EntityManager entityManager) {
+                          JwtUtils jwtUtils) {
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
-        this.utilisateurRepository = utilisateurRepository;
-        this.entityManager = entityManager;
     }
 
     @PostMapping("/signin")
@@ -53,35 +47,4 @@ public class AuthController {
                 roles.get(0)));
     }
 
-    @org.springframework.web.bind.annotation.GetMapping("/users-debug")
-    public ResponseEntity<?> listUsersDebug() {
-        return ResponseEntity.ok(utilisateurRepository.findAll().stream().map(u -> {
-            java.util.Map<String, Object> m = new java.util.HashMap<>();
-            m.put("email", u.getEmail());
-            m.put("role", u.getRole());
-            m.put("statut", u.getStatut());
-            m.put("entreprise", u.getEntreprise() != null ? u.getEntreprise().getNom() : null);
-            m.put("motDePasseHash", u.getMotDePasseHash());
-            return m;
-        }).collect(Collectors.toList()));
-    }
-
-    @org.springframework.web.bind.annotation.GetMapping("/db-debug")
-    public ResponseEntity<?> dbDebug() {
-        java.util.Map<String, Object> res = new java.util.HashMap<>();
-        try {
-            List<?> migrations = entityManager.createNativeQuery(
-                "SELECT version, description, script, success FROM flyway_schema_history ORDER BY installed_rank DESC"
-            ).getResultList();
-            res.put("migrations", migrations);
-
-            List<?> columns = entityManager.createNativeQuery(
-                "SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = 'piece_justificative'"
-            ).getResultList();
-            res.put("columns", columns);
-        } catch (Exception e) {
-            res.put("error", e.getMessage());
-        }
-        return ResponseEntity.ok(res);
-    }
 }

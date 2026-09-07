@@ -9,6 +9,10 @@
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
     <link href="/super-admin/super-admin.css" rel="stylesheet" />
 
     <script>
@@ -443,12 +447,12 @@
                   id="statActives"
                   class="text-2xl sm:text-3xl font-extrabold truncate w-full text-white"
                 >
-                  24
+                  —
                 </div>
                 <div class="flex items-center gap-2 mt-2">
                   <span
                     class="bg-[#A3D977] text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                    >↑</span
+                    ><i class="fa-solid fa-arrow-up"></i></span
                   >
                   <span class="text-xs text-[#A3D977] font-medium"
                     >En hausse depuis le mois dernier</span
@@ -486,12 +490,12 @@
                   id="statPending"
                   class="text-2xl sm:text-3xl font-extrabold truncate w-full text-[#12312E]"
                 >
-                  22
+                  —
                 </div>
                 <div class="flex items-center gap-2 mt-2">
                   <span
                     class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                    >→</span
+                    ><i class="fa-solid fa-arrow-right"></i></span
                   >
                   <span class="text-xs text-slate-500 font-medium"
                     >En hausse depuis le mois dernier</span
@@ -529,12 +533,12 @@
                   id="statTotal"
                   class="text-2xl sm:text-3xl font-extrabold truncate w-full text-[#12312E]"
                 >
-                  145
+                  —
                 </div>
                 <div class="flex items-center gap-2 mt-2">
                   <span
                     class="bg-[#A3D977]/20 text-[#12312E] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"
-                    >↑</span
+                    ><i class="fa-solid fa-arrow-up"></i></span
                   >
                   <span class="text-xs text-slate-500 font-medium"
                     >En hausse depuis le mois dernier</span
@@ -561,40 +565,14 @@
               </div>
               <div
                 id="saasChartContainer"
-                class="flex-1 flex items-end justify-between gap-2 px-2 relative"
+                class="flex-1 flex items-center justify-center gap-2 px-2 relative"
               >
-                <!-- Bar chart mockup -->
-                <div
-                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"
-                ></div>
-                <div class="w-full bg-[#12312E] rounded-full h-3/4"></div>
-                <div
-                  class="w-full bg-[#A3D977] rounded-full h-4/5 relative group"
-                >
-                  <div
-                    class="absolute -top-6 left-1/2 -translate-x-1/2 bg-white border border-slate-200 text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    74%
-                  </div>
-                </div>
-                <div class="w-full bg-[#12312E] rounded-full h-full"></div>
-                <div
-                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/3"
-                ></div>
-                <div
-                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-1/2"
-                ></div>
-                <div
-                  class="w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#e2e8f0_2px,#e2e8f0_4px)] rounded-full h-2/5"
-                ></div>
+                <div class="text-xs text-slate-400 font-bold">Chargement…</div>
               </div>
               <div
                 id="saasChartLabels"
                 class="flex justify-between text-[10px] font-bold text-slate-400 uppercase mt-4 px-3"
-              >
-                <span>L</span><span>M</span><span>M</span><span>J</span
-                ><span>V</span><span>S</span><span>D</span>
-              </div>
+              ></div>
             </div>
 
             <!-- Reminders (Col span 4) -->
@@ -741,7 +719,7 @@
               onclick="loadEntreprises()"
               class="text-xs text-[#12312E] font-bold hover:underline"
             >
-              ↻ Actualiser
+              <i class="fa-solid fa-arrows-rotate"></i> Actualiser
             </button>
           </div>
           <div
@@ -796,7 +774,7 @@
                 class="hidden bg-green-50 border border-green-200 rounded-xl p-4 space-y-2"
               >
                 <p class="text-green-700 font-bold text-sm">
-                  ✅ Invitation envoyée !
+                  <i class="fa-solid fa-check"></i> Invitation envoyée !
                 </p>
                 <p class="text-xs text-green-600">
                   Si l'email n'arrive pas, copiez ce lien manuellement :
@@ -946,7 +924,7 @@
                     <div
                       class="w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs flex-shrink-0"
                     >
-                      ⚠
+                      <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
                     <p class="text-sm text-slate-600 mt-0.5">
                       Si l'entreprise ne s'inscrit pas dans les
@@ -975,11 +953,11 @@
                 >
               </p>
               <ul class="text-sm text-slate-600 space-y-1">
-                <li>✔ Jusqu'à 20 agents</li>
-                <li>✔ 1 site</li>
-                <li>✔ Pointage QR</li>
-                <li>✖ Multi-sites</li>
-                <li>✖ Rapports avancés</li>
+                <li><i class="fa-solid fa-check"></i> Jusqu'à 20 agents</li>
+                <li><i class="fa-solid fa-check"></i> 1 site</li>
+                <li><i class="fa-solid fa-check"></i> Pointage QR</li>
+                <li><i class="fa-solid fa-xmark"></i> Multi-sites</li>
+                <li><i class="fa-solid fa-xmark"></i> Rapports avancés</li>
               </ul>
             </div>
             <div
@@ -997,11 +975,11 @@
                 >
               </p>
               <ul class="text-sm text-slate-600 space-y-1">
-                <li>✔ Agents illimités</li>
-                <li>✔ Multi-sites</li>
-                <li>✔ Pointage QR</li>
-                <li>✔ Rapports avancés</li>
-                <li>✔ Gestion paie</li>
+                <li><i class="fa-solid fa-check"></i> Agents illimités</li>
+                <li><i class="fa-solid fa-check"></i> Multi-sites</li>
+                <li><i class="fa-solid fa-check"></i> Pointage QR</li>
+                <li><i class="fa-solid fa-check"></i> Rapports avancés</li>
+                <li><i class="fa-solid fa-check"></i> Gestion paie</li>
               </ul>
             </div>
             <div
@@ -1012,11 +990,11 @@
               </p>
               <p class="text-3xl font-extrabold text-slate-900">Sur devis</p>
               <ul class="text-sm text-slate-600 space-y-1">
-                <li>✔ Tout le plan PRO</li>
-                <li>✔ API dédiée</li>
-                <li>✔ Support prioritaire</li>
-                <li>✔ SLA garanti</li>
-                <li>✔ Personnalisation</li>
+                <li><i class="fa-solid fa-check"></i> Tout le plan PRO</li>
+                <li><i class="fa-solid fa-check"></i> API dédiée</li>
+                <li><i class="fa-solid fa-check"></i> Support prioritaire</li>
+                <li><i class="fa-solid fa-check"></i> SLA garanti</li>
+                <li><i class="fa-solid fa-check"></i> Personnalisation</li>
               </ul>
             </div>
           </div>

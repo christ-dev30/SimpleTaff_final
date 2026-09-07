@@ -39,6 +39,9 @@ window.closeQrModal = function () {
 window.openCalculModal = function () {
   document.getElementById("calculModal").classList.remove("hidden");
 };
+window.closeCalculModal = function () {
+  document.getElementById("calculModal").classList.add("hidden");
+};
 window.openFactureModal = function () {
   document.getElementById("factureModal").classList.remove("hidden");
 };
@@ -49,12 +52,41 @@ window.closeFactureModal = function () {
 // Load Overview
 async function loadOverview() {
   try {
-    let config = null;
-    try {
-      config = await apiFetch("/admin/entreprise/config");
-    } catch(e) {
+    // Fire every independent request immediately so they run in parallel
+    // instead of one after another (each await used to block the next).
+    const configPromise = apiFetch("/admin/entreprise/config").catch((e) => {
       console.warn("Could not fetch entreprise config:", e);
-    }
+      return null;
+    });
+    const affectationsPromise =
+      typeof window.allAffectations === "undefined" ||
+      !window.allAffectations.length
+        ? apiFetch("/admin/affectations")
+            .then((r) => r || [])
+            .catch(() => [])
+        : Promise.resolve(window.allAffectations);
+    const agentsPromise =
+      !allAgents || !allAgents.length
+        ? apiFetch("/agents")
+            .then((r) => r || [])
+            .catch(() => [])
+        : Promise.resolve(allAgents);
+    const statsPromise = apiFetch("/dashboard/admin")
+      .then((r) => r || {})
+      .catch((e) => {
+        console.warn("Could not fetch admin stats:", e);
+        return {};
+      });
+    const pointagesPromise = apiFetch("/pointages/today")
+      .then((r) => r || [])
+      .catch((e) => {
+        console.error("Error overview pointages:", e);
+        return [];
+      });
+
+    checkContractExpirations();
+
+    const config = await configPromise;
     if (config) {
       const enterpriseNameDisplay = document.getElementById(
         "enterpriseNameDisplay",
@@ -63,26 +95,9 @@ async function loadOverview() {
         enterpriseNameDisplay.textContent = config.nom || "-";
     }
 
-    checkContractExpirations();
-
     // Donezo Layout: Populate Chart
-    if (
-      typeof window.allAffectations === "undefined" ||
-      !window.allAffectations.length
-    ) {
-      try {
-        window.allAffectations = (await apiFetch("/admin/affectations")) || [];
-      } catch (e) {
-        window.allAffectations = [];
-      }
-    }
-    if (!allAgents || !allAgents.length) {
-      try {
-        allAgents = (await apiFetch("/agents")) || [];
-      } catch (e) {
-        allAgents = [];
-      }
-    }
+    window.allAffectations = await affectationsPromise;
+    allAgents = await agentsPromise;
     if (window.allAffectations || allAgents) {
       const dataSource =
         window.allAffectations && window.allAffectations.length
@@ -167,12 +182,7 @@ async function loadOverview() {
       }
     }
 
-    let stats = {};
-    try {
-      stats = (await apiFetch("/dashboard/admin")) || {};
-    } catch(e) {
-      console.warn("Could not fetch admin stats:", e);
-    }
+    const stats = await statsPromise;
     document.getElementById("statOverviewAgents").textContent =
       stats.totalAgents ?? "0";
     document.getElementById("statOverviewPostes").textContent =
@@ -180,9 +190,9 @@ async function loadOverview() {
     document.getElementById("statOverviewAffectations").textContent =
       stats.totalAffectationsActives ?? "0";
 
-    // Load recent affectations
+    // Load recent affectations (reuses the affectations already fetched above)
     try {
-      const affectations = (await apiFetch("/admin/affectations")) || [];
+      const affectations = window.allAffectations || [];
       const tbody = document.getElementById("overviewAffectationsTable");
       if (tbody) {
         if (!affectations || affectations.length === 0) {
@@ -213,7 +223,7 @@ async function loadOverview() {
                                         <td class="px-5 py-3 text-slate-600 font-medium">${a.posteLibelle || "—"}</td>
                                         <td class="px-5 py-3 text-slate-500">${a.siteNom || "—"}</td>
                                         <td class="px-5 py-3 text-slate-500">${a.dateDebut || "—"}</td>
-                                        <td class="px-5 py-3"><span class="badge ${badgeClass}">${isActif ? "🟢 Active" : a.statut || "—"}</span></td>
+                                        <td class="px-5 py-3"><span class="badge ${badgeClass}">${isActif ? '<i class="fa-solid fa-circle text-emerald-500 text-[6px] align-middle"></i> Active' : a.statut || "—"}</span></td>
                                     </tr>`;
             })
             .join("");
@@ -225,7 +235,7 @@ async function loadOverview() {
 
     // Load today's pointages stream
     try {
-      const pointages = (await apiFetch("/pointages/today")) || [];
+      const pointages = await pointagesPromise;
       const ptStat = document.getElementById("statOverviewPointages");
       if (ptStat) ptStat.textContent = pointages.length;
 
@@ -261,7 +271,7 @@ async function loadOverview() {
                                             </div>
                                         </td>
                                         <td class="px-5 py-3">
-                                            ${isSortie ? '<span class="badge bg-rose-100 text-rose-700 font-bold">🔴 Sortie</span>' : '<span class="badge bg-emerald-100 text-emerald-700 font-bold">🟢 Entrée</span>'}
+                                            ${isSortie ? '<span class="badge bg-rose-100 text-rose-700 font-bold"><i class="fa-solid fa-circle text-rose-500 text-[6px] align-middle"></i> Sortie</span>' : '<span class="badge bg-emerald-100 text-emerald-700 font-bold"><i class="fa-solid fa-circle text-emerald-500 text-[6px] align-middle"></i> Entrée</span>'}
                                         </td>
                                         <td class="px-5 py-3 font-mono text-slate-600 font-medium">${timeStr}</td>
                                         <td class="px-5 py-3 text-slate-500">${p.siteNom || "—"}</td>
@@ -445,7 +455,7 @@ window.renderSelectedZoneCities = function () {
       const escapedCity = city.replace(/'/g, "\\'");
       return `
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 text-sky-800 border border-sky-200 shadow-xs">
-                        📍 ${city}
+                        <i class="fa-solid fa-location-dot"></i> ${city}
                         <button type="button" onclick="removeCityFromZone('${escapedCity}')" class="hover:text-rose-600 font-black ml-0.5" title="Retirer ${city}">×</button>
                     </span>
                 `;
@@ -683,7 +693,7 @@ window.filterAgents = function () {
                                     PDF
                                 </button>
                                 <button onclick="printAdminBadge('${a.nom} ${a.prenom}', '${a.codeQr}', '${a.zoneNom}')" class="flex items-center gap-1 text-slate-600 hover:text-slate-800 font-bold text-xs border border-slate-200 bg-slate-50 px-2 py-1 rounded-lg">
-                                    🖨️
+                                    <i class="fa-solid fa-print"></i>
                                 </button>
                             </div>
                         </td>
@@ -1409,14 +1419,6 @@ document
           null;
       } catch (contractErr) {
         console.warn("Aucun contrat via /agent/ :", contractErr.message);
-      }
-
-      // Si toujours pas de contrat, tente l'endpoint générique
-      if (!pendingContrat) {
-        try {
-          const allContracts = await apiFetch("/contrats?agentId=" + agentId);
-          pendingContrat = (allContracts || [])[0] || null;
-        } catch (_) {}
       }
 
       if (pendingContrat) {
@@ -3537,7 +3539,9 @@ window.checkContractExpirations = async function () {
           const btnColor = isUrgent
             ? "bg-red-600 hover:bg-red-700 text-white"
             : "bg-amber-600 hover:bg-amber-700 text-white";
-          const labelEcheance = isUrgent ? "⏳ ≤ 2 mois" : "⏳ 3 mois";
+          const labelEcheance = isUrgent
+            ? '<i class="fa-solid fa-hourglass-half"></i> ≤ 2 mois'
+            : '<i class="fa-solid fa-hourglass-half"></i> 3 mois';
 
           return `
                             <div class="glass flex items-center justify-between p-4 rounded-xl border ${cardBg} shadow-sm transition-all duration-300">
@@ -3770,7 +3774,7 @@ async function loadPointageDates() {
                         <td class="p-3">
                             <button onclick="viewDatePointages('${d.date}')"
                                 class="text-xs font-bold text-sky-600 hover:text-sky-800 hover:underline transition-colors">
-                                Voir le détail →
+                                Voir le détail <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         </td>
                     </tr>
@@ -3978,23 +3982,23 @@ async function loadMateriel() {
           const st = (m.statut || "").toUpperCase();
           if (st === "DISPONIBLE") {
             statusBadge =
-              '<span class="badge bg-green-100 text-green-700 font-bold">🟢 Disponible</span>';
+              '<span class="badge bg-green-100 text-green-700 font-bold"><i class="fa-solid fa-circle text-emerald-500 text-[6px] align-middle"></i> Disponible</span>';
           } else if (st === "ASSIGNE" || st === "REMIS") {
             statusBadge =
-              '<span class="badge bg-sky-100 text-sky-700 font-bold">🔵 Assigné</span>';
+              '<span class="badge bg-sky-100 text-sky-700 font-bold"><i class="fa-solid fa-circle text-sky-500 text-[6px] align-middle"></i> Assigné</span>';
           } else if (
             st === "DEFECTUEUX" ||
             st === "EN_PANNE" ||
             st === "REPARATION"
           ) {
             statusBadge =
-              '<span class="badge bg-amber-100 text-amber-800 font-bold">⚠️ En Panne / Défaut</span>';
+              '<span class="badge bg-amber-100 text-amber-800 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> En Panne / Défaut</span>';
           } else if (st === "INUTILISABLE") {
             statusBadge =
-              '<span class="badge bg-rose-100 text-rose-700 font-bold">⛔ Inutilisable</span>';
+              '<span class="badge bg-rose-100 text-rose-700 font-bold"><i class="fa-solid fa-ban"></i> Inutilisable</span>';
           } else if (st === "PERDU") {
             statusBadge =
-              '<span class="badge bg-purple-100 text-purple-700 font-bold">🔍 Perdu</span>';
+              '<span class="badge bg-purple-100 text-purple-700 font-bold"><i class="fa-solid fa-magnifying-glass"></i> Perdu</span>';
           } else {
             statusBadge = `<span class="badge bg-slate-100 text-slate-700 font-bold">${st || "—"}</span>`;
           }
@@ -4017,8 +4021,8 @@ async function loadMateriel() {
           if (zoneText || coordText) {
             assignmentInfo = `
                                 <div class="space-y-0.5">
-                                    ${zoneText ? `<div class="text-xs font-bold text-slate-700">📍 ${zoneText}</div>` : ""}
-                                    ${coordText ? `<div class="text-[10px] text-sky-600 font-semibold">👤 ${coordText}</div>` : ""}
+                                    ${zoneText ? `<div class="text-xs font-bold text-slate-700"><i class="fa-solid fa-location-dot"></i> ${zoneText}</div>` : ""}
+                                    ${coordText ? `<div class="text-[10px] text-sky-600 font-semibold"><i class="fa-solid fa-user"></i> ${coordText}</div>` : ""}
                                 </div>
                             `;
           }
@@ -4049,17 +4053,17 @@ async function loadMateriel() {
             const st = (m.statut || "").toUpperCase();
             if (st === "DISPONIBLE") {
               statusBadge =
-                '<span class="badge bg-green-100 text-green-700 font-bold">🟢 Disponible</span>';
+                '<span class="badge bg-green-100 text-green-700 font-bold"><i class="fa-solid fa-circle text-emerald-500 text-[6px] align-middle"></i> Disponible</span>';
             } else if (st === "ASSIGNE" || st === "REMIS") {
               statusBadge =
-                '<span class="badge bg-sky-100 text-sky-700 font-bold">🔵 Assigné</span>';
+                '<span class="badge bg-sky-100 text-sky-700 font-bold"><i class="fa-solid fa-circle text-sky-500 text-[6px] align-middle"></i> Assigné</span>';
             } else if (
               st === "DEFECTUEUX" ||
               st === "EN_PANNE" ||
               st === "REPARATION"
             ) {
               statusBadge =
-                '<span class="badge bg-amber-100 text-amber-800 font-bold">⚠️ En Panne</span>';
+                '<span class="badge bg-amber-100 text-amber-800 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> En Panne</span>';
             } else {
               statusBadge = `<span class="badge bg-slate-100 text-slate-700 font-bold">${st || "—"}</span>`;
             }
@@ -4496,7 +4500,7 @@ async function loadConges() {
           let statusBadge = "";
           if (isExpired || c.statut === "VALIDEE") {
             statusBadge =
-              '<span class="badge bg-slate-100 text-slate-600 font-bold">✔ Terminé</span>';
+              '<span class="badge bg-slate-100 text-slate-600 font-bold"><i class="fa-solid fa-check"></i> Terminé</span>';
           } else if (c.statut === "REFUSEE") {
             statusBadge =
               '<span class="badge bg-red-100 text-red-700">Refusée</span>';
@@ -4571,7 +4575,7 @@ window.viewCongeDetails = function (id) {
   let badge = "";
   if (isExpired || c.statut === "VALIDEE")
     badge =
-      '<span class="px-2 py-1 bg-slate-100 text-slate-600 font-bold rounded text-[10px]">✔ Terminé</span>';
+      '<span class="px-2 py-1 bg-slate-100 text-slate-600 font-bold rounded text-[10px]"><i class="fa-solid fa-check"></i> Terminé</span>';
   else if (c.statut === "REFUSEE")
     badge =
       '<span class="px-2 py-1 bg-red-100 text-red-700 font-bold rounded text-[10px]">Refusée</span>';
@@ -4648,7 +4652,7 @@ function renderSanctions(list) {
           ? `${s.agent.nom || ""} ${s.agent.prenom || ""}`.trim()
           : s.agentNom || "—";
         const decisionHtml = s.decisionUrl
-          ? `<a href="${s.decisionUrl}" target="_blank" class="text-sky-600 hover:underline inline-flex items-center gap-1 font-bold">📄 Voir</a>`
+          ? `<a href="${s.decisionUrl}" target="_blank" class="text-sky-600 hover:underline inline-flex items-center gap-1 font-bold"><i class="fa-solid fa-file-lines"></i> Voir</a>`
           : "—";
         const dateFinStr = s.dateFin ? s.dateFin : "Indéterminée";
         const today2 = new Date();
@@ -4662,7 +4666,9 @@ function renderSanctions(list) {
             ? "bg-green-100 text-green-700"
             : "bg-amber-100 text-amber-700";
         const badgeLabel =
-          effectifStatut === "TERMINE" ? "✔ Terminé" : effectifStatut;
+          effectifStatut === "TERMINE"
+            ? '<i class="fa-solid fa-check"></i> Terminé'
+            : effectifStatut;
         return `
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="p-3 font-bold text-slate-800">${agentNom}</td>
@@ -4913,7 +4919,7 @@ window.renderVisualRapportPreview = function (payload) {
     html += `
                     <div class="space-y-3">
                         <div class="flex justify-between items-center bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold text-xs">
-                            <span>⏱️ 1. PRÉSENCES & POINTAGES</span>
+                            <span><i class="fa-solid fa-stopwatch"></i> 1. PRÉSENCES & POINTAGES</span>
                             <span class="text-slate-300 font-normal">Entrées: ${sec.nombre_entrees || list.length} | Journées: ${sec.journees_presentes || "—"}</span>
                         </div>
                         <div class="overflow-x-auto border border-slate-200 rounded-xl">
@@ -4990,7 +4996,7 @@ window.renderVisualRapportPreview = function (payload) {
     html += `
                     <div class="space-y-3 pt-2">
                         <div class="flex justify-between items-center bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold text-xs">
-                            <span>🌴 2. CONGÉS & ABSENCES</span>
+                            <span><i class="fa-solid fa-umbrella-beach"></i> 2. CONGÉS & ABSENCES</span>
                             <span class="text-slate-300 font-normal">Total: ${sec.total_demandes || list.length} | Approuvés: ${sec.approuves || 0} | En attente: ${sec.en_attente || 0}</span>
                         </div>
                         <div class="overflow-x-auto border border-slate-200 rounded-xl">
@@ -5050,7 +5056,7 @@ window.renderVisualRapportPreview = function (payload) {
     html += `
                     <div class="space-y-3 pt-2">
                         <div class="flex justify-between items-center bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold text-xs">
-                            <span>📦 3. PARC MATÉRIEL & ÉQUIPEMENTS</span>
+                            <span><i class="fa-solid fa-box"></i> 3. PARC MATÉRIEL & ÉQUIPEMENTS</span>
                             <span class="text-slate-300 font-normal">Total: ${sec.total_equipements || list.length} | Disponibles: ${sec.disponibles || 0} | En Panne: ${sec.en_panne || 0}</span>
                         </div>
                         <div class="overflow-x-auto border border-slate-200 rounded-xl">
@@ -5113,7 +5119,7 @@ window.renderVisualRapportPreview = function (payload) {
     html += `
                     <div class="space-y-3 pt-2">
                         <div class="flex justify-between items-center bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold text-xs">
-                            <span>⚖️ 4. DISCIPLINAIRE & SANCTIONS</span>
+                            <span><i class="fa-solid fa-scale-balanced"></i> 4. DISCIPLINAIRE & SANCTIONS</span>
                             <span class="text-slate-300 font-normal">Sanctions: ${sec.total_sanctions || list.length}</span>
                         </div>
                         <div class="overflow-x-auto border border-slate-200 rounded-xl">
@@ -5864,8 +5870,8 @@ window.loadNotifications = async function () {
                                 <span class="text-[10px] text-slate-400">${new Date(n.creeLe || Date.now()).toLocaleString()}</span>
                             </div>
                             <div class="flex gap-1.5 items-center">
-                                ${isUnread ? `<button onclick="markNotificationAsRead('${n.id}')" class="text-[10px] text-sky-600 hover:text-sky-800 font-bold" title="Marquer comme lu">✓</button>` : ""}
-                                <button onclick="deleteNotification('${n.id}')" class="text-[10px] text-rose-600 hover:text-rose-800 font-bold" title="Supprimer">✕</button>
+                                ${isUnread ? `<button onclick="markNotificationAsRead('${n.id}')" class="text-[10px] text-sky-600 hover:text-sky-800 font-bold" title="Marquer comme lu"><i class="fa-solid fa-check"></i></button>` : ""}
+                                <button onclick="deleteNotification('${n.id}')" class="text-[10px] text-rose-600 hover:text-rose-800 font-bold" title="Supprimer"><i class="fa-solid fa-xmark"></i></button>
                             </div>
                         </div>
                     `;
@@ -5913,10 +5919,14 @@ window.clearAllNotifications = async function () {
 window.showToast = function (message, type = "info", duration = 3500) {
   const container = document.getElementById("toast-container");
   if (!container) return;
-  const icons = { success: "✓", error: "✕", info: "ℹ" };
+  const icons = {
+    success: '<i class="fa-solid fa-check"></i>',
+    error: '<i class="fa-solid fa-xmark"></i>',
+    info: '<i class="fa-solid fa-circle-info"></i>',
+  };
   const toast = document.createElement("div");
   toast.className = `toast toast-${type}`;
-  toast.innerHTML = `<span style="font-size:15px">${icons[type] || "ℹ"}</span><span>${message}</span>`;
+  toast.innerHTML = `<span style="font-size:15px">${icons[type] || '<i class="fa-solid fa-circle-info"></i>'}</span><span>${message}</span>`;
   container.appendChild(toast);
   setTimeout(() => {
     toast.style.opacity = "0";
@@ -5949,7 +5959,7 @@ if (searchInput) {
         if (name.includes(q) || (a.telephone || "").includes(q)) {
           results.push({
             type: "Agent",
-            icon: "👤",
+            icon: '<i class="fa-solid fa-user"></i>',
             text: (a.nom || "") + " " + (a.prenom || ""),
             tab: "agents",
             action: () => {
@@ -5970,7 +5980,7 @@ if (searchInput) {
         if (name.includes(q) || site.includes(q)) {
           results.push({
             type: "Affectation",
-            icon: "🏢",
+            icon: '<i class="fa-solid fa-building"></i>',
             text: (a.agentNom || "") + " - " + (a.siteNom || ""),
             tab: "affectations",
             action: () => {
@@ -5992,7 +6002,7 @@ if (searchInput) {
         if ((ent.nom || "").toLowerCase().includes(q)) {
           results.push({
             type: "Entreprise",
-            icon: "🏢",
+            icon: '<i class="fa-solid fa-building"></i>',
             text: ent.nom,
             tab: "entreprises",
             action: () => {
