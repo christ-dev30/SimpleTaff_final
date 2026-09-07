@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.siege.platform.common.IdempotencyManager;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -22,17 +23,20 @@ public class DisciplinaireController {
 
     private final com.siege.platform.contrat.ContratAgentRepository contratRepository;
     private final com.siege.platform.poste.AffectationRepository affectationRepository;
+    private final IdempotencyManager idempotencyManager;
 
     public DisciplinaireController(SanctionRepository sanctionRepository,
                                    AgentTerrainRepository agentRepository,
                                    CurrentTenantService tenantService,
                                    com.siege.platform.contrat.ContratAgentRepository contratRepository,
-                                   com.siege.platform.poste.AffectationRepository affectationRepository) {
+                                   com.siege.platform.poste.AffectationRepository affectationRepository,
+                                   IdempotencyManager idempotencyManager) {
         this.sanctionRepository = sanctionRepository;
         this.agentRepository = agentRepository;
         this.tenantService = tenantService;
         this.contratRepository = contratRepository;
         this.affectationRepository = affectationRepository;
+        this.idempotencyManager = idempotencyManager;
     }
 
     @GetMapping("/sanctions")
@@ -90,7 +94,13 @@ public class DisciplinaireController {
 
     @PostMapping("/sanctions")
     @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
- public ResponseEntity<?> create(@RequestBody Map<String, Object> payload) {
+ public ResponseEntity<?> create(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                    @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         Sanction sanction = new Sanction();
         sanction.setEntreprise(tenantService.entreprise());
         sanction.setAgent(agentRepository.findById(UUID.fromString((String) payload.get("agentId"))).orElseThrow());
@@ -106,7 +116,11 @@ public class DisciplinaireController {
         if (payload.get("coordonnateurRemonte") != null) {
             sanction.setCoordonnateurRemonte((String) payload.get("coordonnateurRemonte"));
         }
-        return ResponseEntity.ok(sanctionRepository.save(sanction));
+        Sanction saved = sanctionRepository.save(sanction);
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, saved);
+        }
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/agents/{agentId}/alerte")

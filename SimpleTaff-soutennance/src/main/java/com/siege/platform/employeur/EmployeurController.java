@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import com.siege.platform.common.IdempotencyManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,19 +41,22 @@ public class EmployeurController {
     private final CarteAgentRepository carteAgentRepository;
     private final PointageService pointageService;
     private final JdbcTemplate jdbcTemplate;
+    private final IdempotencyManager idempotencyManager;
 
     public EmployeurController(UtilisateurRepository utilisateurRepository,
                                AffectationRepository affectationRepository,
                                PointageRepository pointageRepository,
                                CarteAgentRepository carteAgentRepository,
                                PointageService pointageService,
-                               JdbcTemplate jdbcTemplate) {
+                               JdbcTemplate jdbcTemplate,
+                               IdempotencyManager idempotencyManager) {
         this.utilisateurRepository = utilisateurRepository;
         this.affectationRepository = affectationRepository;
         this.pointageRepository = pointageRepository;
         this.carteAgentRepository = carteAgentRepository;
         this.pointageService = pointageService;
         this.jdbcTemplate = jdbcTemplate;
+        this.idempotencyManager = idempotencyManager;
     }
 
     // ── Profil ────────────────────────────────────────────────────────────────
@@ -326,7 +330,13 @@ public class EmployeurController {
     // ── Scanner ───────────────────────────────────────────────────────────────
 
     @PostMapping("/pointages/scanner")
-    public ResponseEntity<?> scanner(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> scanner(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                     @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         Object qrObj = payload.get("qrCode");
         if (qrObj == null) qrObj = payload.get("cardId");
         if (qrObj == null) qrObj = payload.get("identifiantNfc");
@@ -386,6 +396,9 @@ public class EmployeurController {
             res.put("heureEntree", pointage.getDateHeureEntree());
             res.put("heureSortie", pointage.getDateHeureSortie());
             res.put("statut", pointage.getStatut());
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, res);
+            }
             return ResponseEntity.ok(res);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage() != null ? e.getMessage() : "Erreur lors du pointage"));

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.siege.platform.common.IdempotencyManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -38,6 +39,7 @@ public class CoordonnateurController {
     private final com.siege.platform.poste.AffectationService affectationService;
     private final UtilisateurRepository utilisateurRepo;
     private final com.siege.platform.emploi.EmploiRepository emploiRepo;
+    private final IdempotencyManager idempotencyManager;
 
     public CoordonnateurController(AgentTerrainRepository agentRepo,
                                     AffectationRepository affectationRepo,
@@ -51,7 +53,8 @@ public class CoordonnateurController {
                                     com.siege.platform.poste.PosteRepository posteRepo,
                                     com.siege.platform.poste.AffectationService affectationService,
                                     UtilisateurRepository utilisateurRepo,
-                                    com.siege.platform.emploi.EmploiRepository emploiRepo) {
+                                    com.siege.platform.emploi.EmploiRepository emploiRepo,
+                                    IdempotencyManager idempotencyManager) {
         this.agentRepo = agentRepo;
         this.affectationRepo = affectationRepo;
         this.zoneRepo = zoneRepo;
@@ -65,6 +68,7 @@ public class CoordonnateurController {
         this.affectationService = affectationService;
         this.utilisateurRepo = utilisateurRepo;
         this.emploiRepo = emploiRepo;
+        this.idempotencyManager = idempotencyManager;
     }
 
     @GetMapping("/stats")
@@ -351,7 +355,13 @@ public class CoordonnateurController {
     }
 
     @PostMapping("/affectations")
-    public ResponseEntity<?> creerAffectation(@RequestBody Map<String, Object> payload, java.security.Principal principal) {
+    public ResponseEntity<?> creerAffectation(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                              @RequestBody Map<String, Object> payload, java.security.Principal principal) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (String) payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         try {
             UUID siteId = UUID.fromString(payload.get("posteId").toString());
             UUID agentId = UUID.fromString(payload.get("agentId").toString());
@@ -421,6 +431,9 @@ public class CoordonnateurController {
             result.put("heureArriveeSite", affectation.getHeureArriveeSite());
             result.put("heureDepartSite", affectation.getHeureDepartSite());
             result.put("message", "Affectation créée avec succès.");
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, result);
+            }
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));

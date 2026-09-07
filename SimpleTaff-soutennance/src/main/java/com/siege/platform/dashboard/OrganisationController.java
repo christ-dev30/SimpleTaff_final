@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import com.siege.platform.common.IdempotencyManager;
 import java.util.*;
 
 /**
@@ -44,6 +45,7 @@ public class OrganisationController {
     private final SiteRepository siteRepo;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
+    private final IdempotencyManager idempotencyManager;
 
     public OrganisationController(ZoneRepository zoneRepo,
                                    UtilisateurRepository utilisateurRepo,
@@ -51,7 +53,8 @@ public class OrganisationController {
                                    StructureDemandeuseRepository structureRepo,
                                    SiteRepository siteRepo,
                                    PasswordEncoder passwordEncoder,
-                                   JwtUtils jwtUtils) {
+                                   JwtUtils jwtUtils,
+                                   IdempotencyManager idempotencyManager) {
         this.zoneRepo = zoneRepo;
         this.utilisateurRepo = utilisateurRepo;
         this.emploiRepo = emploiRepo;
@@ -59,6 +62,7 @@ public class OrganisationController {
         this.siteRepo = siteRepo;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtils = jwtUtils;
+        this.idempotencyManager = idempotencyManager;
     }
 
     // ============================= ZONES =============================
@@ -82,7 +86,13 @@ public class OrganisationController {
 
     @PostMapping("/zones")
     @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
-    public ResponseEntity<?> createZone(@RequestBody Map<String, Object> payload, HttpServletRequest request) {
+    public ResponseEntity<?> createZone(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                        @RequestBody Map<String, Object> payload, HttpServletRequest request) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         try {
             Entreprise entreprise = getEntrepriseFromToken(request);
             String nom = readRequiredText(payload, "nom", "Le nom de la zone est obligatoire.");
@@ -93,7 +103,11 @@ public class OrganisationController {
             zone.setPerimetre(readOptionalText(payload, "perimetre"));
             zone.setStatut("ACTIF");
             Zone saved = zoneRepo.save(zone);
-            return ResponseEntity.ok(Map.of("message", "Zone créée !", "id", saved.getId()));
+            Map<String, Object> responseBody = Map.of("message", "Zone créée !", "id", saved.getId());
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", safeMessage(e)));
         }
@@ -131,7 +145,13 @@ public class OrganisationController {
 
     @PostMapping("/coordonnateurs")
     @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
-    public ResponseEntity<?> createCoordonnateur(@RequestBody Map<String, Object> payload, HttpServletRequest request) {
+    public ResponseEntity<?> createCoordonnateur(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                                 @RequestBody Map<String, Object> payload, HttpServletRequest request) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         try {
             Entreprise entreprise = getEntrepriseFromToken(request);
 
@@ -161,7 +181,11 @@ public class OrganisationController {
             }
 
             Utilisateur saved = utilisateurRepo.save(coord);
-            return ResponseEntity.ok(Map.of("message", "Coordonnateur créé !", "id", saved.getId()));
+            Map<String, Object> responseBody = Map.of("message", "Coordonnateur créé !", "id", saved.getId());
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.CONFLICT).body(Map.of("message", "Conflit de données : L'adresse email est déjà utilisée."));
         } catch (Exception e) {
@@ -215,7 +239,13 @@ public class OrganisationController {
 
     @PostMapping("/emplois")
     @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
-    public ResponseEntity<?> createEmploi(@RequestBody Map<String, Object> payload, HttpServletRequest request) {
+    public ResponseEntity<?> createEmploi(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                          @RequestBody Map<String, Object> payload, HttpServletRequest request) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         try {
             Entreprise entreprise = getEntrepriseFromToken(request);
             String libelle = (String) payload.get("libelle");
@@ -236,7 +266,11 @@ public class OrganisationController {
                 emploi.setSalaireBrutReference(new java.math.BigDecimal(payload.get("salaireBrutReference").toString()));
             }
             Emploi saved = emploiRepo.save(emploi);
-            return ResponseEntity.ok(Map.of("message", "Emploi créé !", "id", saved.getId()));
+            Map<String, Object> responseBody = Map.of("message", "Emploi créé !", "id", saved.getId());
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -270,7 +304,13 @@ public class OrganisationController {
 
     @PostMapping("/structures")
     @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
-    public ResponseEntity<?> createStructure(@RequestBody Map<String, Object> payload, HttpServletRequest request) {
+    public ResponseEntity<?> createStructure(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                             @RequestBody Map<String, Object> payload, HttpServletRequest request) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         try {
             Entreprise entreprise = getEntrepriseFromToken(request);
             StructureDemandeuse s = new StructureDemandeuse();
@@ -279,7 +319,11 @@ public class OrganisationController {
             s.setSecteur((String) payload.get("secteur"));
             s.setBesoinsRecurrents(Boolean.TRUE.equals(payload.get("besoinsRecurrents")));
             StructureDemandeuse saved = structureRepo.save(s);
-            return ResponseEntity.ok(Map.of("message", "Structure créée !", "id", saved.getId()));
+            Map<String, Object> responseBody = Map.of("message", "Structure créée !", "id", saved.getId());
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -315,7 +359,13 @@ public class OrganisationController {
 
     @PostMapping("/sites")
     @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
-    public ResponseEntity<?> createSite(@RequestBody Map<String, Object> payload, HttpServletRequest request) {
+    public ResponseEntity<?> createSite(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                        @RequestBody Map<String, Object> payload, HttpServletRequest request) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         try {
             Site site = new Site();
             site.setNom((String) payload.get("nom"));
@@ -339,7 +389,11 @@ public class OrganisationController {
             }
 
             Site saved = siteRepo.save(site);
-            return ResponseEntity.ok(Map.of("message", "Site créé !", "id", saved.getId()));
+            Map<String, Object> responseBody = Map.of("message", "Site créé !", "id", saved.getId());
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -384,7 +438,13 @@ public class OrganisationController {
 
     @PostMapping("/employeurs")
     @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
-    public ResponseEntity<?> createEmployeur(@RequestBody Map<String, Object> payload, HttpServletRequest request) {
+    public ResponseEntity<?> createEmployeur(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                             @RequestBody Map<String, Object> payload, HttpServletRequest request) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         try {
             Entreprise entreprise = getEntrepriseFromToken(request);
             String email = (String) payload.get("email");
@@ -416,7 +476,11 @@ public class OrganisationController {
             }
 
             Utilisateur saved = utilisateurRepo.save(emp);
-            return ResponseEntity.ok(Map.of("message", "Employeur créé !", "id", saved.getId()));
+            Map<String, Object> responseBody = Map.of("message", "Employeur créé !", "id", saved.getId());
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.siege.platform.common.IdempotencyManager;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +22,13 @@ public class SuperAdminController {
     private final EntrepriseRepository entrepriseRepository;
     private final JdbcTemplate jdbcTemplate;
     private final com.siege.platform.notification.NotificationService notificationService;
+    private final IdempotencyManager idempotencyManager;
 
-    public SuperAdminController(EntrepriseRepository entrepriseRepository, JdbcTemplate jdbcTemplate, com.siege.platform.notification.NotificationService notificationService) {
+    public SuperAdminController(EntrepriseRepository entrepriseRepository, JdbcTemplate jdbcTemplate, com.siege.platform.notification.NotificationService notificationService, IdempotencyManager idempotencyManager) {
         this.entrepriseRepository = entrepriseRepository;
         this.jdbcTemplate = jdbcTemplate;
         this.notificationService = notificationService;
+        this.idempotencyManager = idempotencyManager;
     }
 
     @GetMapping("/entreprises")
@@ -106,7 +109,13 @@ public class SuperAdminController {
 
     @PostMapping("/entreprises")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<Entreprise> createEntreprise(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<Entreprise> createEntreprise(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                                        @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok((Entreprise) idempotencyManager.get(idempotencyKey));
+        }
+
         String nom = (String) payload.getOrDefault("nom", "Nouvelle Entreprise");
         String formuleStr = (String) payload.getOrDefault("formuleAbonnement", "PRO");
         Object cotisationRaw = payload.getOrDefault("tauxCotisation", "5.50");
@@ -129,9 +138,12 @@ public class SuperAdminController {
         entreprise.setStatut(StatutEntreprise.ACTIF);
 
         Entreprise saved = entrepriseRepository.save(entreprise);
-        
+
         notificationService.creerAlerte(saved, "SUPER_ADMIN", "Nouvelle entreprise cliente enregistrée : " + nom);
-        
+
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, saved);
+        }
         return ResponseEntity.ok(saved);
     }
 

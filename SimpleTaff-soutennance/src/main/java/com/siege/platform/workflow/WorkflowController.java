@@ -1,6 +1,7 @@
 package com.siege.platform.workflow;
 
 import com.siege.platform.common.CurrentTenantService;
+import com.siege.platform.common.IdempotencyManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +14,13 @@ import java.util.List;
 public class WorkflowController {
     private final WorkflowDefinitionRepository repository;
     private final CurrentTenantService tenantService;
+    private final IdempotencyManager idempotencyManager;
 
-    public WorkflowController(WorkflowDefinitionRepository repository, CurrentTenantService tenantService) {
+    public WorkflowController(WorkflowDefinitionRepository repository, CurrentTenantService tenantService,
+                              IdempotencyManager idempotencyManager) {
         this.repository = repository;
         this.tenantService = tenantService;
+        this.idempotencyManager = idempotencyManager;
     }
 
     @GetMapping
@@ -25,8 +29,17 @@ public class WorkflowController {
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody WorkflowDefinition workflow) {
+    public ResponseEntity<?> save(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                  @RequestBody WorkflowDefinition workflow) {
+        String idempotencyKey = idempotencyHeader;
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
         workflow.setEntreprise(tenantService.entreprise());
-        return ResponseEntity.ok(repository.save(workflow));
+        WorkflowDefinition saved = repository.save(workflow);
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, saved);
+        }
+        return ResponseEntity.ok(saved);
     }
 }

@@ -186,9 +186,15 @@ public class ContratController {
     }
 
     @PostMapping("/{id}/renouvellements")
-    public ResponseEntity<?> renouveler(@PathVariable("id") UUID id, @RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> renouveler(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                        @PathVariable("id") UUID id, @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (String) payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         ContratAgent contrat = contratRepository.findById(id).orElseThrow();
-        
+
         // Validation d'éligibilité : CDD renouvelable max 2 fois
         int renewalsCount = renouvellementRepository.findByContratIdOrderByCreeLeDesc(id).size();
         if ("CDD".equalsIgnoreCase(contrat.getType()) && renewalsCount >= 2) {
@@ -220,7 +226,11 @@ public class ContratController {
         // Notification
         notificationService.creerAlerte(contrat.getEntreprise(), "RH_CONTRAT", "Contrat de l'agent " + contrat.getAgent().getNom() + " " + contrat.getAgent().getPrenom() + " renouvelé jusqu'au " + renouvellement.getNouvelleDateFin());
 
-        return ResponseEntity.ok(Map.of("message", "Contrat renouvele."));
+        Map<String, Object> responseBody = Map.of("message", "Contrat renouvele.");
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, responseBody);
+        }
+        return ResponseEntity.ok(responseBody);
     }
 
     @GetMapping("/{id}/renouvellements")

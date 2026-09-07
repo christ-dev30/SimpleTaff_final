@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.siege.platform.common.IdempotencyManager;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -25,6 +26,7 @@ public class MaterielController {
     private final com.siege.platform.notification.NotificationService notificationService;
     private final com.siege.platform.zone.ZoneRepository zoneRepository;
     private final com.siege.platform.utilisateur.UtilisateurRepository utilisateurRepository;
+    private final IdempotencyManager idempotencyManager;
 
     public MaterielController(MaterielRepository materielRepository,
                               AffectationMaterielRepository affectationRepository,
@@ -33,7 +35,8 @@ public class MaterielController {
                               DemandeMaterielRepository demandeRepository,
                               com.siege.platform.notification.NotificationService notificationService,
                               com.siege.platform.zone.ZoneRepository zoneRepository,
-                              com.siege.platform.utilisateur.UtilisateurRepository utilisateurRepository) {
+                              com.siege.platform.utilisateur.UtilisateurRepository utilisateurRepository,
+                              IdempotencyManager idempotencyManager) {
         this.materielRepository = materielRepository;
         this.affectationRepository = affectationRepository;
         this.agentRepository = agentRepository;
@@ -42,6 +45,7 @@ public class MaterielController {
         this.notificationService = notificationService;
         this.zoneRepository = zoneRepository;
         this.utilisateurRepository = utilisateurRepository;
+        this.idempotencyManager = idempotencyManager;
     }
 
     @GetMapping("/historique")
@@ -86,7 +90,13 @@ public class MaterielController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> create(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                    @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (String) payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         Materiel materiel = new Materiel();
         materiel.setEntreprise(tenantService.entreprise());
         
@@ -143,7 +153,11 @@ public class MaterielController {
         materiel.setSourceAjout(source);
         materiel.setDateAjout(java.time.LocalDate.now());
 
-        return ResponseEntity.ok(materielRepository.save(materiel));
+        Materiel saved = materielRepository.save(materiel);
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, saved);
+        }
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/demandes")
@@ -181,7 +195,13 @@ public class MaterielController {
     }
 
     @PostMapping("/demandes")
-    public ResponseEntity<?> createDemande(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> createDemande(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                           @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (String) payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         DemandeMateriel demande = new DemandeMateriel();
         demande.setEntreprise(tenantService.entreprise());
         demande.setLibelle((String) payload.get("libelle"));
@@ -213,6 +233,9 @@ public class MaterielController {
             "Nouvelle demande de matériel: '" + saved.getLibelle() + "' (Valeur: " + saved.getValeurAchat() + " FCFA, N° Série: " + (saved.getNumeroSerie() != null ? saved.getNumeroSerie() : "N/A") + ")"
         );
 
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, saved);
+        }
         return ResponseEntity.ok(saved);
     }
 

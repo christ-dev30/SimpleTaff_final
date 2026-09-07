@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.siege.platform.common.IdempotencyManager;
 import java.util.Map;
 
 @RestController
@@ -11,9 +12,11 @@ import java.util.Map;
 public class InvitationController {
 
     private final InvitationService invitationService;
+    private final IdempotencyManager idempotencyManager;
 
-    public InvitationController(InvitationService invitationService) {
+    public InvitationController(InvitationService invitationService, IdempotencyManager idempotencyManager) {
         this.invitationService = invitationService;
+        this.idempotencyManager = idempotencyManager;
     }
 
     /**
@@ -22,7 +25,13 @@ public class InvitationController {
      */
     @PostMapping("/envoyer")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<?> envoyerInvitation(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> envoyerInvitation(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                               @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         String nomEntreprise = (String) payload.getOrDefault("nomEntreprise", "");
         String formule = (String) payload.getOrDefault("formuleAbonnement", "PRO");
         double taux = Double.parseDouble(payload.getOrDefault("tauxCotisation", "5.5").toString());
@@ -34,11 +43,15 @@ public class InvitationController {
 
         try {
             InvitationEntreprise inv = invitationService.creerEtEnvoyerInvitation(nomEntreprise, formule, taux, email);
-            return ResponseEntity.ok(Map.of(
+            Map<String, Object> responseBody = Map.of(
                 "message", "Invitation envoyée avec succès à " + email,
                 "token", inv.getToken(),
                 "expiration", inv.getDateExpiration().toString()
-            ));
+            );
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(Map.of("message", "Erreur : " + e.getMessage()));
         }
@@ -69,7 +82,13 @@ public class InvitationController {
      * Appelé par la page d'inscription pour créer l'admin et activer l'abonnement.
      */
     @PostMapping("/inscrire")
-    public ResponseEntity<?> inscrire(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> inscrire(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                      @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         String token = (String) payload.getOrDefault("token", "");
         String nom = (String) payload.getOrDefault("nom", "");
         String prenom = (String) payload.getOrDefault("prenom", "");
@@ -84,7 +103,11 @@ public class InvitationController {
 
         try {
             invitationService.inscrireAdminEntreprise(token, nom, prenom, password);
-            return ResponseEntity.ok(Map.of("message", "Compte créé avec succès ! Vous pouvez maintenant vous connecter."));
+            Map<String, Object> responseBody = Map.of("message", "Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             return ResponseEntity.badRequest().body(Map.of("message", "Cette adresse email est déjà utilisée par un autre compte."));
         } catch (Exception e) {

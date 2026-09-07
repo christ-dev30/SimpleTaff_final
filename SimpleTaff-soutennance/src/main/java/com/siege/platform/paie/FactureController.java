@@ -1,6 +1,7 @@
 package com.siege.platform.paie;
 
 import com.siege.platform.common.CurrentTenantService;
+import com.siege.platform.common.IdempotencyManager;
 import com.siege.platform.entreprise.Entreprise;
 import com.siege.platform.structuredemandeuse.StructureDemandeuse;
 import com.siege.platform.structuredemandeuse.StructureDemandeuseRepository;
@@ -26,13 +27,16 @@ public class FactureController {
     private final FactureRepository factureRepository;
     private final StructureDemandeuseRepository structureRepository;
     private final CurrentTenantService tenantService;
+    private final IdempotencyManager idempotencyManager;
 
     public FactureController(FactureRepository factureRepository,
                              StructureDemandeuseRepository structureRepository,
-                             CurrentTenantService tenantService) {
+                             CurrentTenantService tenantService,
+                             IdempotencyManager idempotencyManager) {
         this.factureRepository = factureRepository;
         this.structureRepository = structureRepository;
         this.tenantService = tenantService;
+        this.idempotencyManager = idempotencyManager;
     }
 
     @GetMapping
@@ -44,7 +48,13 @@ public class FactureController {
     }
 
     @PostMapping("/generer")
-    public ResponseEntity<?> generer(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> generer(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                     @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (String) payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         Entreprise entreprise = tenantService.entreprise();
 
         Object structureIdRaw = payload.get("structureId");
@@ -86,7 +96,11 @@ public class FactureController {
         facture.setNumeroFacture("FAC-" + java.time.Year.now().getValue() + "-" + String.format("%04d", compteur));
 
         Facture saved = factureRepository.save(facture);
-        return ResponseEntity.ok(toMap(saved));
+        Map<String, Object> responseBody = toMap(saved);
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, responseBody);
+        }
+        return ResponseEntity.ok(responseBody);
     }
 
     @PostMapping("/{id}/payer")

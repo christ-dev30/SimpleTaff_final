@@ -15,6 +15,8 @@ import java.util.*;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import com.siege.platform.common.IdempotencyManager;
+
 @RestController
 @RequestMapping("/api/conges")
 @PreAuthorize("hasAnyRole('ADMIN_ENTREPRISE', 'COORDONNATEUR', 'SUPER_ADMIN')")
@@ -27,6 +29,7 @@ public class CongeController {
     private final AuditLogRepository auditLogRepository;
     private final NotificationService notificationService;
     private final com.siege.platform.poste.AffectationRepository affectationRepository;
+    private final IdempotencyManager idempotencyManager;
 
     public CongeController(DemandeCongeRepository demandeRepository,
                            SoldeCongeRepository soldeRepository,
@@ -34,7 +37,8 @@ public class CongeController {
                            CurrentTenantService tenantService,
                            AuditLogRepository auditLogRepository,
                            NotificationService notificationService,
-                           com.siege.platform.poste.AffectationRepository affectationRepository) {
+                           com.siege.platform.poste.AffectationRepository affectationRepository,
+                           IdempotencyManager idempotencyManager) {
         this.demandeRepository = demandeRepository;
         this.soldeRepository = soldeRepository;
         this.agentRepository = agentRepository;
@@ -42,6 +46,7 @@ public class CongeController {
         this.auditLogRepository = auditLogRepository;
         this.notificationService = notificationService;
         this.affectationRepository = affectationRepository;
+        this.idempotencyManager = idempotencyManager;
     }
 
     @GetMapping
@@ -83,7 +88,13 @@ public class CongeController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> create(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                    @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         DemandeConge demande = new DemandeConge();
         demande.setEntreprise(tenantService.entreprise());
         demande.setAgent(agentRepository.findById(UUID.fromString((String) payload.get("agentId"))).orElseThrow());
@@ -113,6 +124,9 @@ public class CongeController {
         // Notification
         notificationService.creerAlerte(saved.getEntreprise(), "RH_CONGE", "Nouvelle demande de congé (" + saved.getType() + ") créée pour l'agent " + saved.getAgent().getNom() + " " + saved.getAgent().getPrenom());
 
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, saved);
+        }
         return ResponseEntity.ok(saved);
     }
 

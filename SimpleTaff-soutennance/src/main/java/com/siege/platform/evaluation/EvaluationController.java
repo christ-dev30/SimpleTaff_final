@@ -6,10 +6,11 @@ import com.siege.platform.utilisateur.UtilisateurRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
- 
+
+import com.siege.platform.common.IdempotencyManager;
 import java.time.LocalDate;
 import java.util.*;
- 
+
 import org.springframework.transaction.annotation.Transactional;
 
 @RestController
@@ -23,19 +24,22 @@ public class EvaluationController {
     private final com.siege.platform.contrat.ContratAgentRepository contratRepository;
     private final com.siege.platform.poste.AffectationRepository affectationRepository;
     private final UtilisateurRepository utilisateurRepository;
- 
+    private final IdempotencyManager idempotencyManager;
+
     public EvaluationController(EvaluationAgentRepository evaluationRepository,
                                 AgentTerrainRepository agentRepository,
                                 CurrentTenantService tenantService,
                                 com.siege.platform.contrat.ContratAgentRepository contratRepository,
                                 com.siege.platform.poste.AffectationRepository affectationRepository,
-                                UtilisateurRepository utilisateurRepository) {
+                                UtilisateurRepository utilisateurRepository,
+                                IdempotencyManager idempotencyManager) {
         this.evaluationRepository = evaluationRepository;
         this.agentRepository = agentRepository;
         this.tenantService = tenantService;
         this.contratRepository = contratRepository;
         this.affectationRepository = affectationRepository;
         this.utilisateurRepository = utilisateurRepository;
+        this.idempotencyManager = idempotencyManager;
     }
  
     @GetMapping
@@ -109,7 +113,13 @@ public class EvaluationController {
  
     @PostMapping
     @PreAuthorize("hasAnyRole('EMPLOYEUR', 'ADMIN_ENTREPRISE', 'SUPER_ADMIN')")
-    public ResponseEntity<?> create(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> create(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                    @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         EvaluationAgent evaluation = new EvaluationAgent();
         evaluation.setEntreprise(tenantService.entreprise());
         
@@ -153,6 +163,10 @@ public class EvaluationController {
                         + evaluation.getSatisfactionClient()
                         + evaluation.getCommunication()
         );
-        return ResponseEntity.ok(evaluationRepository.save(evaluation));
+        EvaluationAgent saved = evaluationRepository.save(evaluation);
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, saved);
+        }
+        return ResponseEntity.ok(saved);
     }
 }

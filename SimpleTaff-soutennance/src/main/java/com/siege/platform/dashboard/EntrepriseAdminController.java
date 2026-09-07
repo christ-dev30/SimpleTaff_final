@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.siege.platform.common.IdempotencyManager;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -32,6 +33,7 @@ public class EntrepriseAdminController {
     private final EntrepriseRepository entrepriseRepository;
     private final ContratAgentRepository contratAgentRepository;
     private final AgentTerrainRepository agentTerrainRepository;
+    private final IdempotencyManager idempotencyManager;
 
     public EntrepriseAdminController(SiteRepository siteRepository,
                                      PosteRepository posteRepository,
@@ -40,7 +42,8 @@ public class EntrepriseAdminController {
                                      EmploiRepository emploiRepository,
                                      EntrepriseRepository entrepriseRepository,
                                      ContratAgentRepository contratAgentRepository,
-                                     AgentTerrainRepository agentTerrainRepository) {
+                                     AgentTerrainRepository agentTerrainRepository,
+                                     IdempotencyManager idempotencyManager) {
         this.siteRepository = siteRepository;
         this.posteRepository = posteRepository;
         this.affectationRepository = affectationRepository;
@@ -49,6 +52,7 @@ public class EntrepriseAdminController {
         this.entrepriseRepository = entrepriseRepository;
         this.contratAgentRepository = contratAgentRepository;
         this.agentTerrainRepository = agentTerrainRepository;
+        this.idempotencyManager = idempotencyManager;
     }
 
 
@@ -84,7 +88,13 @@ public class EntrepriseAdminController {
     }
 
     @PostMapping("/emplois")
-    public ResponseEntity<?> createEmploi(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> createEmploi(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                          @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (String) payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         UUID enterpriseId = com.siege.platform.config.tenant.TenantContext.getTenantId();
         if (enterpriseId == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Aucune entreprise dans le contexte."));
@@ -105,6 +115,9 @@ public class EntrepriseAdminController {
                 emp.setSalaireBrutReference(new BigDecimal(payload.get("salaireBrutReference").toString()));
             }
             Emploi saved = emploiRepository.save(emp);
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, saved);
+            }
             return ResponseEntity.ok(saved);
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
@@ -168,7 +181,13 @@ public class EntrepriseAdminController {
     }
 
     @PostMapping("/affectations")
-    public ResponseEntity<?> affecterAgent(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<?> affecterAgent(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                           @RequestBody Map<String, String> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         String posteIdStr = payload.get("posteId");
         String agentIdStr = payload.get("agentId");
         String siteIdStr = payload.get("siteId");
@@ -261,7 +280,11 @@ public class EntrepriseAdminController {
             }
             affectationRepository.save(aff);
 
-            return ResponseEntity.ok(Map.of("message", "Affectation créée !", "id", aff.getId()));
+            Map<String, Object> responseBody = Map.of("message", "Affectation créée !", "id", aff.getId());
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -337,7 +360,13 @@ public class EntrepriseAdminController {
     }
 
     @PostMapping("/postes")
-    public ResponseEntity<?> createPoste(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> createPoste(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                         @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (String) payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         UUID enterpriseId = com.siege.platform.config.tenant.TenantContext.getTenantId();
         if (enterpriseId == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Aucune entreprise dans le contexte."));
@@ -361,7 +390,11 @@ public class EntrepriseAdminController {
             poste.setStatut("OUVERT");
 
             Poste saved = posteRepository.save(poste);
-            return ResponseEntity.ok(Map.of("message", "Poste créé avec succès !", "id", saved.getId()));
+            Map<String, Object> responseBody = Map.of("message", "Poste créé avec succès !", "id", saved.getId());
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

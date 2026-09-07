@@ -26,21 +26,42 @@ public class PaieController {
     @Autowired
     private CurrentTenantService tenantService;
 
+    @Autowired
+    private com.siege.platform.common.IdempotencyManager idempotencyManager;
+
     @PostMapping("/calculer")
-    public ResponseEntity<?> calculerPaie(@RequestBody PaieRequest request) {
+    public ResponseEntity<?> calculerPaie(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                          @RequestBody PaieRequest request) {
+        String idempotencyKey = idempotencyHeader;
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
         try {
             paieService.calculerEtGenererBulletin(request);
-            return ResponseEntity.ok(Map.of("message", "Bulletin calculé avec succès"));
+            Map<String, Object> responseBody = Map.of("message", "Bulletin calculé avec succès");
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
     @PostMapping("/bulletins/generer")
-    public ResponseEntity<?> genererBulletinDetaille(@RequestBody GenererBulletinRequest request) {
+    public ResponseEntity<?> genererBulletinDetaille(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                                      @RequestBody GenererBulletinRequest request) {
+        String idempotencyKey = idempotencyHeader;
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
         try {
             paieService.calculerEtGenererBulletinDetaille(request);
-            return ResponseEntity.ok(Map.of("message", "Bulletin calculé avec succès"));
+            Map<String, Object> responseBody = Map.of("message", "Bulletin calculé avec succès");
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

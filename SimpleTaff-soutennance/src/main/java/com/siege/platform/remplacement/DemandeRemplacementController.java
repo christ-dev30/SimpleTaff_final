@@ -10,6 +10,7 @@ import com.siege.platform.poste.AffectationRepository;
 import com.siege.platform.utilisateur.Utilisateur;
 import com.siege.platform.utilisateur.UtilisateurRepository;
 import com.siege.platform.common.enums.Role;
+import com.siege.platform.common.IdempotencyManager;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,17 +34,20 @@ public class DemandeRemplacementController {
     private final UtilisateurRepository utilisateurRepository;
     private final EntrepriseRepository entrepriseRepository;
     private final AffectationRepository affectationRepository;
+    private final IdempotencyManager idempotencyManager;
 
     public DemandeRemplacementController(DemandeRemplacementRepository demandeRepository,
                                          AgentTerrainRepository agentRepository,
                                          UtilisateurRepository utilisateurRepository,
                                          EntrepriseRepository entrepriseRepository,
-                                         AffectationRepository affectationRepository) {
+                                         AffectationRepository affectationRepository,
+                                         IdempotencyManager idempotencyManager) {
         this.demandeRepository = demandeRepository;
         this.agentRepository = agentRepository;
         this.utilisateurRepository = utilisateurRepository;
         this.entrepriseRepository = entrepriseRepository;
         this.affectationRepository = affectationRepository;
+        this.idempotencyManager = idempotencyManager;
     }
 
     private Utilisateur getCurrentUser() {
@@ -56,7 +60,13 @@ public class DemandeRemplacementController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<?> signalerRemplacement(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<?> signalerRemplacement(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                                   @RequestBody Map<String, String> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         Utilisateur current = getCurrentUser();
         if (current == null) return ResponseEntity.status(401).build();
 
@@ -71,7 +81,11 @@ public class DemandeRemplacementController {
         demande.setStatut("EN_ATTENTE");
 
         demandeRepository.save(demande);
-        return ResponseEntity.ok(Map.of("message", "Demande créée avec succès"));
+        Map<String, Object> responseBody = Map.of("message", "Demande créée avec succès");
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, responseBody);
+        }
+        return ResponseEntity.ok(responseBody);
     }
 
     @GetMapping

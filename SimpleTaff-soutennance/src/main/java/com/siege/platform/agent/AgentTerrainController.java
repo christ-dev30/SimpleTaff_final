@@ -241,7 +241,13 @@ public class AgentTerrainController {
     }
 
     @PostMapping("/{id}/pieces")
-    public ResponseEntity<?> ajouterPiece(@PathVariable("id") UUID id, @RequestBody Map<String, String> payload) {
+    public ResponseEntity<?> ajouterPiece(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                          @PathVariable("id") UUID id, @RequestBody Map<String, String> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         try {
             AgentTerrain agent = agentTerrainService.listAll().stream()
                     .filter(a -> a.getId().equals(id))
@@ -260,8 +266,12 @@ public class AgentTerrainController {
             }
             piece.setUrlDocument(payload.get("urlDocument"));
             piece.setStatut(payload.getOrDefault("statut", "VALIDE"));
-            
-            return ResponseEntity.ok(pieceJustificativeRepository.save(piece));
+
+            PieceJustificative saved = pieceJustificativeRepository.save(piece);
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, saved);
+            }
+            return ResponseEntity.ok(saved);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

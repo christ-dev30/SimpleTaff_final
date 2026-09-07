@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.siege.platform.common.IdempotencyManager;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
@@ -22,30 +23,42 @@ public class PointageController {
 
     private final PointageService pointageService;
     private final PointageRepository pointageRepository;
+    private final IdempotencyManager idempotencyManager;
 
-    public PointageController(PointageService pointageService, PointageRepository pointageRepository) {
+    public PointageController(PointageService pointageService, PointageRepository pointageRepository, IdempotencyManager idempotencyManager) {
         this.pointageService = pointageService;
         this.pointageRepository = pointageRepository;
+        this.idempotencyManager = idempotencyManager;
     }
 
     @PostMapping("/scanner")
     @PreAuthorize("hasAnyRole('COORDONNATEUR', 'EMPLOYEUR', 'ADMIN_ENTREPRISE')")
-    public ResponseEntity<?> scannerPointage(@RequestBody Map<String, String> payload) {
+    public ResponseEntity<?> scannerPointage(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                             @RequestBody Map<String, String> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         String cardId = payload.get("cardId");
         if (cardId == null || cardId.trim().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "L'identifiant de la carte est requis."));
         }
-        
+
         String mode = payload.get("mode");
         if (mode == null || mode.trim().isEmpty()) {
             mode = "QR_CODE";
         }
-        
+
         try {
             Pointage pointage = pointageService.scannerCarte(cardId, payload.get("typePointage"), mode);
             applyPointageExtras(pointage, payload);
             pointageRepository.save(pointage);
-            return ResponseEntity.ok(toResponse(pointage));
+            Map<String, Object> responseBody = toResponse(pointage);
+            if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+                idempotencyManager.put(idempotencyKey, responseBody);
+            }
+            return ResponseEntity.ok(responseBody);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", safeMessage(e)));
         }

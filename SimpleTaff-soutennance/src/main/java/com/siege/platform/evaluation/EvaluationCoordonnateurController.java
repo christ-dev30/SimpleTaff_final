@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.siege.platform.common.IdempotencyManager;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -23,19 +24,22 @@ public class EvaluationCoordonnateurController {
     private final com.siege.platform.contrat.ContratAgentRepository contratRepository;
     private final com.siege.platform.poste.AffectationRepository affectationRepository;
     private final UtilisateurRepository utilisateurRepository;
+    private final IdempotencyManager idempotencyManager;
 
     public EvaluationCoordonnateurController(EvaluationCoordonnateurRepository evaluationRepository,
                                               AgentTerrainRepository agentRepository,
                                               CurrentTenantService tenantService,
                                               com.siege.platform.contrat.ContratAgentRepository contratRepository,
                                               com.siege.platform.poste.AffectationRepository affectationRepository,
-                                              UtilisateurRepository utilisateurRepository) {
+                                              UtilisateurRepository utilisateurRepository,
+                                              IdempotencyManager idempotencyManager) {
         this.evaluationRepository = evaluationRepository;
         this.agentRepository = agentRepository;
         this.tenantService = tenantService;
         this.contratRepository = contratRepository;
         this.affectationRepository = affectationRepository;
         this.utilisateurRepository = utilisateurRepository;
+        this.idempotencyManager = idempotencyManager;
     }
 
     @GetMapping
@@ -111,7 +115,13 @@ public class EvaluationCoordonnateurController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('COORDONNATEUR', 'SUPER_ADMIN')")
-    public ResponseEntity<?> create(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> create(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                    @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (payload.get("idempotencyKey") != null ? payload.get("idempotencyKey").toString() : null);
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         EvaluationCoordonnateur evaluation = new EvaluationCoordonnateur();
         evaluation.setEntreprise(tenantService.entreprise());
 
@@ -146,6 +156,10 @@ public class EvaluationCoordonnateurController {
                         + evaluation.getAutonomieTerrain()
                         + evaluation.getHistoriqueDisciplinaire()
         );
-        return ResponseEntity.ok(evaluationToMap(evaluationRepository.save(evaluation)));
+        Map<String, Object> responseBody = evaluationToMap(evaluationRepository.save(evaluation));
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, responseBody);
+        }
+        return ResponseEntity.ok(responseBody);
     }
 }

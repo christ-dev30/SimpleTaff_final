@@ -1,6 +1,7 @@
 package com.siege.platform.prime;
 
 import com.siege.platform.common.CurrentTenantService;
+import com.siege.platform.common.IdempotencyManager;
 import com.siege.platform.entreprise.Entreprise;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,10 +19,13 @@ public class PrimeRendementController {
 
     private final ReglePrimeRendementRepository repository;
     private final CurrentTenantService tenantService;
+    private final IdempotencyManager idempotencyManager;
 
-    public PrimeRendementController(ReglePrimeRendementRepository repository, CurrentTenantService tenantService) {
+    public PrimeRendementController(ReglePrimeRendementRepository repository, CurrentTenantService tenantService,
+                                    IdempotencyManager idempotencyManager) {
         this.repository = repository;
         this.tenantService = tenantService;
+        this.idempotencyManager = idempotencyManager;
     }
 
     @GetMapping("/regles")
@@ -34,7 +38,13 @@ public class PrimeRendementController {
     }
 
     @PostMapping("/regles")
-    public ResponseEntity<?> creerRegle(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> creerRegle(@RequestHeader(value = "Idempotency-Key", required = false) String idempotencyHeader,
+                                        @RequestBody Map<String, Object> payload) {
+        String idempotencyKey = idempotencyHeader != null ? idempotencyHeader : (String) payload.get("idempotencyKey");
+        if (idempotencyKey != null && !idempotencyKey.isBlank() && idempotencyManager.has(idempotencyKey)) {
+            return ResponseEntity.ok(idempotencyManager.get(idempotencyKey));
+        }
+
         String libelle = payload.get("libelle") != null ? payload.get("libelle").toString().trim() : "";
         if (libelle.isBlank()) {
             return ResponseEntity.badRequest().body(Map.of("message", "Libellé de la règle requis."));
@@ -49,7 +59,11 @@ public class PrimeRendementController {
         regle.setStatut(payload.get("statut") != null ? payload.get("statut").toString() : "ACTIF");
 
         ReglePrimeRendement saved = repository.save(regle);
-        return ResponseEntity.ok(toMap(saved));
+        Map<String, Object> responseBody = toMap(saved);
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            idempotencyManager.put(idempotencyKey, responseBody);
+        }
+        return ResponseEntity.ok(responseBody);
     }
 
     @PostMapping("/simuler")
