@@ -65,7 +65,7 @@ ENV PORT=8080 \
     MAIL_PORT=587 \
     MAX_FILE_SIZE=30MB \
     MAX_REQUEST_SIZE=30MB \
-    JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseG1GC"
+    JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseSerialGC -XX:InitialRAMPercentage=40.0"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
