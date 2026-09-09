@@ -306,6 +306,8 @@ public class AgentTerrainController {
             
             agentTerrainRepository.delete(agent);
             return ResponseEntity.ok(Map.of("message", "Agent supprimé avec succès."));
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Impossible de supprimer cet agent car il possède un historique (pointages, contrats, ou équipements). Dans un système RH, vous devez le désactiver ou l'archiver."));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
